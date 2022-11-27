@@ -1,0 +1,15 @@
+field:
+    codigo:
+        invalid: Código inválido!
+    nome:
+        invalid: Nome inválido!
+    peso:
+        invalid: Peso inválido!
+    senha:
+        invalid: Senha inválida!
+    temperatura:
+        invalid: Temperatura inválida!
+    umidade:
+        invalid: Umidade inválida!
+    usuario:
+        invalid: Usuário inválido!

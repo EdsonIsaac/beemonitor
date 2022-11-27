@@ -1,0 +1,21 @@
+rsa:
+    private-key: classpath:certs/private.pem
+    public-key: classpath:certs/public.pem
+
+server:
+    port: 8081
+
+spring:
+    datasource:
+        driver-class-name: org.postgresql.Driver
+        password: ${APP_DATASOURCE_PASSWORD}
+        url: ${APP_DATASOURCE_URL}
+        username: ${APP_DATASOURCE_USERNAME}
+    jpa:
+        hibernate:
+            ddl-auto: validate
+        properties:
+            hibernate:
+                dialect: org.hibernate.dialect.PostgreSQLDialect
+                format_sql: true
+        show-sql: true

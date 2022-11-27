@@ -1,0 +1,35 @@
+.ms-n3 {
+    margin-left: -0.75rem;
+}
+
+.mat-column-indice {
+    flex: 0 0 5% !important;
+    width: 5% !important;
+}
+
+.mat-data-hora-cadastro {
+    flex: 0 0 25% !important;
+    width: 25% !important;
+}
+
+.mat-column-temperatura {
+    flex: 0 0 23.33% !important;
+    width: 23.33% !important;
+}
+
+.mat-column-umidade {
+    flex: 0 0 23.33% !important;
+    width: 23.33% !important;
+}
+
+.mat-column-peso {
+    flex: 0 0 23.33% !important;
+    width: 23.33% !important;
+}
+
+::ng-deep .col-indice .mat-sort-header-container, ::ng-deep .col-data-hora-cadastro .mat-sort-header-container, 
+::ng-deep .col-temperatura .mat-sort-header-container, ::ng-deep .col-umidade .mat-sort-header-container,
+::ng-deep .col-peso .mat-sort-header-container {
+    display: flex;
+    justify-content: center;
+}

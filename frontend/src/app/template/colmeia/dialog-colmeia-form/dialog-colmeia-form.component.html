@@ -1,0 +1,36 @@
+<div class="mat-dialog">
+    <h1 mat-dialog-title class="fw-bold" *ngIf="!this.data.colmeia">Cadastrar Colmeia</h1>
+    <h1 mat-dialog-title class="fw-bold" *ngIf="this.data.colmeia">Editar Colmeia</h1>
+
+    <div mat-dialog-content>
+        <form [formGroup]="form" *ngIf="form">
+            <div class="row">
+                <div class="col-md-6">
+                    <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>Código</mat-label>
+                        <input matInput name="codigo" formControlName="codigo">
+                    </mat-form-field>
+                </div>
+                
+                <div class="col-md-3">
+                    <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>Telefone</mat-label>
+                        <input matInput name="telefone" formControlName="telefone">
+                    </mat-form-field>
+                </div>
+
+                <div class="col-md-3">
+                    <mat-form-field appearance="outline" class="w-100">
+                        <mat-label>Data Cadastro</mat-label>
+                        <input matInput name="dataCadastro" readonly formControlName="dataCadastro">
+                    </mat-form-field>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <div mat-dialog-actions layout="row" class="d-flex justify-content-end">
+        <button mat-button mat-dialog-close>Cancelar</button>
+        <button mat-button class="btn-success" (click)="submitForm()" [disabled]="!form.valid">OK</button>
+    </div>
+</div>

@@ -1,0 +1,34 @@
+a, a:hover {
+    text-decoration: none;
+}
+
+#sidebar {
+    background-color: #2F323A;
+}
+
+.vertical-nav {
+    min-width: 15rem;
+    width: 15rem;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    transition: all 0.4s;
+}
+
+
+.nav-link:hover {
+    background-color: rgba(0, 0, 0, 0.2);
+    transition: 0.5s;
+}
+
+.nav-item-exit, .nav-item-copyright {
+    position: absolute;
+    bottom: 0;
+}
+
+@media (max-width:768px) {
+    #sidebar {
+        display: none;
+    }
+}
