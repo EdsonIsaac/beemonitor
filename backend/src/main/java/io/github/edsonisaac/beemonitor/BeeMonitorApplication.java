@@ -2,6 +2,7 @@ package io.github.edsonisaac.beemonitor;
 
 import io.github.edsonisaac.beemonitor.configurations.RsaKeyProperties;
 import io.github.edsonisaac.beemonitor.entities.User;
+import io.github.edsonisaac.beemonitor.enums.Department;
 import io.github.edsonisaac.beemonitor.exceptions.ObjectNotFoundException;
 import io.github.edsonisaac.beemonitor.services.FacadeService;
 import io.github.edsonisaac.beemonitor.utils.UserUtils;
@@ -73,6 +74,7 @@ public class BeeMonitorApplication implements CommandLineRunner {
 		user.setUsername("cooperativa");
 		user.setPassword("$2a$12$DrBrf0spqOqKyvDPC2fTV.Q/y3HPKkfBeF49YQV4I2TjcowKaPEmi"); //cooperativa
 		user.setEnabled(true);
+		user.setDepartment(Department.SUPPORT);
 
 		facade.userSave(user);
 	}

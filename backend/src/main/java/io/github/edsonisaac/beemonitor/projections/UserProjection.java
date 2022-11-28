@@ -1,5 +1,7 @@
 package io.github.edsonisaac.beemonitor.projections;
 
+import io.github.edsonisaac.beemonitor.enums.Department;
+
 /**
  * The interface User projection.
  *
@@ -34,4 +36,11 @@ public interface UserProjection extends AbstractEntityProjection {
      * @return the boolean
      */
     Boolean getEnabled();
+
+    /**
+     * Get department.
+     *
+     * @return the department
+     */
+    Department getDepartment();
 }

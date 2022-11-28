@@ -1,14 +1,17 @@
 package io.github.edsonisaac.beemonitor.controllers;
 
 import io.github.edsonisaac.beemonitor.entities.Hive;
+import io.github.edsonisaac.beemonitor.exceptions.ObjectNotFoundException;
 import io.github.edsonisaac.beemonitor.services.FacadeService;
+import io.github.edsonisaac.beemonitor.utils.MessageUtils;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * The type Hive controller.
@@ -32,12 +35,25 @@ public class HiveController {
     }
 
     /**
+     * Delete response entity.
+     *
+     * @param id the id
+     * @return the response entity
+     */
+    @DeleteMapping(value = "/{id}")
+    @PreAuthorize("hasAnyRole('ADMINISTRATION', 'SUPPORT')")
+    public ResponseEntity delete(@PathVariable UUID id) {
+        facade.hiveDelete(id);
+        return ResponseEntity.status(HttpStatus.OK).body(null);
+    }
+
+    /**
      * Find all response entity.
      *
      * @return the response entity
      */
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAnyRole('ADMINISTRATION', 'SUPPORT')")
     public ResponseEntity findAll () {
         return ResponseEntity.status(HttpStatus.OK).body(facade.hiveFindAll());
     }
@@ -49,9 +65,21 @@ public class HiveController {
      * @return the response entity
      */
     @GetMapping(value = "/{id}")
-    @ResponseStatus(HttpStatus.OK)
+    @PreAuthorize("hasAnyRole('ADMINISTRATION', 'SUPPORT')")
     public ResponseEntity findById(@PathVariable UUID id) {
         return ResponseEntity.status(HttpStatus.OK).body(facade.hiveFindById(id));
+    }
+
+    /**
+     * Save response entity.
+     *
+     * @param hive the hive
+     * @return the response entity
+     */
+    @PostMapping
+    @PreAuthorize("hasAnyRole('ADMINISTRATION', 'SUPPORT')")
+    public ResponseEntity save(@RequestBody @Valid Hive hive) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(facade.hiveSave(hive));
     }
 
     /**
@@ -61,7 +89,6 @@ public class HiveController {
      * @return the response entity
      */
     @GetMapping(value = "/search")
-    @ResponseStatus(HttpStatus.OK)
     public ResponseEntity search(@RequestParam String code) {
 
         if (code != null) {
@@ -72,32 +99,20 @@ public class HiveController {
     }
 
     /**
-     * Save response entity.
+     * Update response entity.
      *
+     * @param id   the id
      * @param hive the hive
      * @return the response entity
      */
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public ResponseEntity save(@RequestBody Hive hive) {
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAnyRole('ADMINISTRATION', 'SUPPORT')")
+    public ResponseEntity update(@PathVariable UUID id, @RequestBody @Valid Hive hive) {
 
-        if (hive.getId() == null) {
-            return ResponseEntity.status(HttpStatus.CREATED).body(facade.hiveSave(hive));
+        if (hive.getId().equals(id)) {
+            return ResponseEntity.status(HttpStatus.OK).body(facade.hiveSave(hive));
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(facade.hiveSave(hive));
-    }
-
-    /**
-     * Delete response entity.
-     *
-     * @param id the id
-     * @return the response entity
-     */
-    @DeleteMapping(value = "/{id}")
-    @ResponseStatus(HttpStatus.OK)
-    public ResponseEntity delete(@PathVariable UUID id) {
-        facade.hiveDelete(id);
-        return ResponseEntity.status(HttpStatus.OK).body(null);
+        throw new ObjectNotFoundException(MessageUtils.HIVE_NOT_FOUND);
     }
 }

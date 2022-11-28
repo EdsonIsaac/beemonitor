@@ -30,7 +30,8 @@ CREATE TABLE tb_users (
    name VARCHAR(255),
    username VARCHAR(255),
    password VARCHAR(255),
-   enabled BOOLEAN,
+   enabled BOOLEAN NOT NULL,
+   department VARCHAR(255) NOT NULL,
    CONSTRAINT pk_tb_users PRIMARY KEY (id)
 );
 

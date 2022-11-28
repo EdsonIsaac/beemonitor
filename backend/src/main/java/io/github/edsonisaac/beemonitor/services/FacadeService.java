@@ -89,6 +89,15 @@ public class FacadeService {
     /////////////////////////////////////////////////// USER ///////////////////////////////////////////////////
 
     /**
+     * User find all list.
+     *
+     * @return the list
+     */
+    public List<UserProjection> userFindAll() {
+        return userService.findAll();
+    }
+
+    /**
      * User find by username user projection.
      *
      * @param username the username

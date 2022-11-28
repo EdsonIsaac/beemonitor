@@ -29,6 +29,7 @@ public abstract class UserUtils {
         user.setUsername(projection.getUsername());
         user.setPassword(projection.getPassword());
         user.setEnabled(projection.getEnabled());
+        user.setDepartment(projection.getDepartment());
 
         return user;
     }
