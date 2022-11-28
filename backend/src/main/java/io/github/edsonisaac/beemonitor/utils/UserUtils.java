@@ -11,14 +11,14 @@ import io.github.edsonisaac.beemonitor.projections.UserProjection;
 public abstract class UserUtils {
 
     /**
-     * To user user.
+     * To user.
      *
      * @param projection the projection
      * @return the user
      */
     public static User toUser (UserProjection projection) {
 
-        User user = new User();
+        var user = new User();
 
         user.setId(projection.getId());
         user.setCreatedDate(projection.getCreatedDate());

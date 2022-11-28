@@ -1,5 +1,6 @@
 package io.github.edsonisaac.beemonitor.utils;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
@@ -26,6 +27,7 @@ public class TokenUtils {
      *
      * @param encoder the encoder
      */
+    @Autowired
     public TokenUtils(JwtEncoder encoder) {
         this.encoder = encoder;
     }

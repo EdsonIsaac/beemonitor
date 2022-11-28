@@ -24,7 +24,7 @@ public class ControllerAdvice {
     @ExceptionHandler(ObjectNotFoundException.class)
     public ResponseEntity objectNotFound(ObjectNotFoundException ex, HttpServletRequest request) {
 
-        StandardError error = StandardError.builder()
+        var error = StandardError.builder()
                 .timestamp(System.currentTimeMillis())
                 .status(HttpStatus.NOT_FOUND.value())
                 .error("Not Found")
@@ -45,7 +45,7 @@ public class ControllerAdvice {
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity validationException(ValidationException ex, HttpServletRequest request) {
 
-        StandardError error = StandardError.builder()
+        var error = StandardError.builder()
                 .timestamp(System.currentTimeMillis())
                 .status(HttpStatus.BAD_REQUEST.value())
                 .error("Bad Request")
@@ -66,7 +66,7 @@ public class ControllerAdvice {
     @ExceptionHandler(OperationFailedException.class)
     public ResponseEntity operationFailedException(OperationFailedException ex, HttpServletRequest request) {
 
-        StandardError error = StandardError.builder()
+        var error = StandardError.builder()
                 .timestamp(System.currentTimeMillis())
                 .status(HttpStatus.BAD_REQUEST.value())
                 .error("Bad Request")

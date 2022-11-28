@@ -42,7 +42,7 @@ public class MensurationController {
      */
     @PostMapping
     public ResponseEntity save(@RequestParam String code, @RequestParam Mensuration mensuration) {
-        Hive hive = facade.hiveFindById(facade.hiveFindByCode(code).getId());
+        var hive = facade.hiveFindById(facade.hiveFindByCode(code).getId());
         hive.getMensurations().add(mensuration);
         return ResponseEntity.status(HttpStatus.CREATED).body(facade.hiveSave(hive));
     }

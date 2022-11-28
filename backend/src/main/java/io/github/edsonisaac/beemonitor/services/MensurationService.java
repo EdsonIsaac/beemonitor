@@ -39,7 +39,7 @@ public class MensurationService {
      * @return the list
      */
     public List<MensurationProjection> findByHiveIdWithSize(UUID hiveId, Integer size) {
-        Pageable pageable = PageRequest.of(0, size, Sort.by(Sort.Direction.DESC, "createdDate"));
+        var pageable = PageRequest.of(0, size, Sort.by(Sort.Direction.DESC, "createdDate"));
         return repository.findByHiveId(hiveId, pageable).getContent();
     }
 }

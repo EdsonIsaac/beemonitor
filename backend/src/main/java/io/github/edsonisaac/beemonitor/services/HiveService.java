@@ -5,6 +5,7 @@ import io.github.edsonisaac.beemonitor.exceptions.ObjectNotFoundException;
 import io.github.edsonisaac.beemonitor.exceptions.ValidationException;
 import io.github.edsonisaac.beemonitor.projections.HiveProjection;
 import io.github.edsonisaac.beemonitor.repositories.HiveRepository;
+import io.github.edsonisaac.beemonitor.utils.HiveUtils;
 import io.github.edsonisaac.beemonitor.utils.MessageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -104,10 +105,13 @@ public class HiveService {
 
     private boolean validateHive(Hive hive) {
 
-        HiveProjection hive_findByCode = repository.findByCode(hive.getCode()).orElse(null);
+        var hive_findByCode = repository.findByCode(hive.getCode());
 
-        if (hive_findByCode != null && !hive.equals(hive_findByCode)) {
-            throw new ValidationException(MessageUtils.HIVE_ALREADY_SAVE);
+        if (hive_findByCode.isPresent()) {
+
+            if (!hive.equals(HiveUtils.toHive(hive_findByCode.get()))) {
+                throw new ValidationException(MessageUtils.HIVE_ALREADY_SAVE);
+            }
         }
 
         return true;
