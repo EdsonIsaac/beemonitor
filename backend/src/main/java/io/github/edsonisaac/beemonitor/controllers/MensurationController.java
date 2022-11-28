@@ -2,10 +2,10 @@ package io.github.edsonisaac.beemonitor.controllers;
 
 import io.github.edsonisaac.beemonitor.entities.Mensuration;
 import io.github.edsonisaac.beemonitor.services.FacadeService;
+import jakarta.annotation.security.RolesAllowed;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -55,7 +55,7 @@ public class MensurationController {
      * @return the response entity
      */
     @GetMapping("/search")
-    @PreAuthorize("hasAnyRole('ADMINISTRATION', 'SUPPORT')")
+    @RolesAllowed({"ROLE_ADMINISTRATION", "ROLE_SUPPORT"})
     public ResponseEntity search(@RequestParam(required = false) UUID hiveId, @RequestParam(required = false) Integer size) {
 
         if (hiveId != null) {

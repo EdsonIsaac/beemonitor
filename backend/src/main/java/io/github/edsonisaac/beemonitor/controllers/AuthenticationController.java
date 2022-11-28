@@ -38,6 +38,6 @@ public class AuthenticationController {
      */
     @PostMapping("/token")
     public ResponseEntity login(Authentication authentication) {
-        return ResponseEntity.status(HttpStatus.OK).body("Bearer " + tokenUtils.generateToken(authentication));
+        return ResponseEntity.status(HttpStatus.OK).body(tokenUtils.generateToken(authentication));
     }
 }

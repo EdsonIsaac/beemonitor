@@ -4,7 +4,6 @@ import io.github.edsonisaac.beemonitor.projections.MensurationProjection;
 import io.github.edsonisaac.beemonitor.repositories.MensurationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 

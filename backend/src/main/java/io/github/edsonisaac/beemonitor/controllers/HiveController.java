@@ -4,11 +4,11 @@ import io.github.edsonisaac.beemonitor.entities.Hive;
 import io.github.edsonisaac.beemonitor.exceptions.ObjectNotFoundException;
 import io.github.edsonisaac.beemonitor.services.FacadeService;
 import io.github.edsonisaac.beemonitor.utils.MessageUtils;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -41,7 +41,7 @@ public class HiveController {
      * @return the response entity
      */
     @DeleteMapping(value = "/{id}")
-    @PreAuthorize("hasAnyRole('ADMINISTRATION', 'SUPPORT')")
+    @RolesAllowed({"ROLE_ADMINISTRATION", "ROLE_SUPPORT"})
     public ResponseEntity delete(@PathVariable UUID id) {
         facade.hiveDelete(id);
         return ResponseEntity.status(HttpStatus.OK).body(null);
@@ -53,7 +53,7 @@ public class HiveController {
      * @return the response entity
      */
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMINISTRATION', 'SUPPORT')")
+    @RolesAllowed({"ROLE_ADMINISTRATION", "ROLE_SUPPORT"})
     public ResponseEntity findAll () {
         return ResponseEntity.status(HttpStatus.OK).body(facade.hiveFindAll());
     }
@@ -65,7 +65,7 @@ public class HiveController {
      * @return the response entity
      */
     @GetMapping(value = "/{id}")
-    @PreAuthorize("hasAnyRole('ADMINISTRATION', 'SUPPORT')")
+    @RolesAllowed({"ROLE_ADMINISTRATION", "ROLE_SUPPORT"})
     public ResponseEntity findById(@PathVariable UUID id) {
         return ResponseEntity.status(HttpStatus.OK).body(facade.hiveFindById(id));
     }
@@ -77,7 +77,7 @@ public class HiveController {
      * @return the response entity
      */
     @PostMapping
-    @PreAuthorize("hasAnyRole('ADMINISTRATION', 'SUPPORT')")
+    @RolesAllowed({"ROLE_ADMINISTRATION", "ROLE_SUPPORT"})
     public ResponseEntity save(@RequestBody @Valid Hive hive) {
         return ResponseEntity.status(HttpStatus.CREATED).body(facade.hiveSave(hive));
     }
@@ -106,7 +106,7 @@ public class HiveController {
      * @return the response entity
      */
     @PutMapping("/{id}")
-    @PreAuthorize("hasAnyRole('ADMINISTRATION', 'SUPPORT')")
+    @RolesAllowed({"ROLE_ADMINISTRATION", "ROLE_SUPPORT"})
     public ResponseEntity update(@PathVariable UUID id, @RequestBody @Valid Hive hive) {
 
         if (hive.getId().equals(id)) {
