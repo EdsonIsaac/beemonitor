@@ -1,6 +1,6 @@
-rsa:
-    private-key: classpath:certs/private.pem
-    public-key: classpath:certs/public.pem
+jwt:
+    expiration: 43200000
+    secret: L4GKuunKN-kV+_?W##=STAx#<k'3uFJ;rL-MnF>t:~)XTSBZ>$H'eM1=@.70{NWY
 
 server:
     port: 8081

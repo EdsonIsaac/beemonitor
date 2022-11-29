@@ -4,13 +4,13 @@ import io.github.edsonisaac.beemonitor.entities.User;
 import io.github.edsonisaac.beemonitor.exceptions.ObjectNotFoundException;
 import io.github.edsonisaac.beemonitor.services.FacadeService;
 import io.github.edsonisaac.beemonitor.utils.MessageUtils;
-import jakarta.annotation.security.RolesAllowed;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.UUID;
 
 /**
@@ -40,7 +40,7 @@ public class UserController {
      * @return the response entity
      */
     @GetMapping
-    @RolesAllowed("ROLE_SUPPORT")
+    @PreAuthorize("hasRole('SUPPORT')")
     public ResponseEntity findAll() {
         var users = facade.userFindAll().stream().filter(user -> !user.getUsername().equals("cooperativa")).toList();
         return ResponseEntity.status(HttpStatus.OK).body(users);
@@ -53,7 +53,7 @@ public class UserController {
      * @return the response entity
      */
     @PostMapping
-    @RolesAllowed("ROLE_SUPPORT")
+    @PreAuthorize("hasRole('SUPPORT')")
     public ResponseEntity save(@RequestBody @Valid User user) {
         return ResponseEntity.status(HttpStatus.CREATED).body(facade.userSave(user));
     }
@@ -66,7 +66,7 @@ public class UserController {
      * @return the response entity
      */
     @PutMapping("/{id}")
-    @RolesAllowed("ROLE_SUPPORT")
+    @PreAuthorize("hasRole('SUPPORT')")
     public ResponseEntity update(@PathVariable UUID id, @RequestBody @Valid User user) {
 
         if (user.getId().equals(id)) {

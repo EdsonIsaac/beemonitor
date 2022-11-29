@@ -98,6 +98,16 @@ public class FacadeService {
     }
 
     /**
+     * User find by id user.
+     *
+     * @param id the id
+     * @return the user
+     */
+    public User userFindById(UUID id) {
+        return userService.findById(id);
+    }
+
+    /**
      * User find by username user projection.
      *
      * @param username the username

@@ -1,6 +1,7 @@
 package io.github.edsonisaac.beemonitor;
 
-import io.github.edsonisaac.beemonitor.configurations.RsaKeyProperties;
+//import io.github.edsonisaac.beemonitor.configurations.RsaKeyProperties;
+
 import io.github.edsonisaac.beemonitor.entities.User;
 import io.github.edsonisaac.beemonitor.enums.Department;
 import io.github.edsonisaac.beemonitor.exceptions.ObjectNotFoundException;
@@ -10,7 +11,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 /**
@@ -19,7 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
  * @author Edson Isaac
  */
 @SpringBootApplication
-@EnableConfigurationProperties(RsaKeyProperties.class)
+//@EnableConfigurationProperties(RsaKeyProperties.class)
 public class BeeMonitorApplication implements CommandLineRunner {
 
 	private final FacadeService facade;
