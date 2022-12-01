@@ -1,9 +1,11 @@
 package io.github.edsonisaac.beemonitor.filters;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.edsonisaac.beemonitor.entities.User;
 import io.github.edsonisaac.beemonitor.utils.JWTUtils;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -16,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.HashMap;
 
 /**
  * The type Authentication filter.
@@ -74,16 +76,15 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException {
 
+        var responseBody = new HashMap<String, String>();
         var username = ((User) authResult.getPrincipal()).getUsername();
+        var department = ((User) authResult.getPrincipal()).getDepartment();
         var token = jwtUtils.generateToken(username);
 
-        response.getWriter().write(token);
-        /*
-        response.addHeader("Access-Control-Expose-Headers", "Authorization");
-        response.addHeader("Authorization", token);
-        response.addHeader("Access-Control-Expose-Headers", "Setor");
-        response.addHeader("Department", ((User) authResult.getPrincipal()).getDepartment().toString());
-        */
+        responseBody.put("access_token", token);
+        responseBody.put("role", department.toString());
+
+        response.getWriter().print(new ObjectMapper().writeValueAsString(responseBody));
     }
 
     private UsernamePasswordAuthenticationToken getAuth(HttpServletRequest request) throws IOException {
@@ -104,19 +105,21 @@ public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
         @Override
         public void onAuthenticationFailure(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, AuthenticationException ex) throws IOException {
             httpServletResponse.setStatus(HttpStatus.UNAUTHORIZED.value());
-            httpServletResponse.setContentType("application/json");
-            httpServletResponse.getWriter().append(json());
+            httpServletResponse.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            httpServletResponse.getWriter().print(json(httpServletRequest));
         }
 
-        private String json() {
-            var date = new Date().getTime();
+        private String json(HttpServletRequest request) throws JsonProcessingException {
 
-            return "{\"timestamp\": " + date + ", "
-                + "\"status\": 401, "
-                + "\"error\": \"Não autorizado\", "
-                + "\"message\": \"Usuário e/ou senha inválidos!\", "
-                + "\"path\": \"/login\"}"
-            ;
+            var responseBody = new HashMap<String, Object>();
+
+            responseBody.put("timestamp", System.currentTimeMillis());
+            responseBody.put("status", HttpStatus.UNAUTHORIZED.value());
+            responseBody.put("error", "Não autorizado");
+            responseBody.put("message", "Usuário e/ou senha inválidos!");
+            responseBody.put("path", request.getRequestURI());
+
+            return new ObjectMapper().writeValueAsString(responseBody);
         }
     }
 }

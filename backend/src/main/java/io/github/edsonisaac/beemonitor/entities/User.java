@@ -2,6 +2,7 @@ package io.github.edsonisaac.beemonitor.entities;
 
 import io.github.edsonisaac.beemonitor.enums.Department;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
@@ -21,6 +22,7 @@ import java.util.Collection;
  * @author Edson Isaac
  */
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "tb_users")

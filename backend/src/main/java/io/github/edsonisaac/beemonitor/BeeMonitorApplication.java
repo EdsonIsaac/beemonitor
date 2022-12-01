@@ -19,7 +19,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
  * @author Edson Isaac
  */
 @SpringBootApplication
-//@EnableConfigurationProperties(RsaKeyProperties.class)
 public class BeeMonitorApplication implements CommandLineRunner {
 
 	private final FacadeService facade;

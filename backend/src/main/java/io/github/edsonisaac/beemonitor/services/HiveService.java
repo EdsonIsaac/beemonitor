@@ -94,13 +94,14 @@ public class HiveService {
      */
     public void delete (UUID id) {
 
-        if (id == null) {
-            throw new ObjectNotFoundException(MessageUtils.HIVE_NOT_FOUND);
+        if (id != null) {
+
+            if (repository.existsById(id)) {
+                repository.deleteById(id);
+            }
         }
 
-        if (repository.existsById(id)) {
-            repository.deleteById(id);
-        }
+        throw new ObjectNotFoundException(MessageUtils.HIVE_NOT_FOUND);
     }
 
     private boolean validateHive(Hive hive) {

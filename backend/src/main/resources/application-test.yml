@@ -1,0 +1,23 @@
+jwt:
+  expiration: 43200000
+  secret: L4GKuunKN-kV+_?W##=STAx#<k'3uFJ;rL-MnF>t:~)XTSBZ>$H'eM1=@.70{NWY
+
+server:
+  port: 8081
+
+spring:
+  datasource:
+    driver-class-name: org.h2.Driver
+    password: password
+    url: jdbc:h2:mem:testdb
+    username: sa
+  flyway:
+    enabled: false
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+        format_sql: true
+    show-sql: false
