@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 
 import { AuthService } from './auth.service';
+import { HiveService } from './hive.service';
+import { MensurationService } from './mensuration.service';
 
 @Injectable({
   providedIn: 'root'
@@ -8,7 +10,9 @@ import { AuthService } from './auth.service';
 export class FacadeService {
 
   constructor(
-    private authService: AuthService
+    private authService: AuthService,
+    private hiveService: HiveService,
+    private mensurationService: MensurationService
   ) { }
 
   ////////////////////////////////////////////////// AUTHENTICATION //////////////////////////////////////////////////
@@ -53,5 +57,27 @@ export class FacadeService {
    */
   authSetCurrentUser(currentUser: any) {
     return this.authService.setCurrentUser(currentUser);
+  }
+
+  ////////////////////////////////////////////////// HIVE //////////////////////////////////////////////////
+
+  /**
+   * 
+   * @returns 
+   */
+  hiveFindAll() {
+    return this.hiveService.findAll();
+  }
+
+  ////////////////////////////////////////////////// MENSURATION //////////////////////////////////////////////////
+
+  /**
+   * 
+   * @param hiveId 
+   * @param size 
+   * @returns 
+   */
+  mensurationGetMensurations(hiveId: string, size: number) {
+    return this.mensurationService.getMensurations(hiveId, size);
   }
 }

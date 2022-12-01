@@ -1,7 +1,10 @@
 package io.github.edsonisaac.beemonitor.services;
 
+import io.github.edsonisaac.beemonitor.entities.Mensuration;
+import io.github.edsonisaac.beemonitor.exceptions.ValidationException;
 import io.github.edsonisaac.beemonitor.projections.MensurationProjection;
 import io.github.edsonisaac.beemonitor.repositories.MensurationRepository;
+import io.github.edsonisaac.beemonitor.utils.MessageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -28,6 +31,21 @@ public class MensurationService {
     @Autowired
     public MensurationService(MensurationRepository repository) {
         this.repository = repository;
+    }
+
+    /**
+     * Save mensuration.
+     *
+     * @param mensuration the mensuration
+     * @return the mensuration
+     */
+    public Mensuration save(Mensuration mensuration) {
+
+        if (mensuration == null) {
+            throw new ValidationException(MessageUtils.MENSURATION_NULL);
+        }
+
+        return repository.save(mensuration);
     }
 
     /**

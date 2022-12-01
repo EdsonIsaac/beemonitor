@@ -81,7 +81,7 @@ public class HiveService {
         }
 
         if (validateHive(hive)) {
-            repository.save(hive);
+            hive = repository.save(hive);
         }
 
         return hive;

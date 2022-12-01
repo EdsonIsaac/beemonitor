@@ -6,6 +6,7 @@ import { NgChartsModule } from 'ng2-charts';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { InterceptorsModule } from './interceptors/interceptors.module';
 import { TemplatesModule } from './templates/templates.module';
 
 @NgModule({
@@ -18,7 +19,8 @@ import { TemplatesModule } from './templates/templates.module';
     BrowserAnimationsModule,
     HttpClientModule,
     NgChartsModule,
-    TemplatesModule
+    TemplatesModule,
+    InterceptorsModule
   ],
   providers: [],
   bootstrap: [AppComponent]

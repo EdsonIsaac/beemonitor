@@ -1,6 +1,7 @@
 package io.github.edsonisaac.beemonitor.services;
 
 import io.github.edsonisaac.beemonitor.entities.Hive;
+import io.github.edsonisaac.beemonitor.entities.Mensuration;
 import io.github.edsonisaac.beemonitor.entities.User;
 import io.github.edsonisaac.beemonitor.projections.HiveProjection;
 import io.github.edsonisaac.beemonitor.projections.MensurationProjection;
@@ -84,6 +85,16 @@ public class FacadeService {
      */
     public List<MensurationProjection> mensurationFindByHiveIdWithSize(UUID hiveId, Integer size) {
         return mensurationService.findByHiveIdWithSize(hiveId, size);
+    }
+
+    /**
+     * Mensuration save mensuration.
+     *
+     * @param mensuration the mensuration
+     * @return the mensuration
+     */
+    public Mensuration mensurationSave(Mensuration mensuration) {
+        return mensurationService.save(mensuration);
     }
 
     /////////////////////////////////////////////////// USER ///////////////////////////////////////////////////

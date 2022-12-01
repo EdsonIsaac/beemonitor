@@ -23,6 +23,11 @@ public abstract class MessageUtils {
     public static String HIVE_NULL = "Colmeia nula!";
 
     /**
+     * The constant MENSURATION_NULL.
+     */
+    public static String MENSURATION_NULL = "Medição nula!";
+
+    /**
      * The constant USER_ALREADY_SAVE.
      */
     public static String USER_ALREADY_SAVE = "Usuário já cadastrado!";

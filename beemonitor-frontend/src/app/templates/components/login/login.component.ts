@@ -66,10 +66,10 @@ export class LoginComponent implements OnInit {
         switch (currentUser.role) {
 
           case Department.ADMINISTRATION:
-            console.log(currentUser.role);
+            this.router.navigate(['/administration']);
             break;
           case Department.SUPPORT:
-            console.log(currentUser.role);
+            this.router.navigate(['/support']);
             break;
         }
       },

@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { JwtHelperService } from '@auth0/angular-jwt';
-import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
 @Injectable({
@@ -15,7 +14,7 @@ export class AuthService {
     this.jwtHelper = new JwtHelperService();
   }
 
-  getCurrentUser(): any {
+  getCurrentUser() {
     let currentUser: any = localStorage.getItem("currentUser");
 
     try {
@@ -26,7 +25,7 @@ export class AuthService {
     return currentUser;
   }
 
-  isAuthenticated(): boolean {
+  isAuthenticated() {
     const currentUser = this.getCurrentUser();
 
     if (currentUser) {
@@ -41,7 +40,7 @@ export class AuthService {
     return false;
   }
 
-  login(user: any): Observable<any> {
+  login(user: any) {
     return this.http.post<any>(environment.apiURL + '/login', user);
   }
 
@@ -49,7 +48,7 @@ export class AuthService {
     localStorage.removeItem("currentUser");
   }
 
-  setCurrentUser(currentUser: any): void {
+  setCurrentUser(currentUser: any) {
 
     if (localStorage.getItem("currentUser")) {
       localStorage.removeItem("currentUser");

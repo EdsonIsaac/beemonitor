@@ -1,6 +1,8 @@
 package io.github.edsonisaac.beemonitor.entities;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -16,6 +18,7 @@ import javax.validation.constraints.NotNull;
  * @author Edson Isaac
  */
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "tb_mensurations")
@@ -35,5 +38,6 @@ public class Mensuration extends AbstractEntity {
 
     @ManyToOne
     @JoinColumn(name = "hive_id")
+    @JsonBackReference
     private Hive hive;
 }
