@@ -98,6 +98,7 @@ public class HiveService {
 
             if (repository.existsById(id)) {
                 repository.deleteById(id);
+                return;
             }
         }
 

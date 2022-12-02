@@ -29,4 +29,9 @@ public class Hive extends AbstractEntity {
     @OneToMany(mappedBy = "hive")
     @JsonManagedReference
     private Set<Mensuration> mensurations;
+
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
 }

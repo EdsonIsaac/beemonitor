@@ -40,4 +40,9 @@ public class Mensuration extends AbstractEntity {
     @JoinColumn(name = "hive_id")
     @JsonBackReference
     private Hive hive;
+
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
 }
