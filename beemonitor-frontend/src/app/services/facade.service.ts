@@ -1,8 +1,11 @@
 import { Injectable } from '@angular/core';
 
+import { Hive } from '../entities/hive';
+import { NotificationType } from '../enums/notification-type';
 import { AuthService } from './auth.service';
 import { HiveService } from './hive.service';
 import { MensurationService } from './mensuration.service';
+import { NotificationService } from './notification.service';
 
 @Injectable({
   providedIn: 'root'
@@ -12,7 +15,8 @@ export class FacadeService {
   constructor(
     private authService: AuthService,
     private hiveService: HiveService,
-    private mensurationService: MensurationService
+    private mensurationService: MensurationService,
+    private notificationService: NotificationService
   ) { }
 
   ////////////////////////////////////////////////// AUTHENTICATION //////////////////////////////////////////////////
@@ -63,10 +67,37 @@ export class FacadeService {
 
   /**
    * 
+   * @param hive 
+   * @returns 
+   */
+  hiveDelete(hive: Hive) {
+    return this.hiveService.delete(hive);
+  }
+
+  /**
+   * 
    * @returns 
    */
   hiveFindAll() {
     return this.hiveService.findAll();
+  }
+
+  /**
+   * 
+   * @param id 
+   * @returns 
+   */
+  hiveFindById(id: string) {
+    return this.hiveService.findById(id);
+  }
+
+  /**
+   * 
+   * @param hive 
+   * @returns 
+   */
+  hiveSave(hive: Hive) {
+    return this.hiveService.save(hive);
   }
 
   ////////////////////////////////////////////////// MENSURATION //////////////////////////////////////////////////
@@ -79,5 +110,16 @@ export class FacadeService {
    */
   mensurationGetMensurations(hiveId: string, size: number) {
     return this.mensurationService.getMensurations(hiveId, size);
+  }
+
+  ////////////////////////////////////////////////// NOTIFICATION //////////////////////////////////////////////////
+
+  /**
+   * 
+   * @param message 
+   * @param type 
+   */
+  notificationShowNotification(message: string, type: NotificationType) {
+    this.notificationService.showNotification(message, type);
   }
 }

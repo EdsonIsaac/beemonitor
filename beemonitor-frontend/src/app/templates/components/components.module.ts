@@ -3,6 +3,8 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
+import { MatNativeDateModule, MAT_DATE_LOCALE } from '@angular/material/core';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
@@ -15,6 +17,7 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { RouterModule } from '@angular/router';
+import { NgChartsModule } from 'ng2-charts';
 import { getDutchPaginatorIntl } from 'src/app/configurations/internacionalization';
 
 import { FooterComponent } from './footer/footer.component';
@@ -26,6 +29,7 @@ import { HomeComponent } from './home/home.component';
 import { LayoutComponent } from './layout/layout.component';
 import { LoginComponent } from './login/login.component';
 import { NotFoundComponent } from './not-found/not-found.component';
+import { NotificationComponent } from './notification/notification.component';
 import { ToolbarComponent } from './toolbar/toolbar.component';
 import { UsersFormComponent } from './users-form/users-form.component';
 import { UsersComponent } from './users/users.component';
@@ -44,28 +48,33 @@ import { UsersComponent } from './users/users.component';
     ToolbarComponent,
     UsersComponent,
     UsersFormComponent,
+    NotificationComponent,
   ],
   imports: [
     CommonModule,
     FormsModule,
     MatButtonModule,
     MatCardModule,
+    MatDatepickerModule,
     MatDialogModule,
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
     MatMenuModule,
+    MatNativeDateModule,
     MatPaginatorModule,
     MatSelectModule,
     MatSnackBarModule,
     MatSortModule,
     MatTableModule,
     MatToolbarModule,
+    NgChartsModule.forRoot(),
     ReactiveFormsModule,
     RouterModule
   ],
   providers: [
-    { provide: MatPaginatorIntl, useValue: getDutchPaginatorIntl() }
+    { provide: MatPaginatorIntl, useValue: getDutchPaginatorIntl() },
+    { provide: MAT_DATE_LOCALE, useValue: 'pt-BR' }
   ]
 })
 export class ComponentsModule { }

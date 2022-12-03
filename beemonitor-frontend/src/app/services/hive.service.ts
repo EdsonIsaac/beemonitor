@@ -12,7 +12,38 @@ export class HiveService {
     private http: HttpClient
   ) { }
 
+  /**
+   * 
+   * @param hive 
+   * @returns 
+   */
+  delete(hive: Hive) {
+    return this.http.delete(environment.apiURL + '/hives/' + hive.id);
+  }
+
+  /**
+   * 
+   * @returns 
+   */
   findAll() {
     return this.http.get<Array<Hive>>(environment.apiURL + '/hives');
+  }
+
+  /**
+   * 
+   * @param id 
+   * @returns 
+   */
+  findById(id: string) {
+    return this.http.get<Hive>(environment.apiURL + '/hives/' + id);
+  }
+
+  /**
+   * 
+   * @param hive 
+   * @returns 
+   */
+  save(hive: Hive) {
+    return this.http.post<Hive>(environment.apiURL + '/hives', hive);
   }
 }

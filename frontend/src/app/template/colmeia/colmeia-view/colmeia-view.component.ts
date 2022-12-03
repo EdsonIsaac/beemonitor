@@ -26,7 +26,7 @@ export class ColmeiaViewComponent implements OnInit, OnDestroy {
   now!: Date;
 
   lineChartDataTemperatura!: ChartDataSets[];
-  lineChartLabelsTemperatura!: Label[];
+  lineChartLabelsTemperatura!: 'Temperatura';
   lineChartOptionsTemperatura: (ChartOptions & { annotation: any }) = {responsive: true, annotation: true, scales: {xAxes: [{ ticks: { stepSize: 1, min: 0,maxRotation: 90, minRotation: 90,autoSkip: false }}]}};
   lineChartColorsTemperatura: Color[] = [{ backgroundColor: 'rgba(255, 0, 0, 0.3)' }];
   lineChartLegendTemperatura = true;

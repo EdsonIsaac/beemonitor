@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatSnackBar } from '@angular/material/snack-bar';
 import { Router } from '@angular/router';
-import { Color } from 'src/app/enums/color';
 import { Department } from 'src/app/enums/department';
+import { NotificationType } from 'src/app/enums/notification-type';
 import { FacadeService } from 'src/app/services/facade.service';
 
 @Component({
@@ -19,8 +18,7 @@ export class LoginComponent implements OnInit {
   constructor(
     private facade: FacadeService,
     private formBuilder: FormBuilder,
-    private router: Router,
-    private snackBar: MatSnackBar
+    private router: Router
   ) { }
 
   ngOnInit(): void {
@@ -34,16 +32,6 @@ export class LoginComponent implements OnInit {
     this.form = this.formBuilder.group({
       username: [null, Validators.required],
       password: [null, Validators.required]
-    });
-  }
-
-  showSnackBar(message: string, color: Color) {
-
-    this.snackBar.open(message, undefined, {
-      duration: 3000,
-      horizontalPosition: 'center',
-      verticalPosition: 'bottom',
-      //panelClass: [color]
     });
   }
 
@@ -76,7 +64,7 @@ export class LoginComponent implements OnInit {
 
       error: (error) => {
         console.error(error);
-        this.showSnackBar(error.error.message, Color.DANGER);
+        this.facade.notificationShowNotification(error.error.message, NotificationType.FAIL);
       }
     })
   }

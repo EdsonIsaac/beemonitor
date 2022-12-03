@@ -9,9 +9,10 @@ import { FacadeService } from 'src/app/services/facade.service';
 })
 export class ToolbarComponent {
 
-  constructor(private facade: FacadeService, private router: Router) {
-
-  }
+  constructor(
+    private facade: FacadeService,
+    private router: Router
+  ) { }
 
   logout() {
     this.facade.authLogout();

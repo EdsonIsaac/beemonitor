@@ -10,9 +10,9 @@ export class HomeComponent implements OnInit {
   
   currentUser: any;
 
-  constructor(private facade: FacadeService) {
-
-  }
+  constructor(
+    private facade: FacadeService
+  ) { }
 
   ngOnInit(): void {
     this.currentUser = this.facade.authGetCurrentUser();
