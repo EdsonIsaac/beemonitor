@@ -182,15 +182,15 @@ export class HiveComponent implements OnInit {
       },
       width: '100%'
     })
-      .afterClosed().subscribe({
+    .afterClosed().subscribe({
 
-        next: (result) => {
+      next: (result) => {
 
-          if (result && result.status) {
-            this.router.navigate(['/' + this.currentUser.role + '/hives']);
-          }
-        },
-      });
+        if (result && result.status) {
+          this.router.navigate(['/' + this.currentUser.role.toLowerCase() + '/hives']);
+        }
+      },
+    });
   }
 
   filterTable(value: string) {
@@ -201,6 +201,33 @@ export class HiveComponent implements OnInit {
 
   submit() {
 
+    let hive: Hive = Object.assign({}, this.form.value);
+
+    this.facade.hiveSave(hive).subscribe({
+
+      complete: () => {
+        
+        this.facade.hiveFindById(this.hive.id).subscribe({
+
+          next: (hive) => {
+            this.hive = hive;
+            this.hive.mensurations = this.hive.mensurations.sort((a, b) => b.createdDate > a.createdDate ? 1 : -1);
+            this.buildForm(this.hive);
+            this.facade.notificationShowNotification(MessageUtils.HIVE_UPDATE_SUCCESS, NotificationType.SUCCESS);
+          },
+
+          error: (error) => {
+            console.error(error);
+            this.facade.notificationShowNotification(MessageUtils.HIVE_GET_FAIL, NotificationType.FAIL);   
+          }
+        })
+      },
+
+      error: (error) => {
+        console.error(error);
+        this.facade.notificationShowNotification(MessageUtils.HIVE_UPDATE_FAIL + error.error[0].message, NotificationType.FAIL);   
+      }
+    });
   }
 
   updateHive() {

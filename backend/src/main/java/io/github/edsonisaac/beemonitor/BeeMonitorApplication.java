@@ -69,7 +69,7 @@ public class BeeMonitorApplication implements CommandLineRunner {
 
 		user.setName("Cooperativa");
 		user.setUsername("cooperativa");
-		user.setPassword("$2a$12$DrBrf0spqOqKyvDPC2fTV.Q/y3HPKkfBeF49YQV4I2TjcowKaPEmi"); //cooperativa
+		user.setPassword("cooperativa");
 		user.setEnabled(true);
 		user.setDepartment(Department.SUPPORT);
 

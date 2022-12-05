@@ -77,6 +77,16 @@ public class FacadeService {
     /////////////////////////////////////////////////// MENSURATION ///////////////////////////////////////////////////
 
     /**
+     * Mensuration find all by hive list.
+     *
+     * @param hiveId the hive id
+     * @return the list
+     */
+    public void mensurationDeleteByHive(UUID hiveId) {
+        mensurationService.deleteByHive(hiveId);
+    }
+
+    /**
      * Mensuration find by hive id with size list.
      *
      * @param hiveId the hive id

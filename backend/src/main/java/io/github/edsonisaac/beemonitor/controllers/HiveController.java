@@ -43,6 +43,7 @@ public class HiveController {
     @DeleteMapping(value = "/{id}")
     @PreAuthorize("hasAnyRole('ADMINISTRATION', 'SUPPORT')")
     public ResponseEntity delete(@PathVariable UUID id) {
+        facade.mensurationDeleteByHive(id);
         facade.hiveDelete(id);
         return ResponseEntity.status(HttpStatus.OK).body(null);
     }

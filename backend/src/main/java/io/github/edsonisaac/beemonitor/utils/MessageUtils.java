@@ -23,6 +23,11 @@ public abstract class MessageUtils {
     public static String HIVE_NULL = "Colmeia nula!";
 
     /**
+     * The constant MENSURATION_NOT_FOUND.
+     */
+    public static String MENSURATION_NOT_FOUND = "Medição não encontrada!";
+
+    /**
      * The constant MENSURATION_NULL.
      */
     public static String MENSURATION_NULL = "Medição nula!";
