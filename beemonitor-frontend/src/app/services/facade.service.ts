@@ -1,11 +1,13 @@
 import { Injectable } from '@angular/core';
 
 import { Hive } from '../entities/hive';
+import { User } from '../entities/user';
 import { NotificationType } from '../enums/notification-type';
 import { AuthService } from './auth.service';
 import { HiveService } from './hive.service';
 import { MensurationService } from './mensuration.service';
 import { NotificationService } from './notification.service';
+import { UserService } from './user.service';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +18,8 @@ export class FacadeService {
     private authService: AuthService,
     private hiveService: HiveService,
     private mensurationService: MensurationService,
-    private notificationService: NotificationService
+    private notificationService: NotificationService,
+    private userService: UserService
   ) { }
 
   ////////////////////////////////////////////////// AUTHENTICATION //////////////////////////////////////////////////
@@ -100,6 +103,15 @@ export class FacadeService {
     return this.hiveService.save(hive);
   }
 
+  /**
+   * 
+   * @param hive 
+   * @returns 
+   */
+   hiveUpdate(hive: Hive) {
+    return this.hiveService.update(hive);
+  }
+
   ////////////////////////////////////////////////// MENSURATION //////////////////////////////////////////////////
 
   /**
@@ -121,5 +133,33 @@ export class FacadeService {
    */
   notificationShowNotification(message: string, type: NotificationType) {
     this.notificationService.showNotification(message, type);
+  }
+
+  ////////////////////////////////////////////////// USER //////////////////////////////////////////////////
+
+  /**
+   * 
+   * @returns 
+   */
+  userFindAll() {
+    return this.userService.findAll();
+  }
+
+  /**
+   * 
+   * @param user 
+   * @returns 
+   */
+  userSave(user: User) {
+    return this.userService.save(user);
+  }
+
+  /**
+   * 
+   * @param user 
+   * @returns 
+   */
+  userUpdate(user: User) {
+    return this.userService.update(user);
   }
 }

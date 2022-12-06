@@ -46,4 +46,13 @@ export class HiveService {
   save(hive: Hive) {
     return this.http.post<Hive>(environment.apiURL + '/hives', hive);
   }
+
+  /**
+   * 
+   * @param hive 
+   * @returns 
+   */
+   update(hive: Hive) {
+    return this.http.put<Hive>(environment.apiURL + '/hives/' + hive.id, hive);
+  }
 }

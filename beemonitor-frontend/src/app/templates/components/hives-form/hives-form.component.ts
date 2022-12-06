@@ -44,17 +44,35 @@ export class HivesFormComponent implements OnInit {
     
     let hive: Hive = Object.assign({}, this.form.value);
 
-    this.facade.hiveSave(hive).subscribe({
+    if (hive.id) {
 
-      complete: () => {
-        this.facade.notificationShowNotification(hive.id ? MessageUtils.HIVE_UPDATE_SUCCESS : MessageUtils.HIVE_SAVE_SUCCESS, NotificationType.SUCCESS);
-        this.dialogRef.close({status: true});
-      },
+      this.facade.hiveUpdate(hive).subscribe({
 
-      error: (error) => {
-        console.error(error);
-        this.facade.notificationShowNotification(hive.id ? (MessageUtils.HIVE_UPDATE_FAIL + error.error[0].message) : (MessageUtils.HIVE_SAVE_FAIL + error.error[0].message), NotificationType.FAIL);   
-      }
-    })
+        complete: () => {
+          this.facade.notificationShowNotification(MessageUtils.HIVE_UPDATE_SUCCESS, NotificationType.SUCCESS);
+          this.dialogRef.close({status: true});
+        },
+  
+        error: (error) => {
+          console.error(error);
+          this.facade.notificationShowNotification(MessageUtils.HIVE_UPDATE_FAIL + error.error[0].message, NotificationType.FAIL);   
+        }
+      });
+    }
+
+    else {
+      this.facade.hiveSave(hive).subscribe({
+
+        complete: () => {
+          this.facade.notificationShowNotification(MessageUtils.HIVE_SAVE_SUCCESS, NotificationType.SUCCESS);
+          this.dialogRef.close({status: true});
+        },
+  
+        error: (error) => {
+          console.error(error);
+          this.facade.notificationShowNotification(MessageUtils.HIVE_SAVE_FAIL + error.error[0].message, NotificationType.FAIL);   
+        }
+      });
+    }    
   }
 }

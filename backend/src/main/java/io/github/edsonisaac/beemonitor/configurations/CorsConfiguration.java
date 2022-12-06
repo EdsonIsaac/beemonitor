@@ -22,8 +22,8 @@ public class CorsConfiguration {
      */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        org.springframework.web.cors.CorsConfiguration corsConfiguration = new org.springframework.web.cors.CorsConfiguration().applyPermitDefaultValues();
+        var source = new UrlBasedCorsConfigurationSource();
+        var corsConfiguration = new org.springframework.web.cors.CorsConfiguration().applyPermitDefaultValues();
         corsConfiguration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
         source.registerCorsConfiguration("/**", corsConfiguration);
         return source;

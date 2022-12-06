@@ -20,9 +20,20 @@ import java.util.UUID;
 @Service
 public class FacadeService {
 
-    @Autowired private HiveService hiveService;
-    @Autowired private MensurationService mensurationService;
-    @Autowired private UserService userService;
+    private final HiveService hiveService;
+    private final MensurationService mensurationService;
+    private final UserService userService;
+
+    @Autowired
+    public FacadeService(
+            HiveService hiveService,
+            MensurationService mensurationService,
+            UserService userService
+    ) {
+        this.hiveService = hiveService;
+        this.mensurationService = mensurationService;
+        this.userService = userService;
+    }
 
     /////////////////////////////////////////////////// HIVE ///////////////////////////////////////////////////
 

@@ -31,7 +31,7 @@ public class HttpConfigurer extends AbstractHttpConfigurer<HttpConfigurer, HttpS
 
     @Override
     public void configure(HttpSecurity http) {
-        AuthenticationManager authenticationManager = http.getSharedObject(AuthenticationManager.class);
+        var authenticationManager = http.getSharedObject(AuthenticationManager.class);
 
         http.addFilter(new AuthenticationFilter(authenticationManager, jwtUtils));
         http.addFilter(new AuthorizationFilter(authenticationManager, jwtUtils, userDetailsService));
