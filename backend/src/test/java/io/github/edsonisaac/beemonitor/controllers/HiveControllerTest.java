@@ -1,7 +1,10 @@
 package io.github.edsonisaac.beemonitor.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.github.edsonisaac.beemonitor.BeeMonitorApplication;
 import io.github.edsonisaac.beemonitor.entities.Hive;
 import io.github.edsonisaac.beemonitor.entities.User;
@@ -47,7 +50,9 @@ class HiveControllerTest {
     public void before() throws Exception {
 
         // Init mapper
-        this.mapper = new ObjectMapper();
+        this.mapper = JsonMapper.builder()
+                .addModule(new JavaTimeModule())
+                .build();
 
         // Create administration user
         var administration = User.builder()
@@ -87,13 +92,17 @@ class HiveControllerTest {
 
         var hive = Hive.builder().code("0001").build();
 
-        this.mvc.perform(
+        var result = this.mvc.perform(
                 post("/hives")
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(hive)))
                 .andExpect(status().isCreated())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+                .andReturn().getResponse().getContentAsString();
+
+        hive = mapper.readValue(result, Hive.class);
+        this.facade.hiveDelete(hive.getId());
     }
 
     @Test
@@ -132,6 +141,20 @@ class HiveControllerTest {
                         .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
+    }
+
+    @Test
+    void shouldDeleteTheHive() throws Exception {
+
+        var hive = Hive.builder().code("0001").build();
+
+        hive = facade.hiveSave(hive);
+
+        this.mvc.perform(
+                        delete("/hives/" + hive.getId())
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
+                .andExpect(status().isOk())
+                .andReturn();
     }
 
     @Test

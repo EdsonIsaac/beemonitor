@@ -1,14 +1,12 @@
+import { HttpClientModule } from '@angular/common/http';
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
-import { TemplateModule } from './template/template.module';
-import { HttpClientModule } from '@angular/common/http';
-import { InterceptorModule } from './interceptor/interceptor.module';
-
-import { HashLocationStrategy, LocationStrategy  } from '@angular/common';
+import { InterceptorsModule } from './interceptors/interceptors.module';
+import { TemplatesModule } from './templates/templates.module';
 
 @NgModule({
   declarations: [
@@ -19,12 +17,10 @@ import { HashLocationStrategy, LocationStrategy  } from '@angular/common';
     AppRoutingModule,
     BrowserAnimationsModule,
     HttpClientModule,
-    TemplateModule,
-    InterceptorModule
+    TemplatesModule,
+    InterceptorsModule
   ],
-  providers: [
-    {provide: LocationStrategy, useClass: HashLocationStrategy}
-  ],
+  providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
