@@ -45,10 +45,12 @@ public class MensurationService {
     public void deleteByHive(UUID hiveId) {
 
         if (hiveId == null) {
-            throw new ObjectNotFoundException(MessageUtils.MENSURATION_NOT_FOUND);
+            throw new ObjectNotFoundException(MessageUtils.HIVE_NOT_FOUND);
         }
 
-        repository.deleteByHive(hiveId);
+        if (repository.existsByHive(hiveId)) {
+            repository.deleteByHive(hiveId);
+        }
     }
 
     /**

@@ -7,17 +7,15 @@ server:
 
 spring:
   datasource:
-    driver-class-name: org.h2.Driver
-    password: password
-    url: jdbc:h2:mem:testdb
-    username: sa
-  flyway:
-    enabled: false
+    driver-class-name: org.postgresql.Driver
+    password: beemonitor
+    url: jdbc:postgresql://localhost/beemonitor-test
+    username: beemonitor
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: validate
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.H2Dialect
+        dialect: org.hibernate.dialect.PostgreSQLDialect
         format_sql: true
     show-sql: false

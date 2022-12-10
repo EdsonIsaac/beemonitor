@@ -38,7 +38,7 @@ public class HiveService {
      *
      * @return the list
      */
-    public List<HiveProjection> findAll () {
+    public List<HiveProjection> findAll() {
         return repository.findAlll();
     }
 
@@ -48,10 +48,10 @@ public class HiveService {
      * @param id the id
      * @return the hive
      */
-    public Hive findById (UUID id) {
+    public Hive findById(UUID id) {
 
         return repository.findById(id).orElseThrow(() -> {
-           throw new ObjectNotFoundException(MessageUtils.HIVE_NOT_FOUND);
+            throw new ObjectNotFoundException(MessageUtils.HIVE_NOT_FOUND);
         });
     }
 
@@ -61,10 +61,10 @@ public class HiveService {
      * @param code the code
      * @return the hive projection
      */
-    public HiveProjection findByCode (String code) {
+    public HiveProjection findByCode(String code) {
 
         return repository.findByCode(code).orElseThrow(() -> {
-           throw new ObjectNotFoundException(MessageUtils.HIVE_NOT_FOUND);
+            throw new ObjectNotFoundException(MessageUtils.HIVE_NOT_FOUND);
         });
     }
 
@@ -74,7 +74,7 @@ public class HiveService {
      * @param hive the hive
      * @return the hive
      */
-    public Hive save (Hive hive) {
+    public Hive save(Hive hive) {
 
         if (hive == null) {
             throw new ValidationException(MessageUtils.HIVE_NULL);
@@ -92,7 +92,7 @@ public class HiveService {
      *
      * @param id the id
      */
-    public void delete (UUID id) {
+    public void delete(UUID id) {
 
         if (id != null) {
 

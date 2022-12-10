@@ -8,9 +8,9 @@ server:
 spring:
     datasource:
         driver-class-name: org.postgresql.Driver
-        password: ${APP_DATASOURCE_PASSWORD}
-        url: ${APP_DATASOURCE_URL}
-        username: ${APP_DATASOURCE_USERNAME}
+        password: beemonitor
+        url: jdbc:postgresql://localhost/beemonitor-development
+        username: beemonitor
     jpa:
         hibernate:
             ddl-auto: validate

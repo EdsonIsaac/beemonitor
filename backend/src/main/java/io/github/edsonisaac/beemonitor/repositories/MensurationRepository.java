@@ -29,6 +29,9 @@ public interface MensurationRepository extends JpaRepository<Mensuration, UUID> 
     @Query("DELETE FROM tb_mensurations WHERE hive.id = ?1")
     void deleteByHive(UUID id);
 
+    @Query("SELECT CASE WHEN COUNT(m) > 0 THEN true ELSE false END FROM tb_mensurations AS m WHERE m.hive.id = ?1")
+    boolean existsByHive(UUID id);
+
     /**
      * Find by hive id page.
      *
