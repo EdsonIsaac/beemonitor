@@ -1,21 +1,21 @@
 jwt:
-    expiration: 43200000
-    secret: bcL4GKuunKN-kV+_?W##=STAx#<k'3uFJ;rL-MnF>t:~)XTSBZ>$H'eM1=@.70{NWY
+  expiration: 43200000
+  secret: bcL4GKuunKN-kV+_?W##=STAx#<k'3uFJ;rL-MnF>t:~)XTSBZ>$H'eM1=@.70{NWY
 
 server:
-    port: 8081
+  port: 8081
 
 spring:
-    datasource:
-        driver-class-name: org.postgresql.Driver
-        password: ${APP_DATASOURCE_PASSWORD}
-        url: ${APP_DATASOURCE_URL}
-        username: ${APP_DATASOURCE_USERNAME}
-    jpa:
-        hibernate:
-            ddl-auto: validate
-        properties:
-            hibernate:
-                dialect: org.hibernate.dialect.PostgreSQLDialect
-                format_sql: true
-        show-sql: false
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    password: ${APP_DATASOURCE_PASSWORD}
+    url: ${APP_DATASOURCE_URL}
+    username: ${APP_DATASOURCE_USERNAME}
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+    show-sql: false

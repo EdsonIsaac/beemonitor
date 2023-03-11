@@ -23,7 +23,7 @@ import java.util.HashMap;
 /**
  * The type Authentication filter.
  *
- * @author edson
+ * @author Edson Isaac
  */
 public class AuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 

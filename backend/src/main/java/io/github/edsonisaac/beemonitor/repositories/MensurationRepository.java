@@ -1,15 +1,11 @@
 package io.github.edsonisaac.beemonitor.repositories;
 
 import io.github.edsonisaac.beemonitor.entities.Mensuration;
-import io.github.edsonisaac.beemonitor.projections.MensurationProjection;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -21,23 +17,11 @@ import java.util.UUID;
 public interface MensurationRepository extends JpaRepository<Mensuration, UUID> {
 
     /**
-     * Delete by hive.
+     * Find by hive page.
      *
-     * @param id the id
-     */
-    @Modifying
-    @Query("DELETE FROM tb_mensurations WHERE hive.id = ?1")
-    void deleteByHive(UUID id);
-
-    @Query("SELECT CASE WHEN COUNT(m) > 0 THEN true ELSE false END FROM tb_mensurations AS m WHERE m.hive.id = ?1")
-    boolean existsByHive(UUID id);
-
-    /**
-     * Find by hive id page.
-     *
-     * @param hiveId   the hive id
-     * @param pageable the pageable
+     * @param hiveId the hive id
+     * @param page   the page
      * @return the page
      */
-    Page<MensurationProjection> findByHiveId(UUID hiveId, Pageable pageable);
+    Page<Mensuration> findByHiveId(UUID hiveId, Pageable page);
 }

@@ -1,17 +1,19 @@
 package io.github.edsonisaac.beemonitor.controllers;
 
+import io.github.edsonisaac.beemonitor.dtos.HiveDTO;
 import io.github.edsonisaac.beemonitor.entities.Hive;
 import io.github.edsonisaac.beemonitor.exceptions.ObjectNotFoundException;
-import io.github.edsonisaac.beemonitor.services.FacadeService;
+import io.github.edsonisaac.beemonitor.services.HiveService;
 import io.github.edsonisaac.beemonitor.utils.MessageUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.UUID;
+
+import static org.springframework.http.HttpStatus.*;
 
 /**
  * The type Hive controller.
@@ -20,19 +22,10 @@ import java.util.UUID;
  */
 @RestController
 @RequestMapping(value = "/hives")
+@RequiredArgsConstructor
 public class HiveController {
 
-    private final FacadeService facade;
-
-    /**
-     * Instantiates a new Hive controller.
-     *
-     * @param facade the facade
-     */
-    @Autowired
-    public HiveController(FacadeService facade) {
-        this.facade = facade;
-    }
+    private final HiveService service;
 
     /**
      * Delete response entity.
@@ -43,9 +36,8 @@ public class HiveController {
     @DeleteMapping(value = "/{id}")
     @PreAuthorize("hasAnyRole('ADMINISTRATION', 'SUPPORT')")
     public ResponseEntity delete(@PathVariable UUID id) {
-        facade.mensurationDeleteByHive(id);
-        facade.hiveDelete(id);
-        return ResponseEntity.status(HttpStatus.OK).body(null);
+        service.delete(id);
+        return ResponseEntity.status(OK).body(null);
     }
 
     /**
@@ -55,8 +47,13 @@ public class HiveController {
      */
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMINISTRATION', 'SUPPORT')")
-    public ResponseEntity findAll () {
-        return ResponseEntity.status(HttpStatus.OK).body(facade.hiveFindAll());
+    public ResponseEntity findAll (@RequestParam(required = false, defaultValue = "0") Integer page,
+                                   @RequestParam(required = false, defaultValue = "10") Integer size,
+                                   @RequestParam(required = false, defaultValue = "code") String sort,
+                                   @RequestParam(required = false, defaultValue = "asc") String direction) {
+
+        var hives = service.findAll(page, size, sort, direction).map(HiveDTO::toDTO);
+        return ResponseEntity.status(OK).body(hives);
     }
 
     /**
@@ -68,7 +65,8 @@ public class HiveController {
     @GetMapping(value = "/{id}")
     @PreAuthorize("hasAnyRole('ADMINISTRATION', 'SUPPORT')")
     public ResponseEntity findById(@PathVariable UUID id) {
-        return ResponseEntity.status(HttpStatus.OK).body(facade.hiveFindById(id));
+        var hive = service.findById(id);
+        return ResponseEntity.status(OK).body(HiveDTO.toDTO(hive));
     }
 
     /**
@@ -80,7 +78,8 @@ public class HiveController {
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMINISTRATION', 'SUPPORT')")
     public ResponseEntity save(@RequestBody @Valid Hive hive) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(facade.hiveSave(hive));
+        hive = service.save(hive);
+        return ResponseEntity.status(CREATED).body(HiveDTO.toDTO(hive));
     }
 
     /**
@@ -93,10 +92,11 @@ public class HiveController {
     public ResponseEntity search(@RequestParam String code) {
 
         if (code != null) {
-            return ResponseEntity.status(HttpStatus.OK).body(facade.hiveFindByCode(code));
+            var hive = service.findByCode(code);
+            return ResponseEntity.status(OK).body(HiveDTO.toDTO(hive));
         }
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        return ResponseEntity.status(NOT_FOUND).body(null);
     }
 
     /**
@@ -111,7 +111,8 @@ public class HiveController {
     public ResponseEntity update(@PathVariable UUID id, @RequestBody @Valid Hive hive) {
 
         if (hive.getId().equals(id)) {
-            return ResponseEntity.status(HttpStatus.OK).body(facade.hiveSave(hive));
+            hive = service.save(hive);
+            return ResponseEntity.status(CREATED).body(HiveDTO.toDTO(hive));
         }
 
         throw new ObjectNotFoundException(MessageUtils.HIVE_NOT_FOUND);

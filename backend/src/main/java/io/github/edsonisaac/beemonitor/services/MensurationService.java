@@ -3,16 +3,16 @@ package io.github.edsonisaac.beemonitor.services;
 import io.github.edsonisaac.beemonitor.entities.Mensuration;
 import io.github.edsonisaac.beemonitor.exceptions.ObjectNotFoundException;
 import io.github.edsonisaac.beemonitor.exceptions.ValidationException;
-import io.github.edsonisaac.beemonitor.projections.MensurationProjection;
 import io.github.edsonisaac.beemonitor.repositories.MensurationRepository;
 import io.github.edsonisaac.beemonitor.utils.MessageUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -21,62 +21,108 @@ import java.util.UUID;
  * @author Edson Isaac
  */
 @Service
-public class MensurationService {
+@RequiredArgsConstructor
+public class MensurationService implements AbstractService<Mensuration> {
 
     private final MensurationRepository repository;
 
     /**
-     * Instantiates a new Mensuration service.
+     * Delete.
      *
-     * @param repository the repository
+     * @param id the id
      */
-    @Autowired
-    public MensurationService(MensurationRepository repository) {
-        this.repository = repository;
-    }
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void delete(UUID id) {
 
-    /**
-     * Find all by hive list.
-     *
-     * @param hiveId the hive id
-     * @return the list
-     */
-    @Transactional
-    public void deleteByHive(UUID hiveId) {
+        if (id != null) {
 
-        if (hiveId == null) {
-            throw new ObjectNotFoundException(MessageUtils.HIVE_NOT_FOUND);
+            if (repository.existsById(id)) {
+                repository.deleteById(id);
+                return;
+            }
         }
 
-        if (repository.existsByHive(hiveId)) {
-            repository.deleteByHive(hiveId);
-        }
+        throw new ObjectNotFoundException(MessageUtils.MENSURATION_NOT_FOUND);
     }
 
     /**
-     * Find by hive id with size list.
+     * Find all.
      *
-     * @param hiveId the hive id
-     * @param size   the size
-     * @return the list
+     * @param page      the page
+     * @param size      the size
+     * @param sort      the sort
+     * @param direction the direction
+     * @return the mensuration list
      */
-    public List<MensurationProjection> findByHiveIdWithSize(UUID hiveId, Integer size) {
-        var pageable = PageRequest.of(0, size, Sort.by(Sort.Direction.DESC, "createdDate"));
-        return repository.findByHiveId(hiveId, pageable).getContent();
+    @Override
+    @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+    public Page<Mensuration> findAll(Integer page, Integer size, String sort, String direction) {
+        return repository.findAll(PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(direction), sort)));
     }
 
     /**
-     * Save mensuration.
+     * Find by hive id page.
+     *
+     * @param hiveId    the hive id
+     * @param page      the page
+     * @param size      the size
+     * @param sort      the sort
+     * @param direction the direction
+     * @return the mensuration list
+     */
+    @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+    public Page<Mensuration> findByHiveId(UUID hiveId, Integer page, Integer size, String sort, String direction) {
+        return repository.findByHiveId(hiveId, PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(direction), sort)));
+    }
+
+    /**
+     * Find by id.
+     *
+     * @param id the id
+     * @return the mensuration
+     */
+    @Override
+    @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+    public Mensuration findById(UUID id) {
+
+        return repository.findById(id).orElseThrow(() -> {
+            throw new ObjectNotFoundException(MessageUtils.MENSURATION_NOT_FOUND);
+        });
+    }
+
+    /**
+     * Save.
      *
      * @param mensuration the mensuration
      * @return the mensuration
      */
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
     public Mensuration save(Mensuration mensuration) {
 
         if (mensuration == null) {
             throw new ValidationException(MessageUtils.MENSURATION_NULL);
         }
 
-        return repository.save(mensuration);
+        if (validate(mensuration)) {
+            mensuration = repository.save(mensuration);
+        }
+
+        return mensuration;
+    }
+
+    /**
+     * Validate.
+     *
+     * @param mensuration the mensuration
+     * @return the boolean
+     */
+    @Override
+    @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+    public boolean validate(Mensuration mensuration) {
+
+
+        return true;
     }
 }

@@ -11,7 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 /**
  * The type Http configurer.
  *
- * @author edson
+ * @author Edson Isaac
  */
 public class HttpConfigurer extends AbstractHttpConfigurer<HttpConfigurer, HttpSecurity> {
 

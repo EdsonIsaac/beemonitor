@@ -10,7 +10,7 @@ import java.util.Arrays;
 /**
  * The type Cors configuration.
  *
- * @author edson
+ * @author Edson Isaac
  */
 @Configuration
 public class CorsConfiguration {

@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotEmpty;
@@ -26,7 +27,7 @@ public class Hive extends AbstractEntity {
     @NotEmpty(message = "{field.code.invalid}")
     private String code;
 
-    @OneToMany(mappedBy = "hive")
+    @OneToMany(cascade = {CascadeType.REMOVE}, orphanRemoval = true, mappedBy = "hive")
     @JsonManagedReference
     private Set<Mensuration> mensurations;
 

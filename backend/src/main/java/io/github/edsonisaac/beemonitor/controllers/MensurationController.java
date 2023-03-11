@@ -1,9 +1,10 @@
 package io.github.edsonisaac.beemonitor.controllers;
 
+import io.github.edsonisaac.beemonitor.dtos.MensurationDTO;
 import io.github.edsonisaac.beemonitor.entities.Mensuration;
-import io.github.edsonisaac.beemonitor.services.FacadeService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import io.github.edsonisaac.beemonitor.services.HiveService;
+import io.github.edsonisaac.beemonitor.services.MensurationService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -12,6 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.UUID;
 
+import static org.springframework.http.HttpStatus.*;
+
 /**
  * The type Mensuration controller.
  *
@@ -19,19 +22,11 @@ import java.util.UUID;
  */
 @RestController
 @RequestMapping("/mensurations")
+@RequiredArgsConstructor
 public class MensurationController {
 
-    private final FacadeService facade;
-
-    /**
-     * Instantiates a new Mensuration controller.
-     *
-     * @param facade the facade
-     */
-    @Autowired
-    public MensurationController(FacadeService facade) {
-        this.facade = facade;
-    }
+    private final HiveService hiveService;
+    private final MensurationService mensurationService;
 
     /**
      * Save response entity.
@@ -41,10 +36,14 @@ public class MensurationController {
      * @return the response entity
      */
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity save(@RequestPart String code, @RequestPart @Valid Mensuration mensuration) {
-        var hive = facade.hiveFindById(facade.hiveFindByCode(code).getId());
+    public ResponseEntity save(@RequestPart String code,
+                               @RequestPart @Valid Mensuration mensuration) {
+
+        var hive = hiveService.findByCode(code);
         mensuration.setHive(hive);
-        return ResponseEntity.status(HttpStatus.CREATED).body(facade.mensurationSave(mensuration));
+        mensuration = mensurationService.save(mensuration);
+
+        return ResponseEntity.status(CREATED).body(MensurationDTO.toDTO(mensuration));
     }
 
     /**
@@ -56,15 +55,17 @@ public class MensurationController {
      */
     @GetMapping("/search")
     @PreAuthorize("hasAnyRole('ADMINISTRATION', 'SUPPORT')")
-    public ResponseEntity search(@RequestParam(required = false) UUID hiveId, @RequestParam(required = false) Integer size) {
+    public ResponseEntity search(@RequestParam UUID hiveId,
+                                 @RequestParam(required = false, defaultValue = "0") Integer page,
+                                 @RequestParam(required = false, defaultValue = "10") Integer size,
+                                 @RequestParam(required = false, defaultValue = "createdDate") String sort,
+                                 @RequestParam(required = false, defaultValue = "desc") String direction) {
 
         if (hiveId != null) {
-
-            if (size > 0) {
-                return ResponseEntity.status(HttpStatus.OK).body(facade.mensurationFindByHiveIdWithSize(hiveId, size));
-            }
+            var mensurations = mensurationService.findByHiveId(hiveId, page, size, sort, direction).map(MensurationDTO::toDTO);
+            return ResponseEntity.status(OK).body(mensurations);
         }
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        return ResponseEntity.status(BAD_REQUEST).body(null);
     }
 }

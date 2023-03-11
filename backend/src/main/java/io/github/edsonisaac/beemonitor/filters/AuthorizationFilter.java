@@ -16,7 +16,7 @@ import java.io.IOException;
 /**
  * The type Authorization filter.
  *
- * @author edson
+ * @author Edson Isaac
  */
 public class AuthorizationFilter extends BasicAuthenticationFilter {
 

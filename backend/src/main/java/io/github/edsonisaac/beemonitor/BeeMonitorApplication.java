@@ -3,13 +3,11 @@ package io.github.edsonisaac.beemonitor;
 import io.github.edsonisaac.beemonitor.entities.User;
 import io.github.edsonisaac.beemonitor.enums.Department;
 import io.github.edsonisaac.beemonitor.exceptions.ObjectNotFoundException;
-import io.github.edsonisaac.beemonitor.services.FacadeService;
-import io.github.edsonisaac.beemonitor.utils.UserUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.github.edsonisaac.beemonitor.services.UserService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 /**
  * The type Bee monitor application.
@@ -17,22 +15,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
  * @author Edson Isaac
  */
 @SpringBootApplication
+@RequiredArgsConstructor
 public class BeeMonitorApplication implements CommandLineRunner {
 
-	private final FacadeService facade;
-	private final BCryptPasswordEncoder encoder;
-
-	/**
-	 * Instantiates a new Bee monitor application.
-	 *
-	 * @param facade  the facade
-	 * @param encoder the encoder
-	 */
-	@Autowired
-	public BeeMonitorApplication(FacadeService facade, BCryptPasswordEncoder encoder) {
-		this.facade = facade;
-		this.encoder = encoder;
-	}
+	private final UserService service;
 
 	/**
 	 * The entry point of application.
@@ -43,25 +29,31 @@ public class BeeMonitorApplication implements CommandLineRunner {
 		SpringApplication.run(BeeMonitorApplication.class, args);
 	}
 
+	/**
+	 * Run.
+	 *
+	 * @param args
+	 */
 	@Override
 	public void run(String... args) {
 		checkDefaultUser();
 	}
 
 	/**
-	 * Check default user
+	 * Check default user.
 	 */
 	private void checkDefaultUser () {
 
 		try {
-			saveDefaultUser(UserUtils.toUser(facade.userFindByUsername("cooperativa")));
+			var user = service.findByUsername("cooperativa");
+			saveDefaultUser(user);
 		} catch (ObjectNotFoundException ex) {
 			saveDefaultUser(new User());
 		}
 	}
 
 	/**
-	 * Save default user
+	 * Save default user.
 	 *
 	 * @param user the user
 	 */
@@ -73,6 +65,6 @@ public class BeeMonitorApplication implements CommandLineRunner {
 		user.setEnabled(true);
 		user.setDepartment(Department.SUPPORT);
 
-		facade.userSave(user);
+		service.save(user);
 	}
 }

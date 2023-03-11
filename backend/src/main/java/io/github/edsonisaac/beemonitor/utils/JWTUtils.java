@@ -13,7 +13,7 @@ import java.util.Date;
 /**
  * The type Jwt utils.
  *
- * @author edson
+ * @author Edson Isaac
  */
 @Component
 public class JWTUtils {

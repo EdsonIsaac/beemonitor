@@ -8,12 +8,15 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfigurationSource;
 
 /**
  * The type Security configuration.
+ *
+ * @author Edson Isaac
  */
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -27,6 +30,11 @@ public class SecurityConfiguration {
         "/cooperativas",
         "/cooperativas/search",
         "/imagens/*"
+
+    };
+
+    private static final String[] PUBLIC_MATCHERS_POST = {
+        "/mensurations"
     };
 
     /**
@@ -55,6 +63,7 @@ public class SecurityConfiguration {
 
         http.authorizeRequests()
             .antMatchers(HttpMethod.GET, PUBLIC_MATCHERS_GET).permitAll()
+            .antMatchers(HttpMethod.POST, PUBLIC_MATCHERS_POST).permitAll()
             .anyRequest().authenticated()
         ;
 
