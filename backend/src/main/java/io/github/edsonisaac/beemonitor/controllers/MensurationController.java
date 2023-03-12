@@ -11,6 +11,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import java.time.LocalDate;
 import java.util.UUID;
 
 import static org.springframework.http.HttpStatus.*;
@@ -27,6 +28,18 @@ public class MensurationController {
 
     private final HiveService hiveService;
     private final MensurationService mensurationService;
+
+    @GetMapping
+    @PreAuthorize("hasAnyRole('ADMINISTRATION', 'SUPPORT')")
+    public ResponseEntity<?> findAll(@RequestParam UUID hiveId,
+                                     @RequestParam(required = false, defaultValue = "0") Integer page,
+                                     @RequestParam(required = false, defaultValue = "10") Integer size,
+                                     @RequestParam(required = false, defaultValue = "createdDate") String sort,
+                                     @RequestParam(required = false, defaultValue = "desc") String direction) {
+
+        var mensurations = mensurationService.findAll(hiveId, page, size, sort, direction).map(MensurationDTO::toDTO);
+        return ResponseEntity.status(OK).body(mensurations);
+    }
 
     /**
      * Save response entity.
@@ -56,16 +69,13 @@ public class MensurationController {
     @GetMapping("/search")
     @PreAuthorize("hasAnyRole('ADMINISTRATION', 'SUPPORT')")
     public ResponseEntity search(@RequestParam UUID hiveId,
+                                 @RequestParam String date,
                                  @RequestParam(required = false, defaultValue = "0") Integer page,
                                  @RequestParam(required = false, defaultValue = "10") Integer size,
                                  @RequestParam(required = false, defaultValue = "createdDate") String sort,
                                  @RequestParam(required = false, defaultValue = "desc") String direction) {
 
-        if (hiveId != null) {
-            var mensurations = mensurationService.findByHiveId(hiveId, page, size, sort, direction).map(MensurationDTO::toDTO);
-            return ResponseEntity.status(OK).body(mensurations);
-        }
-
-        return ResponseEntity.status(BAD_REQUEST).body(null);
+        var mensurations = mensurationService.search(hiveId, date, page, size, sort, direction).map(MensurationDTO::toDTO);
+        return ResponseEntity.status(OK).body(mensurations);
     }
 }

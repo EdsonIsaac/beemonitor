@@ -1,9 +1,15 @@
 <mat-toolbar>
     <mat-toolbar-row>
-        <span>BeeMonitor</span>
+        <a class="text-white" [routerLink]="'/' + user.role.toLowerCase()" *ngIf="user">BeeMonitor</a>
         <span class="spacer"></span>
-        <button mat-icon-button class="text-danger" (click)="logout()">
-            <mat-icon>exit_to_app</mat-icon>
-        </button>
+        <div *ngIf="userRemoto">
+            <button mat-button [matMenuTriggerFor]="menu">{{userRemoto.name.toUpperCase()}}</button>
+            <mat-menu #menu="matMenu">
+                <button mat-menu-item class="text-danger" (click)="logout()">
+                    <mat-icon>exit_to_app</mat-icon>
+                    <span>Sair</span>
+                </button>
+            </mat-menu>
+        </div>
     </mat-toolbar-row>
 </mat-toolbar>

@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { FacadeService } from 'src/app/services/facade.service';
+import { AuthService } from 'src/app/services/auth.service';
 
 @Component({
   selector: 'app-home',
@@ -8,13 +8,13 @@ import { FacadeService } from 'src/app/services/facade.service';
 })
 export class HomeComponent implements OnInit {
   
-  currentUser: any;
+  user!: any;
 
   constructor(
-    private facade: FacadeService
+    private _authService: AuthService
   ) { }
 
   ngOnInit(): void {
-    this.currentUser = this.facade.authGetCurrentUser();
+    this.user = this._authService.getUser();
   }
 }

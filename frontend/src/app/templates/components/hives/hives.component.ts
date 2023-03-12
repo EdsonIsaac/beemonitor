@@ -1,12 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { MatPaginator } from '@angular/material/paginator';
 import { Hive } from 'src/app/entities/hive';
 import { NotificationType } from 'src/app/enums/notification-type';
-import { FacadeService } from 'src/app/services/facade.service';
+import { AuthService } from 'src/app/services/auth.service';
+import { HiveService } from 'src/app/services/hive.service';
+import { MensurationService } from 'src/app/services/mensuration.service';
+import { NotificationService } from 'src/app/services/notification.service';
 import { MessageUtils } from 'src/app/utils/message-utils';
+import { OperatorUtils } from 'src/app/utils/operator-utils';
 
-import { HivesDeleteComponent } from '../hives-delete/hives-delete.component';
-import { HivesFormComponent } from '../hives-form/hives-form.component';
+import { HiveFormComponent } from '../hive-form/hive-form.component';
 
 @Component({
   selector: 'app-hives',
@@ -15,23 +19,36 @@ import { HivesFormComponent } from '../hives-form/hives-form.component';
 })
 export class HivesComponent implements OnInit {
 
-  currentUser!: any;
+  filterString!: string;
   hives!: Array<Hive>;
-  hivesToShow!: Array<Hive>;
+  isLoadingResults!: boolean;
+  pageIndex!: number;
+  pageSize!: number;
+  resultsLength!: number;
+  user!: any;
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   constructor(
-    private dialog: MatDialog,
-    private facade: FacadeService
+    private _authService: AuthService,
+    private _dialog: MatDialog,
+    private _hiveService: HiveService,
+    private _mensurationService: MensurationService,
+    private _notificationService: NotificationService
   ) { }
 
   ngOnInit(): void {
-    this.currentUser = this.facade.authGetCurrentUser();
-    this.findAllHives();
+    this.isLoadingResults = false;
+    this.pageIndex = 0;
+    this.pageSize = 10;
+    this.resultsLength = 0;
+    this.user = this._authService.getUser();
+    this.findAll();
   }
 
-  addHive() {
+  add() {
 
-    this.dialog.open(HivesFormComponent, {
+    this._dialog.open(HiveFormComponent, {
       data: {
         hive: null
       },
@@ -42,77 +59,105 @@ export class HivesComponent implements OnInit {
       next: (result) => {
           
         if (result && result.status) {
-          this.findAllHives();
+          this.findAll();
         }
       },
     });
   }
 
-  deleteHive(hive: Hive) {
+  async findAll() {
 
-    this.dialog.open(HivesDeleteComponent, {
-      data: {
-        hive: hive
+    const page: number = this.pageIndex;
+    const size: number = this.pageSize;
+    const sort: string = 'code';
+    const direction: string = 'asc';
+
+    this.isLoadingResults = true;
+    await OperatorUtils.delay(1000);
+
+    this._hiveService.findAll(page, size, sort, direction).subscribe({
+
+      complete: () => {
+        this.isLoadingResults = false;
+        this.findMensurations();
       },
-      width: '100%'
-    })
-    .afterClosed().subscribe({
-
-      next: (result) => {
-          
-        if (result && result.status) {
-          this.findAllHives();
-        }
-      },
-    });
-  }
-
-  filter(value: string) {
-    this.hivesToShow = this.hives.filter(hive => hive.code.toUpperCase().includes(value.toUpperCase()));
-  }
-
-  findAllHives() {
-
-    this.facade.hiveFindAll().subscribe({
 
       next: (hives) => {
-        this.hives = hives.sort((a, b) => a.code.toUpperCase() > b.code.toUpperCase() ? 1 : -1);
-        
-        this.hives.forEach(hive => {
-          this.facade.mensurationGetMensurations(hive.id, 1).subscribe({
-            
-            next: (mensurations) => {
-              hive.mensurations = mensurations;    
-            }
-          })
-        });
-
-        this.hivesToShow = this.hives;
+        this.hives = hives.content;
+        this.resultsLength = hives.totalElements;
       },
 
       error: (error) => {
+        this.isLoadingResults = false;
         console.error(error);
-        this.facade.notificationShowNotification(MessageUtils.HIVES_GET_FAIL, NotificationType.FAIL);
+        this._notificationService.show(MessageUtils.HIVES_GET_FAIL, NotificationType.FAIL);
       }
     });
   }
 
-  updateHive(hive: Hive) {
+  findMensurations() {
 
-    this.dialog.open(HivesFormComponent, {
-      data: {
-        hive: hive
-      },
-      width: '100%'
-    })
-    .afterClosed().subscribe({
+    this.hives.forEach(hive => {
 
-      next: (result) => {
-          
-        if (result && result.status) {
-          this.findAllHives();
+      const page = 0;
+      const size = 1;
+      const sort = 'createdDate';
+      const direction = 'desc';
+
+      this._mensurationService.findAll(hive.id, page, size, sort, direction).subscribe({
+
+        next: (mensurations) => {
+          hive.mensurations = mensurations.content;
+        },
+
+        error: (error) => {
+          this.isLoadingResults = false;
+          console.error(error);
+          this._notificationService.show(MessageUtils.MENSURATIONS_GET_FAIL, NotificationType.FAIL);
         }
+      });
+    });
+  }
+
+  pageChange(event: any) {
+  
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+
+    if (this.filterString) {
+      this.search();
+    }
+
+    this.findAll();
+  }
+
+  async search() {
+
+    const value: string = this.filterString;
+    const page: number = this.pageIndex;
+    const size: number = this.pageSize;
+    const sort: string = 'code';
+    const direction: string = 'asc';
+
+    this.isLoadingResults = true;
+    await OperatorUtils.delay(1000);
+
+    this._hiveService.search(value, page, size, sort, direction).subscribe({
+
+      complete: () => {
+        this.isLoadingResults = false;
       },
+
+      next: (hives) => {
+        this.hives = hives.content;
+        this.resultsLength = hives.totalElements;
+      },
+
+      error: (error) => {
+        this.isLoadingResults = false;
+        console.error(error);
+        this._notificationService.show(MessageUtils.HIVES_GET_FAIL, NotificationType.FAIL);
+      }
     });
   }
 }

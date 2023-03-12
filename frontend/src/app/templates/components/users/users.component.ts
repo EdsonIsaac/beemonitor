@@ -1,44 +1,55 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatSort } from '@angular/material/sort';
 import { MatTableDataSource } from '@angular/material/table';
 import { User } from 'src/app/entities/user';
 import { NotificationType } from 'src/app/enums/notification-type';
-import { FacadeService } from 'src/app/services/facade.service';
+import { AuthService } from 'src/app/services/auth.service';
+import { NotificationService } from 'src/app/services/notification.service';
+import { UserService } from 'src/app/services/user.service';
 import { MessageUtils } from 'src/app/utils/message-utils';
 
-import { UsersFormComponent } from '../users-form/users-form.component';
+import { UserFormComponent } from '../user-form/user-form.component';
+import { OperatorUtils } from 'src/app/utils/operator-utils';
 
 @Component({
   selector: 'app-users',
   templateUrl: './users.component.html',
   styleUrls: ['./users.component.sass']
 })
-export class UsersComponent implements OnInit {
+export class UsersComponent implements AfterViewInit {
   
   columns!: Array<string>;
-  currentUser!: any;
   dataSource!: MatTableDataSource<User>;
+  filterString!: string;
+  isLoadingResults!: boolean;
+  resultsLength!: number;
+  user!: any;
 
-  @ViewChild(MatPaginator, { static: false }) set paginator(value: MatPaginator) { if (this.dataSource) this.dataSource.paginator = value }
-  @ViewChild(MatSort, { static: false }) set sort(value: MatSort) { if (this.dataSource) this.dataSource.sort = value }
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+  @ViewChild(MatSort) sort!: MatSort;
 
   constructor (
-    private dialog: MatDialog,
-    private facade: FacadeService
-  ) { }
-
-  ngOnInit(): void {
+    private _authService: AuthService,
+    private _dialog: MatDialog,
+    private _notificationService: NotificationService,
+    private _userService: UserService
+  ) {
     this.columns = ['index', 'name', 'username', 'enabled', 'action'];
-    this.currentUser = this.facade.authGetCurrentUser();
     this.dataSource = new MatTableDataSource();
-    this.findAllUsers();
+    this.isLoadingResults = true;
+    this.resultsLength = 0;
+    this.user = this._authService.getUser();
   }
 
-  addUser() {
+  ngAfterViewInit(): void {
+    this.findAll();
+  }
+
+  add() {
     
-    this.dialog.open(UsersFormComponent, {
+    this._dialog.open(UserFormComponent, {
       data: {
         user: null
       },
@@ -47,39 +58,93 @@ export class UsersComponent implements OnInit {
     .afterClosed().subscribe((result) => {
 
       if (result && result.status) {
-        this.findAllUsers();
+        this.findAll();
       }
     });
   }
 
-  buildTable(users: Array<User>) {
-    this.dataSource.data = users;
-    this.dataSource.filterPredicate = (user: User, filter: string) => user.name.toUpperCase().includes(filter) || user.username.toUpperCase().includes(filter);
-  }
+  async findAll() {
 
-  filter(value: string) {
-    value = value.toUpperCase();
-    this.dataSource.filter = value;
-  }
+    const page: number = this.paginator.pageIndex;
+    const size: number = this.paginator.pageSize;
+    const sort: string = this.sort.active;
+    const direction: string = this.sort.direction;
 
-  findAllUsers() {
+    this.isLoadingResults = true;
+    await OperatorUtils.delay(1000);
 
-    this.facade.userFindAll().subscribe({
+    this._userService.findAll(page, size, sort, direction).subscribe({
+
+      complete: () => {
+        this.isLoadingResults = false;
+      },
 
       next: (users) => {
-        this.buildTable(users);
+        this.dataSource.data = users.content;
+        this.resultsLength = users.totalElements;
       },
 
       error: (error) => {
+        this.isLoadingResults = false;
         console.error(error);
-        this.facade.notificationShowNotification(MessageUtils.USERS_GET_FAIL, NotificationType.FAIL);
+        this._notificationService.show(MessageUtils.USERS_GET_FAIL, NotificationType.FAIL);
       }
     });
   }
 
-  updateUser(user: User) {
+  pageChange() {
+    
+    if (this.filterString) {
+      this.search();
+    }
 
-    this.dialog.open(UsersFormComponent, {
+    this.findAll();
+  }
+
+  async search() {
+
+    const value: string = this.filterString;
+    const page: number = this.paginator.pageIndex;
+    const size: number = this.paginator.pageSize;
+    const sort: string = this.sort.active;
+    const direction: string = this.sort.direction;
+
+    this.isLoadingResults = true;
+    await OperatorUtils.delay(1000);
+
+    this._userService.search(value, page, size, sort, direction).subscribe({
+
+      complete: () => {
+        this.isLoadingResults = false;
+      },
+
+      next: (users) => {
+        this.dataSource.data = users.content;
+        this.resultsLength = users.totalElements;
+      },
+
+      error: (error) => {
+        this.isLoadingResults = false;
+        console.error(error);
+        this._notificationService.show(MessageUtils.USERS_GET_FAIL, NotificationType.FAIL);
+      }
+    });
+  }
+
+  sortChange() {
+
+    this.paginator.pageIndex = 0;
+    
+    if (this.filterString) {
+      this.search();
+    }
+
+    this.findAll();
+  }
+
+  update(user: User) {
+
+    this._dialog.open(UserFormComponent, {
       data: {
         user: user
       },
@@ -88,7 +153,7 @@ export class UsersComponent implements OnInit {
     .afterClosed().subscribe((result) => {
 
       if (result && result.status) {
-        this.findAllUsers();
+        this.findAll();
       }
     });
   }

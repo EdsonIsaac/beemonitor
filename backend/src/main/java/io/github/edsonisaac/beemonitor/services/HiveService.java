@@ -108,6 +108,21 @@ public class HiveService implements AbstractService<Hive> {
     }
 
     /**
+     * Search.
+     *
+     * @param value     the value
+     * @param page      the page
+     * @param size      the size
+     * @param sort      the sort
+     * @param direction the direction
+     * @return the hive list
+     */
+    @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+    public Page<Hive> search(String value, Integer page, Integer size, String sort, String direction) {
+        return repository.search(value, PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(direction), sort)));
+    }
+
+    /**
      * Validate.
      *
      * @param hive the hive

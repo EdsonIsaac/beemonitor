@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.UUID;
 
 /**
@@ -62,7 +63,7 @@ public class MensurationService implements AbstractService<Mensuration> {
     }
 
     /**
-     * Find by hive id page.
+     * Find all.
      *
      * @param hiveId    the hive id
      * @param page      the page
@@ -72,8 +73,8 @@ public class MensurationService implements AbstractService<Mensuration> {
      * @return the mensuration list
      */
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-    public Page<Mensuration> findByHiveId(UUID hiveId, Integer page, Integer size, String sort, String direction) {
-        return repository.findByHiveId(hiveId, PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(direction), sort)));
+    public Page<Mensuration> findAll(UUID hiveId, Integer page, Integer size, String sort, String direction) {
+        return repository.findAll(hiveId, PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(direction), sort)));
     }
 
     /**
@@ -110,6 +111,22 @@ public class MensurationService implements AbstractService<Mensuration> {
         }
 
         return mensuration;
+    }
+
+    /**
+     * Search.
+     *
+     * @param hiveId    the hive id
+     * @param date      the date
+     * @param page      the page
+     * @param size      the size
+     * @param sort      the sort
+     * @param direction the direction
+     * @return the mensuration list
+     */
+    @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+    public Page<Mensuration> search(UUID hiveId, String date, Integer page, Integer size, String sort, String direction) {
+        return repository.search(hiveId, date, PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(direction), sort)));
     }
 
     /**

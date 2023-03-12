@@ -40,7 +40,7 @@ public record HiveDTO(
             hive.getCreatedByUser(),
             hive.getModifiedByUser(),
             hive.getCode(),
-            hive.getMensurations() != null ? hive.getMensurations().stream().map(MensurationDTO::toDTO).collect(Collectors.toSet()) : null
+            null
         );
     }
 }

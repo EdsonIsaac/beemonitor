@@ -49,7 +49,7 @@ public class UserService implements AbstractService<User> {
     }
 
     /**
-     * Check Password
+     * Encode password.
      *
      * @param user the user
      * @return the user
@@ -104,7 +104,7 @@ public class UserService implements AbstractService<User> {
      * @return the user
      */
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-    public User findByUsername (String username) {
+    public User findByUsername(String username) {
 
         return repository.findByUsername(username).orElseThrow(() -> {
             throw new ObjectNotFoundException(MessageUtils.USER_NOT_FOUND);
@@ -112,7 +112,7 @@ public class UserService implements AbstractService<User> {
     }
 
     /**
-     * Save user.
+     * Save.
      *
      * @param user the user
      * @return the user
@@ -134,7 +134,22 @@ public class UserService implements AbstractService<User> {
     }
 
     /**
-     * Validate User
+     * Search.
+     *
+     * @param value     the value
+     * @param page      the page
+     * @param size      the size
+     * @param sort      the sort
+     * @param direction the direction
+     * @return the user list
+     */
+    @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+    public Page<User> search(String value, Integer page, Integer size, String sort, String direction) {
+        return repository.search(value, PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(direction), sort)));
+    }
+
+    /**
+     * Validate.
      *
      * @param user the user
      * @return the boolean

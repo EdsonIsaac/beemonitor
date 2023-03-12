@@ -2,7 +2,7 @@
     <div class="col-12">
         <nav style="--bs-breadcrumb-divider: url(&#34;data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Cpath d='M2.5 0L1 1.5 3.5 4 1 6.5 2.5 8l4-4-4-4z' fill='%236c757d'/%3E%3C/svg%3E&#34;);" aria-label="breadcrumb">
             <ol class="breadcrumb m-0">
-                <li class="breadcrumb-item"><a class="text-white" [routerLink]="'/' + currentUser.role.toLowerCase()">Início</a></li>
+                <li class="breadcrumb-item"><a class="text-white" [routerLink]="'/' + user.role.toLowerCase()">Início</a></li>
                 <li class="breadcrumb-item active" aria-current="page">Usuários</li>
             </ol>
         </nav>
@@ -21,22 +21,22 @@
                     </div>
                 </div>
             </mat-card-header>
-    
+
             <mat-card-content>
                 <div class="row mb-3">
-                    <div class="col-10 col-md-11">
+                    <div class="col-12 col-md-11 mb-3 mb-md-0">
                         <mat-form-field appearance="outline" class="w-100" style="margin-bottom: -1.25em;">
                             <mat-label>Buscar</mat-label>
-                            <input type="text" matInput #searchText (keyup)="filter(searchText.value)">
-                            <button mat-icon-button matSuffix>
+                            <input type="text" matInput [(ngModel)]="filterString" (keyup.enter)="search()" placeholder="Nome ou usuário">
+                            <button mat-icon-button matSuffix (click)="search()">
                                 <mat-icon>search</mat-icon>
                             </button>
                         </mat-form-field>
                     </div>
-    
-                    <div class="col-2 col-md-1">
+
+                    <div class="col-12 col-md-1">
                         <div class="d-flex align-items-center justify-content-center h-100">
-                            <button mat-icon-button class="bg-success text-white" (click)="addUser()">
+                            <button mat-icon-button class="bg-success text-white" (click)="add()">
                                 <mat-icon>add</mat-icon>
                             </button>
                         </div>
@@ -47,61 +47,89 @@
     </div>
 </div>
 
-<div class="row mb-3">
+<div class="row mb-3" [hidden]="(dataSource && dataSource.data.length == 0) || isLoadingResults">
     <div class="col-12">
         <mat-card>
             <mat-card-content>
-                <div class="table-responsive mb-3" [hidden]="!dataSource || dataSource.data.length == 0">
-                    <table mat-table [dataSource]="dataSource" matSort matSortActive="created-date" matSortDirection="desc" class="w-100 border">
-                        
+                <div class="table-responsive">
+                    <table mat-table [dataSource]="dataSource" class="w-100 border" matSort matSortActive="name" matSortDisableClear matSortDirection="asc" (matSortChange)="sortChange()">
+
+                        <!-- Index Column -->
                         <ng-container matColumnDef="index">
                             <th mat-header-cell *matHeaderCellDef mat-sort-header class="col-index">#</th>
-                            <td mat-cell *matCellDef="let user; let i = index" class="text-center pe-3">{{i+1}}</td>
+                            <td mat-cell *matCellDef="let user; let i = index">{{i+1}}</td>
                         </ng-container>
-                        
+
+                        <!-- Name Column -->
                         <ng-container matColumnDef="name">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header class="col-name pe-2">Nome</th>
-                            <td mat-cell *matCellDef="let user" class="text-center pe-3">{{user.name}}</td>
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header class="col-name">Nome</th>
+                            <td mat-cell *matCellDef="let user" class="text-center">{{user.name}}</td>
                         </ng-container>
-        
+
+                        <!-- Username Column -->
                         <ng-container matColumnDef="username">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header class="col-username pe-2">Usuário</th>
-                            <td mat-cell *matCellDef="let user" class="text-center pe-3">{{user.username}}</td>
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header class="col-username">Usuário</th>
+                            <td mat-cell *matCellDef="let user" class="text-center">{{user.username}}</td>
                         </ng-container>
-        
+
+                        <!-- Enabled Column -->
                         <ng-container matColumnDef="enabled">
-                            <th mat-header-cell *matHeaderCellDef mat-sort-header class="col-enabled pe-2">Status</th>
-                            <td mat-cell *matCellDef="let user" class="text-center pe-3">{{user.enabled ? 'Ativo' : 'Inativo'}}</td>
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header class="col-enabled">Situação</th>
+                            <td mat-cell *matCellDef="let user" class="text-center">{{user.enabled ? 'Ativo' : 'Inativo'}}</td>
                         </ng-container>
-                        
+
+                        <!-- Action Column -->
                         <ng-container matColumnDef="action">
-                            <th mat-header-cell *matHeaderCellDef class="col-action pe-2">&nbsp;</th>
-                            <td mat-cell *matCellDef="let user" class="text-center pe-3">
-                                <button mat-button (click)="updateUser(user)">
-                                    <mat-icon>edit</mat-icon>
-                                </button>
+                            <th mat-header-cell *matHeaderCellDef mat-sort-header class="col-action">&nbsp;</th>
+                            <td mat-cell *matCellDef="let user">
+                                <div class="text-end">
+                                    <button mat-icon-button (click)="update(user)">
+                                        <mat-icon>edit</mat-icon>
+                                    </button>
+                                </div>
                             </td>
                         </ng-container>
-        
+
                         <tr mat-header-row *matHeaderRowDef="columns"></tr>
                         <tr mat-row *matRowDef="let row; columns: columns;"></tr>
                     </table>
-    
-                    <mat-paginator [pageSizeOptions]="[25, 50, 75, 100]" showFirstLastButtons></mat-paginator>
-                </div>
 
-                <div class="row" *ngIf="dataSource.data.length == 0">
-                    <div class="col-12">
-                        <div class="text-center">
-                            <div class="mb-3">
-                                <img src="assets/images/bee.png" width="200px">
-                            </div>
-
-                            <h2>Não há dados a serem exibidos!</h2>
-                        </div>
-                    </div>
+                    <mat-paginator [length]="resultsLength" [pageSizeOptions]="[10, 25, 50, 100]" showFirstLastButtons class="w-100" (page)="pageChange()"></mat-paginator>
                 </div>
             </mat-card-content>
         </mat-card>
     </div>
+</div>
+
+<div class="row mb-3" *ngIf="isLoadingResults">
+    <div class="col-12">
+        <mat-card>
+            <mat-card-content>
+                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                <p class="text-center pt-3">Obtendo dados</p>
+            </mat-card-content>
+        </mat-card>
+    </div>
+</div>
+
+<div [hidden]="(dataSource && dataSource.data.length > 0) || isLoadingResults">
+    <mat-card>
+        <mat-card-content>
+            <div class="row">
+                <div class="col-12">
+                    <div class="text-center">
+                        <img src="/assets/images/bee.png" width="100px">
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-12">
+                    <div class="text-center">
+                        <h2 class="m-0">Não há dados a serem exibidos!</h2>
+                    </div>
+                </div>
+            </div>
+        </mat-card-content>
+    </mat-card>
 </div>

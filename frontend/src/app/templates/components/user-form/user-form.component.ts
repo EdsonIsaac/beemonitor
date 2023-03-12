@@ -3,24 +3,26 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { User } from 'src/app/entities/user';
 import { NotificationType } from 'src/app/enums/notification-type';
-import { FacadeService } from 'src/app/services/facade.service';
+import { NotificationService } from 'src/app/services/notification.service';
+import { UserService } from 'src/app/services/user.service';
 import { MessageUtils } from 'src/app/utils/message-utils';
 
 @Component({
-  selector: 'app-users-form',
-  templateUrl: './users-form.component.html',
-  styleUrls: ['./users-form.component.sass']
+  selector: 'app-user-form',
+  templateUrl: './user-form.component.html',
+  styleUrls: ['./user-form.component.sass']
 })
-export class UsersFormComponent implements OnInit {
+export class UserFormComponent implements OnInit {
   
   form!: FormGroup;
   hide!: boolean;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
-    private dialogRef: MatDialogRef<UsersFormComponent>,
-    private facade: FacadeService,
-    private formBuilder: FormBuilder
+    private _dialogRef: MatDialogRef<UserFormComponent>,
+    private _formBuilder: FormBuilder,
+    private _notificationService: NotificationService,
+    private _userService: UserService
   ) { }
 
   ngOnInit(): void {
@@ -36,7 +38,7 @@ export class UsersFormComponent implements OnInit {
 
   buildForm(user: User | null) {
 
-    this.form = this.formBuilder.group({
+    this.form = this._formBuilder.group({
       id: [user?.id, Validators.nullValidator],
       name: [user?.name, Validators.required],
       username: [user?.username, Validators.required],
@@ -52,16 +54,16 @@ export class UsersFormComponent implements OnInit {
 
     if (user.id) {
       
-      this.facade.userSave(user).subscribe({
+      this._userService.update(user).subscribe({
 
         complete: () => {
-          this.facade.notificationShowNotification(MessageUtils.USER_UPDATE_SUCCESS, NotificationType.SUCCESS);
-          this.dialogRef.close({status: true});
+          this._notificationService.show(MessageUtils.USER_UPDATE_SUCCESS, NotificationType.SUCCESS);
+          this._dialogRef.close({status: true});
         },
   
         error: (error) => {
           console.error(error);
-          this.facade.notificationShowNotification(MessageUtils.USER_UPDATE_FAIL + error.error[0].message, NotificationType.FAIL);   
+          this._notificationService.show(MessageUtils.USER_UPDATE_FAIL + error.error[0].message, NotificationType.FAIL);   
         
         }
       });
@@ -69,16 +71,16 @@ export class UsersFormComponent implements OnInit {
 
     else {
 
-      this.facade.userSave(user).subscribe({
+      this._userService.save(user).subscribe({
 
         complete: () => {
-          this.facade.notificationShowNotification(MessageUtils.USER_SAVE_SUCCESS, NotificationType.SUCCESS);
-          this.dialogRef.close({status: true});
+          this._notificationService.show(MessageUtils.USER_SAVE_SUCCESS, NotificationType.SUCCESS);
+          this._dialogRef.close({status: true});
         },
   
         error: (error) => {
           console.error(error);
-          this.facade.notificationShowNotification(MessageUtils.USER_SAVE_FAIL + error.error[0].message, NotificationType.FAIL);   
+          this._notificationService.show(MessageUtils.USER_SAVE_FAIL + error.error[0].message, NotificationType.FAIL);   
         
         }
       });

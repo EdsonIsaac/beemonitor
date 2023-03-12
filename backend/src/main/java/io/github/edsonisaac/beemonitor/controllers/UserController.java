@@ -58,6 +58,27 @@ public class UserController {
     }
 
     /**
+     * Search response entity.
+     *
+     * @param value     the value
+     * @param page      the page
+     * @param size      the size
+     * @param sort      the sort
+     * @param direction the direction
+     * @return the response entity
+     */
+    @GetMapping("/search")
+    public ResponseEntity search(@RequestParam String value,
+                                 @RequestParam(required = false, defaultValue = "0") Integer page,
+                                 @RequestParam(required = false, defaultValue = "10") Integer size,
+                                 @RequestParam(required = false, defaultValue = "name") String sort,
+                                 @RequestParam(required = false, defaultValue = "asc") String direction) {
+
+        var users = service.search(value, page, size, sort, direction).map(UserDTO::toDTO);
+        return ResponseEntity.status(OK).body(users);
+    }
+
+    /**
      * Update response entity.
      *
      * @param id   the id

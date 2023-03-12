@@ -3,7 +3,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { Department } from 'src/app/enums/department';
 import { NotificationType } from 'src/app/enums/notification-type';
-import { FacadeService } from 'src/app/services/facade.service';
+import { AuthService } from 'src/app/services/auth.service';
+import { NotificationService } from 'src/app/services/notification.service';
 
 @Component({
   selector: 'app-login',
@@ -16,20 +17,30 @@ export class LoginComponent implements OnInit {
   hide!: boolean;
 
   constructor(
-    private facade: FacadeService,
-    private formBuilder: FormBuilder,
-    private router: Router
+    private _authService: AuthService,
+    private _formBuilder: FormBuilder,
+    private _notificationService: NotificationService,
+    private _router: Router
   ) { }
 
   ngOnInit(): void {
-
+    
     this.hide = true;
-    this.buildForm();
+
+    if (this._authService.isAuthenticated()) {
+    
+      let user: any = this._authService.getUser();
+      this._router.navigate(['/' + user.role.toLowerCase()]);
+    } 
+    
+    else {
+      this.buildForm();
+    }
   }
 
   buildForm() {
 
-    this.form = this.formBuilder.group({
+    this.form = this._formBuilder.group({
       username: [null, Validators.required],
       password: [null, Validators.required]
     });
@@ -38,33 +49,29 @@ export class LoginComponent implements OnInit {
   submit() {
     const user = Object.assign({}, this.form.value);
 
-    this.facade.authLogin(user).subscribe({
+    this._authService.login(user).subscribe({
 
-      next: (authentication) => {
-
-        this.facade.authSetCurrentUser({
-          token: authentication.access_token,
-          role: authentication.role
-        })
+      next: (user) => {
+        this._authService.setUser(user);
       },
 
       complete: () => {
-        let currentUser = this.facade.authGetCurrentUser();
+        let user = this._authService.getUser();
 
-        switch (currentUser.role) {
+        switch (user.role) {
 
           case Department.ADMINISTRATION:
-            this.router.navigate(['/administration']);
+            this._router.navigate(['/administration']);
             break;
           case Department.SUPPORT:
-            this.router.navigate(['/support']);
+            this._router.navigate(['/support']);
             break;
         }
       },
 
       error: (error) => {
         console.error(error);
-        this.facade.notificationShowNotification(error.error.message, NotificationType.FAIL);
+        this._notificationService.show(error.error.message, NotificationType.FAIL);
       }
     })
   }

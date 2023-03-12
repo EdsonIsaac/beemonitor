@@ -82,21 +82,26 @@ public class HiveController {
         return ResponseEntity.status(CREATED).body(HiveDTO.toDTO(hive));
     }
 
+
     /**
      * Search response entity.
      *
-     * @param code the code
+     * @param value     the value
+     * @param page      the page
+     * @param size      the size
+     * @param sort      the sort
+     * @param direction the direction
      * @return the response entity
      */
     @GetMapping(value = "/search")
-    public ResponseEntity search(@RequestParam String code) {
+    public ResponseEntity search(@RequestParam String value,
+                                 @RequestParam(required = false, defaultValue = "0") Integer page,
+                                 @RequestParam(required = false, defaultValue = "10") Integer size,
+                                 @RequestParam(required = false, defaultValue = "name") String sort,
+                                 @RequestParam(required = false, defaultValue = "asc") String direction) {
 
-        if (code != null) {
-            var hive = service.findByCode(code);
-            return ResponseEntity.status(OK).body(HiveDTO.toDTO(hive));
-        }
-
-        return ResponseEntity.status(NOT_FOUND).body(null);
+        var hives = service.search(value, page, size, sort, direction).map(HiveDTO::toDTO);
+        return ResponseEntity.status(OK).body(hives);
     }
 
     /**
@@ -112,7 +117,7 @@ public class HiveController {
 
         if (hive.getId().equals(id)) {
             hive = service.save(hive);
-            return ResponseEntity.status(CREATED).body(HiveDTO.toDTO(hive));
+            return ResponseEntity.status(OK).body(HiveDTO.toDTO(hive));
         }
 
         throw new ObjectNotFoundException(MessageUtils.HIVE_NOT_FOUND);

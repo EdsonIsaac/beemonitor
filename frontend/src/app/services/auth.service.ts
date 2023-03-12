@@ -8,32 +8,35 @@ import { environment } from 'src/environments/environment';
 })
 export class AuthService {
 
-  private jwtHelper: JwtHelperService;
+  private _jwtHelper!: JwtHelperService;
 
-  constructor(private http: HttpClient) {
-    this.jwtHelper = new JwtHelperService();
+  constructor(
+    private _http: HttpClient, 
+  ) {
+    this._jwtHelper = new JwtHelperService();
   }
 
-  getCurrentUser() {
-    let currentUser: any = localStorage.getItem("currentUser");
+  getUser() {
 
+    let user: any;
+    
     try {
-      currentUser = JSON.parse(currentUser);
-      currentUser.username = this.jwtHelper.decodeToken(currentUser.token).sub;
+      user = localStorage.getItem("user");
+      user = JSON.parse(user);
     } catch (error) { }
 
-    return currentUser;
+    return user;
   }
 
   isAuthenticated() {
-    const currentUser = this.getCurrentUser();
+    const user = this.getUser();
 
-    if (currentUser) {
+    if (user) {
 
-      const token = currentUser.token.substring(7);
+      const token = user.token.substring(7);
 
       if (token) {
-        return !this.jwtHelper.isTokenExpired(token);
+        return !this._jwtHelper.isTokenExpired(token);
       }
     }
 
@@ -41,19 +44,23 @@ export class AuthService {
   }
 
   login(user: any) {
-    return this.http.post<any>(environment.apiURL + '/login', user);
+    return this._http.post<any>(environment.apiURL + '/login', user);
   }
 
   logout() {
-    localStorage.removeItem("currentUser");
+    localStorage.removeItem("user");
   }
 
-  setCurrentUser(currentUser: any) {
+  setUser(user: any) {
 
-    if (localStorage.getItem("currentUser")) {
-      localStorage.removeItem("currentUser");
+    if (localStorage.getItem("user")) {
+      localStorage.removeItem("user");
     }
 
-    localStorage.setItem("currentUser", JSON.stringify(currentUser));
+    localStorage.setItem("user", JSON.stringify({
+      role: user.role,
+      token: user.access_token,
+      username: this._jwtHelper.decodeToken(user.access_token).sub
+    }));
   }
 }
