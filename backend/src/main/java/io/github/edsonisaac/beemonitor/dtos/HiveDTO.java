@@ -2,12 +2,10 @@ package io.github.edsonisaac.beemonitor.dtos;
 
 import io.github.edsonisaac.beemonitor.entities.Hive;
 
-import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 
 /**

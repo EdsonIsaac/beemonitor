@@ -1,16 +1,21 @@
 package io.github.edsonisaac.beemonitor.controllers;
 
 import io.github.edsonisaac.beemonitor.dtos.UserDTO;
+import io.github.edsonisaac.beemonitor.entities.Image;
 import io.github.edsonisaac.beemonitor.entities.User;
 import io.github.edsonisaac.beemonitor.exceptions.ObjectNotFoundException;
 import io.github.edsonisaac.beemonitor.services.UserService;
+import io.github.edsonisaac.beemonitor.utils.FileUtils;
 import io.github.edsonisaac.beemonitor.utils.MessageUtils;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
+import java.io.FileNotFoundException;
 import java.util.UUID;
 
 import static org.springframework.http.HttpStatus.CREATED;
@@ -50,9 +55,21 @@ public class UserController {
      * @param user the user
      * @return the response entity
      */
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('SUPPORT')")
-    public ResponseEntity save(@RequestBody @Valid User user) {
+    public ResponseEntity save(@RequestPart @Valid User user,
+                               @RequestPart(required = false) MultipartFile photo) throws FileNotFoundException {
+
+        if (photo != null) {
+
+            var image = Image.builder()
+                    .name(System.currentTimeMillis() + "." + FileUtils.getExtension(photo))
+                    .build();
+
+            user.setPhoto(image);
+            FileUtils.FILES.put(image.getName(), photo);
+        }
+
         user = service.save(user);
         return ResponseEntity.status(CREATED).body(UserDTO.toDTO(user));
     }
@@ -85,15 +102,28 @@ public class UserController {
      * @param user the user
      * @return the response entity
      */
-    @PutMapping("/{id}")
+    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('SUPPORT')")
-    public ResponseEntity update(@PathVariable UUID id, @RequestBody @Valid User user) {
+    public ResponseEntity update(@PathVariable UUID id,
+                                 @RequestPart @Valid User user,
+                                 @RequestPart(required = false) MultipartFile photo) throws FileNotFoundException {
 
         if (user.getId().equals(id)) {
+
+            if (photo != null) {
+
+                var image = Image.builder()
+                        .name(System.currentTimeMillis() + "." + FileUtils.getExtension(photo))
+                        .build();
+
+                user.setPhoto(image);
+                FileUtils.FILES.put(image.getName(), photo);
+            }
+
             user = service.save(user);
             return ResponseEntity.status(OK).body(UserDTO.toDTO(user));
         }
 
-        throw new ObjectNotFoundException(MessageUtils.USER_NOT_FOUND);
+        throw new ObjectNotFoundException(MessageUtils.ARGUMENT_NOT_VALID);
     }
 }

@@ -2,7 +2,6 @@ package io.github.edsonisaac.beemonitor.dtos;
 
 import io.github.edsonisaac.beemonitor.entities.Mensuration;
 
-import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;

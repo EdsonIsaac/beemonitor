@@ -8,6 +8,11 @@ package io.github.edsonisaac.beemonitor.utils;
 public abstract class MessageUtils {
 
     /**
+     * The constant ARGUMENT_NOT_VALID.
+     */
+    public static final String ARGUMENT_NOT_VALID = "Parâmetros inválidos!";
+
+    /**
      * The constant HIVE_ALREADY_SAVE.
      */
     public static String HIVE_ALREADY_SAVE = "Colmeia já cadastrada!";
@@ -31,6 +36,11 @@ public abstract class MessageUtils {
      * The constant MENSURATION_NULL.
      */
     public static String MENSURATION_NULL = "Medição nula!";
+
+    /**
+     * The constant OPERATION_FAILURE.
+     */
+    public static String OPERATION_FAILURE = "Não foi possível concluir a operação! Por favor, entre em contato com o suporte técnico!";
 
     /**
      * The constant USER_ALREADY_SAVE.

@@ -8,10 +8,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.Transient;
+import javax.persistence.*;
+import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.Collection;
@@ -43,6 +41,10 @@ public class User extends AbstractEntity implements UserDetails {
     @NotNull(message = "{field.department.invalid}")
     @Enumerated(EnumType.STRING)
     private Department department;
+
+    @Valid
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    private Image photo;
 
     @Transient
     private Collection<? extends GrantedAuthority> authorities;

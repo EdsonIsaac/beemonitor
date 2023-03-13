@@ -9,6 +9,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
+import java.io.File;
+
 /**
  * The type Bee monitor application.
  *
@@ -37,6 +39,7 @@ public class BeeMonitorApplication implements CommandLineRunner {
 	@Override
 	public void run(String... args) {
 		checkDefaultUser();
+		createFolders();
 	}
 
 	/**
@@ -49,6 +52,18 @@ public class BeeMonitorApplication implements CommandLineRunner {
 			saveDefaultUser(user);
 		} catch (ObjectNotFoundException ex) {
 			saveDefaultUser(new User());
+		}
+	}
+
+	/**
+	 * Create folders.
+	 */
+	private void createFolders() {
+
+		var files = new File("files");
+
+		if (!files.exists()) {
+			files.mkdir();
 		}
 	}
 
