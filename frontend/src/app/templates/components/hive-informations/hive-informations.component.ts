@@ -57,11 +57,15 @@ export class HiveInformationsComponent implements OnInit {
     this.form.disable();
   }
 
-  delete(hive: Hive) {
+  cancel() {
+    this.buildForm(this.hive);
+  }
+
+  delete() {
 
     this._dialog.open(HiveDeleteComponent, {
       data: {
-        hive: hive
+        hive: this.hive
       },
       width: '100%'
     })
@@ -78,9 +82,9 @@ export class HiveInformationsComponent implements OnInit {
 
   submit() {
 
-    let hive: Hive = Object.assign({}, this.form.value);
+    const hive: Hive = Object.assign({}, this.form.value);
 
-    this._hiveService.save(hive).subscribe({
+    this._hiveService.update(hive).subscribe({
 
       next: (hive) => {
         this._hiveService.set(hive);

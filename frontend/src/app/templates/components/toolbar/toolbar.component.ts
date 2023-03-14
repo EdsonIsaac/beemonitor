@@ -6,6 +6,7 @@ import { AuthService } from 'src/app/services/auth.service';
 import { NotificationService } from 'src/app/services/notification.service';
 import { UserService } from 'src/app/services/user.service';
 import { MessageUtils } from 'src/app/utils/message-utils';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-toolbar',
@@ -14,8 +15,9 @@ import { MessageUtils } from 'src/app/utils/message-utils';
 })
 export class ToolbarComponent implements OnInit {
   
+  apiURL!: string;
   user!: any;
-  userRemoto!: User;
+  userRemote!: User;
 
   constructor(
     private _authService: AuthService,
@@ -26,12 +28,13 @@ export class ToolbarComponent implements OnInit {
 
   ngOnInit(): void {
     
+    this.apiURL = environment.apiURL;
     this.user = this._authService.getUser();
     
     this._userService.search(this.user.username, 0, 1, 'name', 'asc').subscribe({
 
       next: (users) => {
-        this.userRemoto = users.content[0];
+        this.userRemote = users.content[0];
       },
 
       error: (error) => {

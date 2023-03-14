@@ -1,27 +1,27 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { Hive } from 'src/app/entities/hive';
+import { User } from 'src/app/entities/user';
 import { NotificationType } from 'src/app/enums/notification-type';
 import { AuthService } from 'src/app/services/auth.service';
-import { HiveService } from 'src/app/services/hive.service';
 import { NotificationService } from 'src/app/services/notification.service';
+import { UserService } from 'src/app/services/user.service';
 import { MessageUtils } from 'src/app/utils/message-utils';
 
 @Component({
-  selector: 'app-hive',
-  templateUrl: './hive.component.html',
-  styleUrls: ['./hive.component.sass']
+  selector: 'app-user',
+  templateUrl: './user.component.html',
+  styleUrls: ['./user.component.sass']
 })
-export class HiveComponent implements OnInit {
+export class UserComponent implements OnInit {
 
-  hive!: Hive;
   user!: any;
+  userRemote!: User;
 
   constructor(
     private _activatedRoute: ActivatedRoute,
     private _authService: AuthService,
-    private _hiveService: HiveService,
-    private _notificationService: NotificationService
+    private _notificationService: NotificationService,
+    private _userService: UserService,
   ) { }
 
   ngOnInit(): void {
@@ -34,27 +34,27 @@ export class HiveComponent implements OnInit {
           
         if (x && x.id) {
           
-          this._hiveService.findById(x.id).subscribe({
+          this._userService.findById(x.id).subscribe({
             
-            next: (hive) => {
-              this._hiveService.set(hive);
+            next: (user) => {
+              this._userService.set(user);
             },
 
             error: (error) => {
               console.error(error);
-              this._notificationService.show(MessageUtils.HIVE_GET_FAIL, NotificationType.FAIL); 
+              this._notificationService.show(MessageUtils.USER_GET_FAIL, NotificationType.FAIL); 
             }
           });
         }
       },
     });
 
-    this._hiveService.get().subscribe({
+    this._userService.get().subscribe({
 
-      next: (hive) => {
+      next: (user) => {
         
-        if (hive) {
-          this.hive = hive;
+        if (user) {
+          this.userRemote = user;
         }
       }
     });

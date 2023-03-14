@@ -40,7 +40,7 @@ public class UserController {
      */
     @GetMapping
     @PreAuthorize("hasRole('SUPPORT')")
-    public ResponseEntity findAll(@RequestParam(required = false, defaultValue = "0") Integer page,
+    public ResponseEntity<?> findAll(@RequestParam(required = false, defaultValue = "0") Integer page,
                                   @RequestParam(required = false, defaultValue = "10") Integer size,
                                   @RequestParam(required = false, defaultValue = "name") String sort,
                                   @RequestParam(required = false, defaultValue = "asc") String direction) {
@@ -50,6 +50,19 @@ public class UserController {
     }
 
     /**
+     * Find by id response entity.
+     *
+     * @param id the id
+     * @return the response entity
+     */
+    @GetMapping("/{id}")
+    @PreAuthorize("hasRole('SUPPORT')")
+    public ResponseEntity<?> findById(@PathVariable UUID id) {
+        var user = service.findById(id);
+        return ResponseEntity.status(OK).body(UserDTO.toDTO(user));
+    }
+    
+    /**
      * Save response entity.
      *
      * @param user the user
@@ -57,7 +70,7 @@ public class UserController {
      */
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('SUPPORT')")
-    public ResponseEntity save(@RequestPart @Valid User user,
+    public ResponseEntity<?> save(@RequestPart @Valid User user,
                                @RequestPart(required = false) MultipartFile photo) throws FileNotFoundException {
 
         if (photo != null) {
@@ -85,7 +98,7 @@ public class UserController {
      * @return the response entity
      */
     @GetMapping("/search")
-    public ResponseEntity search(@RequestParam String value,
+    public ResponseEntity<?> search(@RequestParam String value,
                                  @RequestParam(required = false, defaultValue = "0") Integer page,
                                  @RequestParam(required = false, defaultValue = "10") Integer size,
                                  @RequestParam(required = false, defaultValue = "name") String sort,
@@ -104,7 +117,7 @@ public class UserController {
      */
     @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('SUPPORT')")
-    public ResponseEntity update(@PathVariable UUID id,
+    public ResponseEntity<?> update(@PathVariable UUID id,
                                  @RequestPart @Valid User user,
                                  @RequestPart(required = false) MultipartFile photo) throws FileNotFoundException {
 

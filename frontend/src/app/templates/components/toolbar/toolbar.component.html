@@ -2,9 +2,16 @@
     <mat-toolbar-row>
         <a class="text-white" [routerLink]="'/' + user.role.toLowerCase()" *ngIf="user">BeeMonitor</a>
         <span class="spacer"></span>
-        <div *ngIf="userRemoto">
-            <button mat-button [matMenuTriggerFor]="menu">{{userRemoto.name.toUpperCase()}}</button>
-            <mat-menu #menu="matMenu">
+        <div *ngIf="userRemote">
+            <button mat-button [matMenuTriggerFor]="menu">
+                <span class="me-2" *ngIf="userRemote.photo">
+                    <img mat-card-avatar class="m-0" [src]="apiURL + '/images/search?name=' + userRemote.photo.name">
+                </span>
+                <span>
+                    {{userRemote.name.toUpperCase().split(' ')[0]}}
+                </span>
+            </button>
+            <mat-menu #menu="matMenu" xPosition="before">
                 <button mat-menu-item class="text-danger" (click)="logout()">
                     <mat-icon>exit_to_app</mat-icon>
                     <span>Sair</span>

@@ -27,7 +27,7 @@ public class ExceptionHandlerController {
     private final MessageSource messageSource;
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity methodArgumentNotValidException(MethodArgumentNotValidException ex, HttpServletRequest request) {
+    public ResponseEntity<?> methodArgumentNotValidException(MethodArgumentNotValidException ex, HttpServletRequest request) {
 
         var errors = ex.getBindingResult().getFieldErrors().stream().map(error ->
                 StandardError.builder()
@@ -50,7 +50,7 @@ public class ExceptionHandlerController {
      * @return the response entity
      */
     @ExceptionHandler(ObjectNotFoundException.class)
-    public ResponseEntity objectNotFound(ObjectNotFoundException ex, HttpServletRequest request) {
+    public ResponseEntity<?> objectNotFound(ObjectNotFoundException ex, HttpServletRequest request) {
 
         var error = StandardError.builder()
                 .timestamp(System.currentTimeMillis())
@@ -71,7 +71,7 @@ public class ExceptionHandlerController {
      * @return the response entity
      */
     @ExceptionHandler(ValidationException.class)
-    public ResponseEntity validationException(ValidationException ex, HttpServletRequest request) {
+    public ResponseEntity<?> validationException(ValidationException ex, HttpServletRequest request) {
 
         var error = StandardError.builder()
                 .timestamp(System.currentTimeMillis())

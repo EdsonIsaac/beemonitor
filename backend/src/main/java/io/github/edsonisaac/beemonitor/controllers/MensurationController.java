@@ -49,7 +49,7 @@ public class MensurationController {
      * @return the response entity
      */
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity save(@RequestPart String code,
+    public ResponseEntity<?> save(@RequestPart String code,
                                @RequestPart @Valid Mensuration mensuration) {
 
         var hive = hiveService.findByCode(code);
@@ -68,7 +68,7 @@ public class MensurationController {
      */
     @GetMapping("/search")
     @PreAuthorize("hasAnyRole('ADMINISTRATION', 'SUPPORT')")
-    public ResponseEntity search(@RequestParam UUID hiveId,
+    public ResponseEntity<?> search(@RequestParam UUID hiveId,
                                  @RequestParam String date,
                                  @RequestParam(required = false, defaultValue = "0") Integer page,
                                  @RequestParam(required = false, defaultValue = "10") Integer size,

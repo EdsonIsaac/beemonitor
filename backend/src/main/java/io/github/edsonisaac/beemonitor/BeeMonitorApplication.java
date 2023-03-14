@@ -74,7 +74,7 @@ public class BeeMonitorApplication implements CommandLineRunner {
 	 */
 	private void saveDefaultUser (User user) {
 
-		user.setName("Cooperativa");
+		user.setName("COOPERTIVA");
 		user.setUsername("cooperativa");
 		user.setPassword("cooperativa");
 		user.setEnabled(true);

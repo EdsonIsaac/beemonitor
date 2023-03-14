@@ -37,6 +37,9 @@ import { NotificationComponent } from './notification/notification.component';
 import { ToolbarComponent } from './toolbar/toolbar.component';
 import { UserFormComponent } from './user-form/user-form.component';
 import { UsersComponent } from './users/users.component';
+import { UserComponent } from './user/user.component';
+import { UserInformationsComponent } from './user-informations/user-informations.component';
+import { SelectImageComponent } from './select-image/select-image.component';
 
 @NgModule({
   declarations: [
@@ -55,6 +58,9 @@ import { UsersComponent } from './users/users.component';
     ToolbarComponent,
     UserFormComponent,
     UsersComponent,
+    UserComponent,
+    UserInformationsComponent,
+    SelectImageComponent,
   ],
   imports: [
     CommonModule,

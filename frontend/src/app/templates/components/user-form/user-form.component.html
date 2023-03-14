@@ -1,9 +1,42 @@
 <div class="mat-dialog">
-    <h2 class="m-0" mat-dialog-title *ngIf="!this.data.user">Cadastrar Usuário</h2>
-    <h2 class="m-0" mat-dialog-title *ngIf="this.data.user">Editar Usuário</h2>
+    <h2 class="m-0" mat-dialog-title>Cadastrar Usuário</h2>
 
     <div mat-dialog-content class="py-3">
         <form [formGroup]="form" *ngIf="form">
+
+            <div class="row mb-3">
+                <div class="col-12">
+                    <div class="text-center">
+                        <div *ngIf="!photo">
+                            <img src="assets/images/users.png" height="150px" class="rounded-circle">
+                        </div>
+        
+                        <div *ngIf="photo && photo.data">
+                            <img [src]="photo.data" height="150px" class="rounded-circle">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="row mb-3" *ngIf="form.enabled">
+                <div class="col-12">
+                    <div class="text-center">
+                        <button mat-icon-button type="button" [matMenuTriggerFor]="menu">
+                            <mat-icon>camera_alt</mat-icon>
+                        </button>
+                        <mat-menu #menu="matMenu">
+                            <button mat-menu-item (click)="addPhoto()">
+                                <mat-icon>search</mat-icon>
+                                <span>Selecionar Foto</span>
+                            </button>
+                            <button mat-menu-item (click)="removePhoto()" *ngIf="photo">
+                                <mat-icon>delete</mat-icon>
+                                <span>Remover Foto</span>
+                            </button>
+                        </mat-menu>
+                    </div>
+                </div>
+            </div>
 
             <div class="row">
                 <div class="col-12">

@@ -49,18 +49,20 @@
 
 <div class="row" [hidden]="(hives && hives.length == 0) || isLoadingResults">
     <div class="col-12 col-md-4 mb-3" *ngFor="let hive of hives">
-        <mat-card>
-            <mat-card-header>
-                <div class="mat-card-header-text">
-                    <h2 class="fw-bold mb-0">{{hive.code}}</h2>
-                </div>
-            </mat-card-header>
-            <a [routerLink]="'/' + user.role.toLowerCase() + '/hives/' + hive.id" class="text-decoration-none text-dark">
+        <a [routerLink]="'/' + user.role.toLowerCase() + '/hives/' + hive.id" class="text-decoration-none text-dark">
+            <mat-card>
+                <mat-card-header>
+                    <div class="mat-card-header-text">
+                        <h2 class="fw-bold mb-0">{{hive.code}}</h2>
+                    </div>
+                </mat-card-header>
+            
                 <mat-card-content>
                     <div class="text-center mb-3">
                         <img src="assets/images/hive.png" width="128px">
                     </div>
                 </mat-card-content>
+                
                 <mat-card-footer>
                     <div class="mb-3">
                         <div class="row">
@@ -104,8 +106,8 @@
                         </div>
                     </div>
                 </mat-card-footer>
-            </a>
-        </mat-card>
+            </mat-card>
+        </a>
     </div>
 </div>
 

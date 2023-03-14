@@ -28,8 +28,7 @@ public class SecurityConfiguration {
     private static final String[] PUBLIC_MATCHERS_GET = {
         "/cooperativas",
         "/cooperativas/search",
-        "/imagens/*"
-
+        "/images/*"
     };
 
     private static final String[] PUBLIC_MATCHERS_POST = {

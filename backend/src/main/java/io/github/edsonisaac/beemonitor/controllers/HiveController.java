@@ -36,7 +36,7 @@ public class HiveController {
      */
     @DeleteMapping(value = "/{id}")
     @PreAuthorize("hasAnyRole('ADMINISTRATION', 'SUPPORT')")
-    public ResponseEntity delete(@PathVariable UUID id) {
+    public ResponseEntity<?> delete(@PathVariable UUID id) {
         service.delete(id);
         return ResponseEntity.status(OK).body(null);
     }
@@ -48,7 +48,7 @@ public class HiveController {
      */
     @GetMapping
     @PreAuthorize("hasAnyRole('ADMINISTRATION', 'SUPPORT')")
-    public ResponseEntity findAll (@RequestParam(required = false, defaultValue = "0") Integer page,
+    public ResponseEntity<?> findAll (@RequestParam(required = false, defaultValue = "0") Integer page,
                                    @RequestParam(required = false, defaultValue = "10") Integer size,
                                    @RequestParam(required = false, defaultValue = "code") String sort,
                                    @RequestParam(required = false, defaultValue = "asc") String direction) {
@@ -65,7 +65,7 @@ public class HiveController {
      */
     @GetMapping(value = "/{id}")
     @PreAuthorize("hasAnyRole('ADMINISTRATION', 'SUPPORT')")
-    public ResponseEntity findById(@PathVariable UUID id) {
+    public ResponseEntity<?> findById(@PathVariable UUID id) {
         var hive = service.findById(id);
         return ResponseEntity.status(OK).body(HiveDTO.toDTO(hive));
     }
@@ -78,7 +78,7 @@ public class HiveController {
      */
     @PostMapping
     @PreAuthorize("hasAnyRole('ADMINISTRATION', 'SUPPORT')")
-    public ResponseEntity save(@RequestBody @Valid Hive hive) {
+    public ResponseEntity<?> save(@RequestBody @Valid Hive hive) {
         hive = service.save(hive);
         return ResponseEntity.status(CREATED).body(HiveDTO.toDTO(hive));
     }
@@ -95,7 +95,7 @@ public class HiveController {
      * @return the response entity
      */
     @GetMapping(value = "/search")
-    public ResponseEntity search(@RequestParam String value,
+    public ResponseEntity<?> search(@RequestParam String value,
                                  @RequestParam(required = false, defaultValue = "0") Integer page,
                                  @RequestParam(required = false, defaultValue = "10") Integer size,
                                  @RequestParam(required = false, defaultValue = "name") String sort,
@@ -114,7 +114,7 @@ public class HiveController {
      */
     @PutMapping("/{id}")
     @PreAuthorize("hasAnyRole('ADMINISTRATION', 'SUPPORT')")
-    public ResponseEntity update(@PathVariable UUID id, @RequestBody @Valid Hive hive) {
+    public ResponseEntity<?> update(@PathVariable UUID id, @RequestBody @Valid Hive hive) {
 
         if (hive.getId().equals(id)) {
             hive = service.save(hive);

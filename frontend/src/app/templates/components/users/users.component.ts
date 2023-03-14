@@ -1,17 +1,16 @@
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
-import { MatSort } from '@angular/material/sort';
-import { MatTableDataSource } from '@angular/material/table';
 import { User } from 'src/app/entities/user';
 import { NotificationType } from 'src/app/enums/notification-type';
 import { AuthService } from 'src/app/services/auth.service';
 import { NotificationService } from 'src/app/services/notification.service';
 import { UserService } from 'src/app/services/user.service';
 import { MessageUtils } from 'src/app/utils/message-utils';
+import { OperatorUtils } from 'src/app/utils/operator-utils';
+import { environment } from 'src/environments/environment';
 
 import { UserFormComponent } from '../user-form/user-form.component';
-import { OperatorUtils } from 'src/app/utils/operator-utils';
 
 @Component({
   selector: 'app-users',
@@ -20,15 +19,16 @@ import { OperatorUtils } from 'src/app/utils/operator-utils';
 })
 export class UsersComponent implements AfterViewInit {
   
-  columns!: Array<string>;
-  dataSource!: MatTableDataSource<User>;
+  apiURL!: string;
   filterString!: string;
   isLoadingResults!: boolean;
+  pageIndex!: number;
+  pageSize!: number;
   resultsLength!: number;
   user!: any;
+  users!: Array<User>;
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-  @ViewChild(MatSort) sort!: MatSort;
 
   constructor (
     private _authService: AuthService,
@@ -36,8 +36,7 @@ export class UsersComponent implements AfterViewInit {
     private _notificationService: NotificationService,
     private _userService: UserService
   ) {
-    this.columns = ['index', 'name', 'username', 'enabled', 'action'];
-    this.dataSource = new MatTableDataSource();
+    this.apiURL = environment.apiURL;
     this.isLoadingResults = true;
     this.resultsLength = 0;
     this.user = this._authService.getUser();
@@ -67,8 +66,8 @@ export class UsersComponent implements AfterViewInit {
 
     const page: number = this.paginator.pageIndex;
     const size: number = this.paginator.pageSize;
-    const sort: string = this.sort.active;
-    const direction: string = this.sort.direction;
+    const sort: string = 'name';
+    const direction: string = 'asc';
 
     this.isLoadingResults = true;
     await OperatorUtils.delay(1000);
@@ -80,7 +79,7 @@ export class UsersComponent implements AfterViewInit {
       },
 
       next: (users) => {
-        this.dataSource.data = users.content;
+        this.users = users.content;
         this.resultsLength = users.totalElements;
       },
 
@@ -92,8 +91,11 @@ export class UsersComponent implements AfterViewInit {
     });
   }
 
-  pageChange() {
+  pageChange(event: any) {
     
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+
     if (this.filterString) {
       this.search();
     }
@@ -106,8 +108,8 @@ export class UsersComponent implements AfterViewInit {
     const value: string = this.filterString;
     const page: number = this.paginator.pageIndex;
     const size: number = this.paginator.pageSize;
-    const sort: string = this.sort.active;
-    const direction: string = this.sort.direction;
+    const sort: string = 'name';
+    const direction: string = 'asc';
 
     this.isLoadingResults = true;
     await OperatorUtils.delay(1000);
@@ -119,7 +121,7 @@ export class UsersComponent implements AfterViewInit {
       },
 
       next: (users) => {
-        this.dataSource.data = users.content;
+        this.users = users.content;
         this.resultsLength = users.totalElements;
       },
 
