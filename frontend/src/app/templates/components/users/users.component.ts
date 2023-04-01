@@ -133,17 +133,6 @@ export class UsersComponent implements AfterViewInit {
     });
   }
 
-  sortChange() {
-
-    this.paginator.pageIndex = 0;
-    
-    if (this.filterString) {
-      this.search();
-    }
-
-    this.findAll();
-  }
-
   update(user: User) {
 
     this._dialog.open(UserFormComponent, {

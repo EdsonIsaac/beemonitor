@@ -2,9 +2,6 @@ jwt:
   expiration: 43200000
   secret: bcL4GKuunKN-kV+_?W##=STAx#<k'3uFJ;rL-MnF>t:~)XTSBZ>$H'eM1=@.70{NWY
 
-server:
-  port: 8081
-
 spring:
   datasource:
     driver-class-name: org.postgresql.Driver

@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { User } from 'src/app/entities/user';
 import { NotificationType } from 'src/app/enums/notification-type';
+import { AuthService } from 'src/app/services/auth.service';
 import { ImageService } from 'src/app/services/image.service';
 import { NotificationService } from 'src/app/services/notification.service';
 import { UserService } from 'src/app/services/user.service';
@@ -24,8 +25,10 @@ export class UserInformationsComponent implements OnInit {
   photo!: any;
   photoToSave!: any;
   user!: User;
+  userLogged!: any;
 
   constructor(
+    private _authService: AuthService,
     private _dialog: MatDialog,
     private _formBuilder: FormBuilder,
     private _imageService: ImageService,
@@ -37,6 +40,7 @@ export class UserInformationsComponent implements OnInit {
     
     this.apiURL = environment.apiURL;
     this.hide = true;
+    this.userLogged = this._authService.getUser();
     
     this._userService.get().subscribe({
 
@@ -122,6 +126,13 @@ export class UserInformationsComponent implements OnInit {
   }
 
   update() {
+
     this.form.enable();
+    
+    if (this.user.username === this.userLogged.username) {
+      this.form.get('username')?.disable();
+      this.form.get('department')?.disable();
+      this.form.get('enabled')?.disable();
+    }
   }
 }

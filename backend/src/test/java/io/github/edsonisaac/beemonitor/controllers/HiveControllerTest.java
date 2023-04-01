@@ -4,14 +4,16 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import io.github.edsonisaac.beemonitor.BeeMonitorApplication;
 import io.github.edsonisaac.beemonitor.entities.Hive;
 import io.github.edsonisaac.beemonitor.entities.User;
 import io.github.edsonisaac.beemonitor.enums.Department;
 import io.github.edsonisaac.beemonitor.repositories.HiveRepository;
-import io.github.edsonisaac.beemonitor.repositories.UserRepository;
-import io.github.edsonisaac.beemonitor.services.FacadeService;
-import org.junit.jupiter.api.*;
+import io.github.edsonisaac.beemonitor.services.HiveService;
+import io.github.edsonisaac.beemonitor.services.UserService;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -32,24 +34,24 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles(profiles = "test")
 @AutoConfigureMockMvc
 @ExtendWith(SpringExtension.class)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK, classes = BeeMonitorApplication.class)
+@SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class HiveControllerTest {
 
     private ObjectMapper mapper;
     private String token;
 
-    private final FacadeService facade;
     private final HiveRepository hiveRepository;
+    private final HiveService hiveService;
     private final MockMvc mvc;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     @Autowired
-    HiveControllerTest(FacadeService facade, HiveRepository hiveRepository, MockMvc mvc, UserRepository userRepository) {
-        this.facade = facade;
+    HiveControllerTest(HiveRepository hiveRepository, HiveService hiveService, MockMvc mvc, UserService userService) {
         this.hiveRepository = hiveRepository;
+        this.hiveService = hiveService;
         this.mvc = mvc;
-        this.userRepository = userRepository;
+        this.userService = userService;
     }
 
     @BeforeAll
@@ -70,7 +72,7 @@ class HiveControllerTest {
                 .build();
 
         // Save administration user
-        facade.userSave(administration);
+        userService.save(administration);
 
         // Create login body
         var requestBody = new HashMap<String, String>();
@@ -96,12 +98,6 @@ class HiveControllerTest {
     @AfterEach
     public void alterEach() {
         this.hiveRepository.deleteAll();
-    }
-
-    @AfterAll
-    public void afterAll() {
-        this.hiveRepository.deleteAll();
-        this.userRepository.deleteAll();
     }
 
     @Test
@@ -162,7 +158,7 @@ class HiveControllerTest {
 
         var hive = Hive.builder().code("0001").build();
 
-        hive = facade.hiveSave(hive);
+        hive = hiveService.save(hive);
 
         this.mvc.perform(
                         delete("/hives/" + hive.getId())

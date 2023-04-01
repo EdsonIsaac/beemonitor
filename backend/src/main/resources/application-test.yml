@@ -1,21 +1,18 @@
 jwt:
   expiration: 43200000
-  secret: L4GKuunKN-kV+_?W##=STAx#<k'3uFJ;rL-MnF>t:~)XTSBZ>$H'eM1=@.70{NWY
-
-server:
-  port: 8081
+  secret: bcL4GKuunKN-kV+_?W##=STAx#<k'3uFJ;rL-MnF>t:~)XTSBZ>$H'eM1=@.70{NWY
 
 spring:
   datasource:
-    driver-class-name: org.postgresql.Driver
-    password: beemonitor
-    url: jdbc:postgresql://localhost/beemonitor-test
-    username: beemonitor
+    driver-class-name: org.h2.Driver
+    password: password
+    username: sa
+    url: jdbc:h2:mem:testdb
   jpa:
     hibernate:
       ddl-auto: validate
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+        dialect: org.hibernate.dialect.H2Dialect
         format_sql: true
     show-sql: false
