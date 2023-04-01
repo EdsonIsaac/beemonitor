@@ -34,4 +34,4 @@ Crie a imagem do projeto
 
 Execute a imagem do projeto
 
-<pre><code>docker run -p 80:80 --network beemonitor -d beemonitor-frontend:latest</code></pre>
+<pre><code>docker run -p 80:80 --name beemonitor-frontend --network beemonitor -d beemonitor-frontend:latest</code></pre>
