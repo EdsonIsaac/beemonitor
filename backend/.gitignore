@@ -1,4 +1,5 @@
 HELP.md
+data/
 target/
 .mvn
 !**/src/main/**/target/
