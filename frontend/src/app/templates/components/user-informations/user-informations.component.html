@@ -20,15 +20,11 @@
         <div class="col-12">
             <div class="text-center">
                 <div *ngIf="!photo">
-                    <img src="assets/images/users.png" height="150px" class="rounded-circle">
+                    <img src="assets/images/users.png" height="150px">
                 </div>
 
-                <div *ngIf="photo && photo.name">
-                    <img [src]="apiURL + '/images/search?name=' + photo.name" height="150px" class="rounded-circle">
-                </div>
-
-                <div *ngIf="photo && photo.data">
-                    <img [src]="photo.data" height="150px" class="rounded-circle">
+                <div *ngIf="photo">
+                    <img [src]="photo.name ? apiURL + '/images/search?name=' + photo.name : photo.data" height="150px" class="rounded-circle">
                 </div>
             </div>
         </div>

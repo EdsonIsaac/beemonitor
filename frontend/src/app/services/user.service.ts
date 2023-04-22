@@ -97,7 +97,7 @@ export class UserService {
    * 
    * @param user 
    */
-  set(user: User) {
+  set(user: User | null) {
     this._subject.next(user);
   }
 
