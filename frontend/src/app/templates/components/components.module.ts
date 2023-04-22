@@ -34,12 +34,11 @@ import { LayoutComponent } from './layout/layout.component';
 import { LoginComponent } from './login/login.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { NotificationComponent } from './notification/notification.component';
-import { ToolbarComponent } from './toolbar/toolbar.component';
-import { UserFormComponent } from './user-form/user-form.component';
-import { UsersComponent } from './users/users.component';
-import { UserComponent } from './user/user.component';
-import { UserInformationsComponent } from './user-informations/user-informations.component';
 import { SelectImageComponent } from './select-image/select-image.component';
+import { ToolbarComponent } from './toolbar/toolbar.component';
+import { UserInformationsComponent } from './user-informations/user-informations.component';
+import { UserComponent } from './user/user.component';
+import { UsersComponent } from './users/users.component';
 
 @NgModule({
   declarations: [
@@ -56,7 +55,6 @@ import { SelectImageComponent } from './select-image/select-image.component';
     NotFoundComponent,
     NotificationComponent,
     ToolbarComponent,
-    UserFormComponent,
     UsersComponent,
     UserComponent,
     UserInformationsComponent,

@@ -11,6 +11,7 @@ import { MessageUtils } from 'src/app/utils/message-utils';
 import { environment } from 'src/environments/environment';
 
 import { SelectImageComponent } from '../select-image/select-image.component';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-user-informations',
@@ -23,7 +24,6 @@ export class UserInformationsComponent implements OnInit {
   form!: FormGroup;
   hide!: boolean;
   photo!: any;
-  photoToSave!: any;
   user!: User;
   userLogged!: any;
 
@@ -33,6 +33,7 @@ export class UserInformationsComponent implements OnInit {
     private _formBuilder: FormBuilder,
     private _imageService: ImageService,
     private _notificationService: NotificationService,
+    private _router: Router,
     private _userService: UserService,
   ) { }
 
@@ -40,6 +41,7 @@ export class UserInformationsComponent implements OnInit {
     
     this.apiURL = environment.apiURL;
     this.hide = true;
+    this.photo = null;
     this.userLogged = this._authService.getUser();
     
     this._userService.get().subscribe({
@@ -53,6 +55,10 @@ export class UserInformationsComponent implements OnInit {
           if (user.photo) {
             this.photo = { id: user.photo.id, data: null, name: user.photo.name };
           }
+        }
+
+        else {
+          this.buildForm(null);
         }
       }
     });
@@ -71,58 +77,72 @@ export class UserInformationsComponent implements OnInit {
       if (result && result.status) {
 
         this._imageService.toBase64(result.images[0])?.then(data => {
-
-          let imagem = { id: new Date().getTime(), data: data, name: null };
-
-          this.photo = imagem;
-          this.photoToSave = result.images[0];
+          this.photo = { id: new Date().getTime(), data: data, name: null, file: result.images[0] };
         });
       }
     });
   }
 
-  buildForm(user: User) {
+  buildForm(user: User | null) {
 
     this.form = this._formBuilder.group({
-      id: [user.id, Validators.nullValidator],
-      name: [user.name, Validators.required],
-      username: [user.username, Validators.required],
-      password: [user.password, Validators.required],
-      department: [user.department, Validators.required],
-      enabled: [user.enabled, Validators.required],
-      photo: [user.photo, Validators.nullValidator]
+      id: [user?.id, Validators.nullValidator],
+      name: [user?.name, Validators.required],
+      username: [user?.username, Validators.required],
+      password: [user?.password, Validators.required],
+      department: [user?.department, Validators.required],
+      enabled: [user?.enabled, Validators.required],
+      photo: [user?.photo, Validators.nullValidator]
     });
 
-    this.form.disable();
+    user ? this.form.disable() : this.form.enable();
   }
 
   cancel() {
-    this.buildForm(this.user);
+    this.user ? this.buildForm(this.user) : this._router.navigate(['/' + this.userLogged.role.toLowerCase() + '/users']);
   }
 
   removePhoto() {
     this.photo = null;
-    this.photoToSave = null;
     this.form.get('photo')?.patchValue(null);
   }
 
   submit() {
 
     const user: User = Object.assign({}, this.form.getRawValue());
+    const image: File = this.photo?.file;
 
-    this._userService.update(user, this.photoToSave).subscribe({
+    if (user.id) {
 
-      next: (user) => {
-        this.photoToSave = null;
-        this._userService.set(user);
-        this._notificationService.show(MessageUtils.USER_UPDATE_SUCCESS, NotificationType.SUCCESS);
-      },
+      this._userService.update(user, image).subscribe({
 
-      error: (error) => {
-        console.error(error);
-        this._notificationService.show(MessageUtils.USER_UPDATE_FAIL + error.error[0].message, NotificationType.FAIL);   
-      }
-    });
+        next: (user) => {
+          this._userService.set(user);
+          this._notificationService.show(MessageUtils.USER_UPDATE_SUCCESS, NotificationType.SUCCESS);
+        },
+  
+        error: (error) => {
+          console.error(error);
+          this._notificationService.show(MessageUtils.USER_UPDATE_FAIL + error.error[0].message, NotificationType.FAIL);   
+        }
+      });
+    }
+
+    else {
+
+      this._userService.save(user, image).subscribe({
+
+        next: (user) => {
+          this._router.navigate(['/' + this.userLogged.role.toLowerCase() + '/users/' + user.id]);
+          this._notificationService.show(MessageUtils.USER_SAVE_SUCCESS, NotificationType.SUCCESS);
+        },
+  
+        error: (error) => {
+          console.error(error);
+          this._notificationService.show(MessageUtils.USER_SAVE_FAIL + error.error[0].message, NotificationType.FAIL);   
+        }
+      });
+    }
   }
 
   update() {
