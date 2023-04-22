@@ -4,17 +4,17 @@
             <ol class="breadcrumb m-0">
                 <li class="breadcrumb-item"><a class="text-white" [routerLink]="'/' + user.role.toLowerCase()">Início</a></li>
                 <li class="breadcrumb-item"><a class="text-white" [routerLink]="'/' + user.role.toLowerCase() + '/users'">Usuários</a></li>
-                <li class="breadcrumb-item active" aria-current="page" *ngIf="userRemote">{{userRemote.name}}</li>
+                <li class="breadcrumb-item active" aria-current="page">{{userRemote ? userRemote.name : 'Cadastro'}}</li>
             </ol>
         </nav>
     </div>
 </div>
 
-<mat-card *ngIf="userRemote">
+<mat-card>
     <mat-card-header>
         <div class="mat-card-header-text">
             <div class="text-center">
-                <h2>{{userRemote.name}}</h2>
+                <h2>{{userRemote ? userRemote.name : 'Cadastrar Usuário'}}</h2>
             </div>
         </div>
     </mat-card-header>

@@ -30,21 +30,28 @@ export class UserComponent implements OnInit {
 
     this._activatedRoute.params.subscribe({
 
-      next: (x: any) => {
+      next: (params: any) => {
           
-        if (x && x.id) {
+        if (params && params.id) {
           
-          this._userService.findById(x.id).subscribe({
-            
-            next: (user) => {
-              this._userService.set(user);
-            },
+          if (params.id.includes('register')) {
+            this._userService.set(null);
+          }
 
-            error: (error) => {
-              console.error(error);
-              this._notificationService.show(MessageUtils.USER_GET_FAIL, NotificationType.FAIL); 
-            }
-          });
+          else {
+
+            this._userService.findById(params.id).subscribe({
+            
+              next: (user) => {
+                this._userService.set(user);
+              },
+  
+              error: (error) => {
+                console.error(error);
+                this._notificationService.show(MessageUtils.USER_GET_FAIL, NotificationType.FAIL); 
+              }
+            });
+          }
         }
       },
     });

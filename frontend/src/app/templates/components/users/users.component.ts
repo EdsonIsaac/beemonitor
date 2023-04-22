@@ -1,6 +1,6 @@
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
+import { Router } from '@angular/router';
 import { User } from 'src/app/entities/user';
 import { NotificationType } from 'src/app/enums/notification-type';
 import { AuthService } from 'src/app/services/auth.service';
@@ -9,8 +9,6 @@ import { UserService } from 'src/app/services/user.service';
 import { MessageUtils } from 'src/app/utils/message-utils';
 import { OperatorUtils } from 'src/app/utils/operator-utils';
 import { environment } from 'src/environments/environment';
-
-import { UserFormComponent } from '../user-form/user-form.component';
 
 @Component({
   selector: 'app-users',
@@ -32,8 +30,8 @@ export class UsersComponent implements AfterViewInit {
 
   constructor (
     private _authService: AuthService,
-    private _dialog: MatDialog,
     private _notificationService: NotificationService,
+    private _router: Router,
     private _userService: UserService
   ) {
     this.apiURL = environment.apiURL;
@@ -47,19 +45,7 @@ export class UsersComponent implements AfterViewInit {
   }
 
   add() {
-    
-    this._dialog.open(UserFormComponent, {
-      data: {
-        user: null
-      },
-      width: '100%'
-    })
-    .afterClosed().subscribe((result) => {
-
-      if (result && result.status) {
-        this.findAll();
-      }
-    });
+    this._router.navigate(['/' + this.user.role.toLowerCase() + '/users/register']);
   }
 
   async findAll() {
@@ -133,19 +119,7 @@ export class UsersComponent implements AfterViewInit {
     });
   }
 
-  update(user: User) {
-
-    this._dialog.open(UserFormComponent, {
-      data: {
-        user: user
-      },
-      width: '100%'
-    })
-    .afterClosed().subscribe((result) => {
-
-      if (result && result.status) {
-        this.findAll();
-      }
-    });
+  show(user: User) {
+    this._router.navigate(['/' + this.user.role.toLowerCase() + '/users/' + user.id]);
   }
 }
