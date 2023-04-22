@@ -1,8 +1,8 @@
 CREATE TABLE tb_hives
 (
     id                 UUID NOT NULL,
-    created_date       TIMESTAMP WITHOUT TIME ZONE,
-    last_modified_date TIMESTAMP WITHOUT TIME ZONE,
+    created_date       TIMESTAMP,
+    last_modified_date TIMESTAMP,
     created_by_user    VARCHAR(255),
     modified_by_user   VARCHAR(255),
     code               VARCHAR(255),
@@ -12,8 +12,8 @@ CREATE TABLE tb_hives
 CREATE TABLE tb_images
 (
     id                 UUID NOT NULL,
-    created_date       TIMESTAMP WITHOUT TIME ZONE,
-    last_modified_date TIMESTAMP WITHOUT TIME ZONE,
+    created_date       TIMESTAMP,
+    last_modified_date TIMESTAMP,
     created_by_user    VARCHAR(255),
     modified_by_user   VARCHAR(255),
     name               VARCHAR(255),
@@ -23,8 +23,8 @@ CREATE TABLE tb_images
 CREATE TABLE tb_mensurations
 (
     id                 UUID             NOT NULL,
-    created_date       TIMESTAMP WITHOUT TIME ZONE,
-    last_modified_date TIMESTAMP WITHOUT TIME ZONE,
+    created_date       TIMESTAMP,
+    last_modified_date TIMESTAMP,
     created_by_user    VARCHAR(255),
     modified_by_user   VARCHAR(255),
     temperature        DOUBLE PRECISION NOT NULL,
@@ -37,8 +37,8 @@ CREATE TABLE tb_mensurations
 CREATE TABLE tb_users
 (
     id                 UUID         NOT NULL,
-    created_date       TIMESTAMP WITHOUT TIME ZONE,
-    last_modified_date TIMESTAMP WITHOUT TIME ZONE,
+    created_date       TIMESTAMP,
+    last_modified_date TIMESTAMP,
     created_by_user    VARCHAR(255),
     modified_by_user   VARCHAR(255),
     name               VARCHAR(255),

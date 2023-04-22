@@ -4,15 +4,24 @@ jwt:
 
 spring:
   datasource:
-    driver-class-name: org.postgresql.Driver
+    driver-class-name: org.h2.Driver
     password: beemonitor
-    url: jdbc:postgresql://localhost/beemonitor-development
+    url: jdbc:h2:file:./data/database/database-development
     username: beemonitor
+  h2:
+    console:
+      enabled: true
+      path: /database/h2-console
   jpa:
     hibernate:
       ddl-auto: validate
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
+        dialect: org.hibernate.dialect.H2Dialect
         format_sql: true
     show-sql: false
+  servlet:
+    multipart:
+      max-file-size: 10MB
+  web:
+    locale: pt_BR
