@@ -60,7 +60,13 @@ public class BeeMonitorApplication implements CommandLineRunner {
 	 */
 	private void createFolders() {
 
-		var files = new File("files");
+		var data = new File("data");
+
+		if (!data.exists()) {
+			data.mkdir();
+		}
+
+		var files = new File("data/files");
 
 		if (!files.exists()) {
 			files.mkdir();
