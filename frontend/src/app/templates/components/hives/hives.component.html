@@ -49,7 +49,7 @@
 
 <div class="row" [hidden]="(hives && hives.length == 0) || isLoadingResults">
     <div class="col-12 col-md-4 mb-3" *ngFor="let hive of hives">
-        <a [routerLink]="'/' + user.role.toLowerCase() + '/hives/' + hive.id" class="text-decoration-none text-dark">
+        <a class="text-decoration-none text-dark" style="cursor: pointer;" (click)="show(hive)">
             <mat-card>
                 <mat-card-header>
                     <div class="mat-card-header-text">
