@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
 import { MatPaginator } from '@angular/material/paginator';
+import { Router } from '@angular/router';
 import { Hive } from 'src/app/entities/hive';
 import { NotificationType } from 'src/app/enums/notification-type';
 import { AuthService } from 'src/app/services/auth.service';
@@ -9,8 +9,6 @@ import { MensurationService } from 'src/app/services/mensuration.service';
 import { NotificationService } from 'src/app/services/notification.service';
 import { MessageUtils } from 'src/app/utils/message-utils';
 import { OperatorUtils } from 'src/app/utils/operator-utils';
-
-import { HiveFormComponent } from '../hive-form/hive-form.component';
 
 @Component({
   selector: 'app-hives',
@@ -31,10 +29,10 @@ export class HivesComponent implements OnInit {
 
   constructor(
     private _authService: AuthService,
-    private _dialog: MatDialog,
     private _hiveService: HiveService,
     private _mensurationService: MensurationService,
-    private _notificationService: NotificationService
+    private _notificationService: NotificationService,
+    private _router: Router
   ) { }
 
   ngOnInit(): void {
@@ -47,22 +45,7 @@ export class HivesComponent implements OnInit {
   }
 
   add() {
-
-    this._dialog.open(HiveFormComponent, {
-      data: {
-        hive: null
-      },
-      width: '100%'
-    })
-    .afterClosed().subscribe({
-
-      next: (result) => {
-          
-        if (result && result.status) {
-          this.findAll();
-        }
-      },
-    });
+    this._router.navigate(['/' + this.user.role.toLowerCase() + '/hives/register']);
   }
 
   async findAll() {
@@ -159,5 +142,9 @@ export class HivesComponent implements OnInit {
         this._notificationService.show(MessageUtils.HIVES_GET_FAIL, NotificationType.FAIL);
       }
     });
+  }
+
+  show(hive: Hive) {
+    this._router.navigate(['/' + this.user.role.toLowerCase() + '/hives/' + hive.id]);
   }
 }
