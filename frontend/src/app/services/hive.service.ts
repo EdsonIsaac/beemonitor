@@ -100,7 +100,7 @@ export class HiveService {
    * 
    * @param hive 
    */
-  set(hive: Hive) {
+  set(hive: Hive | null) {
     this._subject.next(hive);
   }
 

@@ -4,17 +4,17 @@
             <ol class="breadcrumb m-0">
                 <li class="breadcrumb-item"><a class="text-white" [routerLink]="'/' + user.role.toLowerCase()">Início</a></li>
                 <li class="breadcrumb-item"><a class="text-white" [routerLink]="'/' + user.role.toLowerCase() + '/hives'">Colmeias</a></li>
-                <li class="breadcrumb-item active" aria-current="page" *ngIf="hive">{{hive.code}}</li>
+                <li class="breadcrumb-item active" aria-current="page">{{hive ? hive.code : 'Cadastro'}}</li>
             </ol>
         </nav>
     </div>
 </div>
 
-<mat-card *ngIf="hive">
+<mat-card>
     <mat-card-header>
         <div class="mat-card-header-text">
             <div class="text-center">
-                <h2>{{hive.code}}</h2>
+                <h2>{{hive ? hive.code : 'Cadastrar Colmeia'}}</h2>
             </div>
         </div>
     </mat-card-header>
@@ -26,7 +26,7 @@
                     <app-hive-informations></app-hive-informations>
                 </ng-template>
             </mat-tab>
-            <mat-tab label="Medições">
+            <mat-tab label="Medições" *ngIf="hive">
                 <ng-template matTabContent>
                     <app-hive-mensurations></app-hive-mensurations>
                 </ng-template>
