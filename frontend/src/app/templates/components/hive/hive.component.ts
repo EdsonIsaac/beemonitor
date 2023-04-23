@@ -30,21 +30,28 @@ export class HiveComponent implements OnInit {
 
     this._activatedRoute.params.subscribe({
 
-      next: (x: any) => {
+      next: (params: any) => {
           
-        if (x && x.id) {
+        if (params && params.id) {
           
-          this._hiveService.findById(x.id).subscribe({
-            
-            next: (hive) => {
-              this._hiveService.set(hive);
-            },
+          if (params.id.includes('register')) {
+            this._hiveService.set(null);
+          }
 
-            error: (error) => {
-              console.error(error);
-              this._notificationService.show(MessageUtils.HIVE_GET_FAIL, NotificationType.FAIL); 
-            }
-          });
+          else {
+
+            this._hiveService.findById(params.id).subscribe({
+            
+              next: (hive) => {
+                this._hiveService.set(hive);
+              },
+  
+              error: (error) => {
+                console.error(error);
+                this._notificationService.show(MessageUtils.HIVE_GET_FAIL, NotificationType.FAIL); 
+              }
+            });
+          }
         }
       },
     });

@@ -24,7 +24,6 @@ import { getDutchPaginatorIntl } from 'src/app/configurations/internacionalizati
 
 import { FooterComponent } from './footer/footer.component';
 import { HiveDeleteComponent } from './hive-delete/hive-delete.component';
-import { HiveFormComponent } from './hive-form/hive-form.component';
 import { HiveInformationsComponent } from './hive-informations/hive-informations.component';
 import { HiveMensurationsComponent } from './hive-mensurations/hive-mensurations.component';
 import { HiveComponent } from './hive/hive.component';
@@ -34,19 +33,17 @@ import { LayoutComponent } from './layout/layout.component';
 import { LoginComponent } from './login/login.component';
 import { NotFoundComponent } from './not-found/not-found.component';
 import { NotificationComponent } from './notification/notification.component';
-import { ToolbarComponent } from './toolbar/toolbar.component';
-import { UserFormComponent } from './user-form/user-form.component';
-import { UsersComponent } from './users/users.component';
-import { UserComponent } from './user/user.component';
-import { UserInformationsComponent } from './user-informations/user-informations.component';
 import { SelectImageComponent } from './select-image/select-image.component';
+import { ToolbarComponent } from './toolbar/toolbar.component';
+import { UserInformationsComponent } from './user-informations/user-informations.component';
+import { UserComponent } from './user/user.component';
+import { UsersComponent } from './users/users.component';
 
 @NgModule({
   declarations: [
     FooterComponent,
     HiveComponent,
     HiveDeleteComponent,
-    HiveFormComponent,
     HiveInformationsComponent,
     HiveMensurationsComponent,
     HivesComponent,
@@ -56,7 +53,6 @@ import { SelectImageComponent } from './select-image/select-image.component';
     NotFoundComponent,
     NotificationComponent,
     ToolbarComponent,
-    UserFormComponent,
     UsersComponent,
     UserComponent,
     UserInformationsComponent,
