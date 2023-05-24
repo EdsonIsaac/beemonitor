@@ -3,20 +3,15 @@ package io.github.edsonisaac.beemonitor.entities;
 import io.github.edsonisaac.beemonitor.exceptions.OperationFailureException;
 import io.github.edsonisaac.beemonitor.utils.FileUtils;
 import io.github.edsonisaac.beemonitor.utils.MessageUtils;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
 import java.io.IOException;
 
-/**
- * The type Image.
- *
- * @author Edson Isaac
- */
 @Data
 @Builder
 @NoArgsConstructor
@@ -25,7 +20,7 @@ import java.io.IOException;
 public class Image extends AbstractEntity {
 
     @NotEmpty
-    @Column(name = "name")
+    @Column(name = "name", unique = true)
     private String name;
 
     @Override

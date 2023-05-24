@@ -1,72 +1,118 @@
 package io.github.edsonisaac.beemonitor.entities;
 
-import io.github.edsonisaac.beemonitor.enums.Department;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import io.github.edsonisaac.beemonitor.enums.Authority;
+import jakarta.persistence.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
+
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.*;
-import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.util.Collection;
+import java.util.Set;
 
 /**
- * The type User.
+ * Represents a user entity.
  *
  * @author Edson Isaac
  */
 @Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity(name = "tb_users")
 public class User extends AbstractEntity implements UserDetails {
 
-    @NotEmpty(message = "{field.name.invalid}")
+    /**
+     * The name of the user.
+     */
+    @NotEmpty
+    @Column(name = "name", nullable = false)
     private String name;
 
-    @NotEmpty(message = "{field.username.invalid}")
+    /**
+     * The username of the user (unique).
+     */
+    @NotEmpty
+    @Column(name = "username", nullable = false, unique = true)
     private String username;
 
-    @NotEmpty(message = "{field.password.invalid}")
+    /**
+     * The password of the user.
+     */
+    @NotEmpty
+    @Column(name = "password", nullable = false)
     private String password;
 
-    @NotNull(message = "{field.enabled.invalid}")
+    /**
+     * Indicates whether the user is enabled.
+     */
+    @NotNull
+    @Column(name = "enabled", nullable = false)
     private Boolean enabled;
 
-    @NotNull(message = "{field.department.invalid}")
+    /**
+     * Indicates whether the user's account is non-expired.
+     */
+    @Column(name = "account_non_expired", columnDefinition = "boolean default true")
+    private Boolean accountNonExpired;
+
+    /**
+     * Indicates whether the user's account is non-locked.
+     */
+    @Column(name = "account_non_locked", columnDefinition = "boolean default true")
+    private Boolean accountNonLocked;
+
+    /**
+     * Indicates whether the user's credentials are non-expired.
+     */
+    @Column(name = "credentials_non_expired", columnDefinition = "boolean default true")
+    private Boolean credentialsNonExpired;
+
+    /**
+     * The set of authorities (roles) associated with the user.
+     */
+    @NotNull
     @Enumerated(EnumType.STRING)
-    private Department department;
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "tb_authorities")
+    private Set<Authority> authorities;
 
     @Valid
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private Image photo;
 
-    @Transient
-    private Collection<? extends GrantedAuthority> authorities;
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities;
+        return authorities.stream().map(authority -> new SimpleGrantedAuthority(authority.name())).toList();
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return username;
     }
 
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        return accountNonExpired;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return accountNonLocked;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
+        return credentialsNonExpired;
     }
 
     @Override

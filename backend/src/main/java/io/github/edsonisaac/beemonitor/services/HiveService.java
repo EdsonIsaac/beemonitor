@@ -1,5 +1,6 @@
 package io.github.edsonisaac.beemonitor.services;
 
+import io.github.edsonisaac.beemonitor.dtos.HiveDTO;
 import io.github.edsonisaac.beemonitor.entities.Hive;
 import io.github.edsonisaac.beemonitor.exceptions.ObjectNotFoundException;
 import io.github.edsonisaac.beemonitor.exceptions.ValidationException;
@@ -15,22 +16,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
-/**
- * The type Hive service.
- *
- * @author Edson Isaac
- */
 @Service
 @RequiredArgsConstructor
-public class HiveService implements AbstractService<Hive> {
+public class HiveService implements AbstractService<Hive, HiveDTO> {
 
     private final HiveRepository repository;
 
-    /**
-     * Delete.
-     *
-     * @param id the id
-     */
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public void delete(UUID id) {
@@ -46,55 +37,29 @@ public class HiveService implements AbstractService<Hive> {
         throw new ObjectNotFoundException(MessageUtils.HIVE_NOT_FOUND);
     }
 
-    /**
-     * Find all.
-     *
-     * @return the hive list
-     */
     @Override
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-    public Page<Hive> findAll(Integer page, Integer size, String sort, String direction) {
-        return repository.findAll(PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(direction), sort)));
+    public Page<HiveDTO> findAll(Integer page, Integer size, String sort, String direction) {
+        final var hives = repository.findAll(PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(direction), sort)));
+        return hives.map(HiveDTO::toDTO);
     }
 
-    /**
-     * Find by code.
-     *
-     * @param code the code
-     * @return the hive projection
-     */
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-    public Hive findByCode(String code) {
-
-        return repository.findByCode(code).orElseThrow(() -> {
-            throw new ObjectNotFoundException(MessageUtils.HIVE_NOT_FOUND);
-        });
+    public HiveDTO findByCode(String code) {
+        final var hive = repository.findByCode(code).orElseThrow(() -> new ObjectNotFoundException(MessageUtils.HIVE_NOT_FOUND));
+        return HiveDTO.toDTO(hive);
     }
 
-    /**
-     * Find by id.
-     *
-     * @param id the id
-     * @return the hive
-     */
     @Override
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-    public Hive findById(UUID id) {
-
-        return repository.findById(id).orElseThrow(() -> {
-            throw new ObjectNotFoundException(MessageUtils.HIVE_NOT_FOUND);
-        });
+    public HiveDTO findById(UUID id) {
+        final var hive = repository.findById(id).orElseThrow(() -> new ObjectNotFoundException(MessageUtils.HIVE_NOT_FOUND));
+        return HiveDTO.toDTO(hive);
     }
 
-    /**
-     * Save.
-     *
-     * @param hive the hive
-     * @return the hive
-     */
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public Hive save(Hive hive) {
+    public HiveDTO save(Hive hive) {
 
         if (hive == null) {
             throw new ValidationException(MessageUtils.HIVE_NULL);
@@ -104,43 +69,18 @@ public class HiveService implements AbstractService<Hive> {
             hive = repository.save(hive);
         }
 
-        return hive;
+        return HiveDTO.toDTO(hive);
     }
 
-    /**
-     * Search.
-     *
-     * @param value     the value
-     * @param page      the page
-     * @param size      the size
-     * @param sort      the sort
-     * @param direction the direction
-     * @return the hive list
-     */
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-    public Page<Hive> search(String value, Integer page, Integer size, String sort, String direction) {
-        return repository.search(value, PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(direction), sort)));
+    public Page<HiveDTO> search(String value, Integer page, Integer size, String sort, String direction) {
+        final var hives = repository.search(value, PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(direction), sort)));
+        return hives.map(HiveDTO::toDTO);
     }
 
-    /**
-     * Validate.
-     *
-     * @param hive the hive
-     * @return the boolean
-     */
     @Override
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
     public boolean validate(Hive hive) {
-
-        var hive_findByCode = repository.findByCode(hive.getCode());
-
-        if (hive_findByCode.isPresent()) {
-
-            if (!hive_findByCode.get().equals(hive)) {
-                throw new ValidationException(MessageUtils.HIVE_ALREADY_SAVE);
-            }
-        }
-
         return true;
     }
 }

@@ -1,75 +1,117 @@
 package io.github.edsonisaac.beemonitor.configurations;
 
-import io.github.edsonisaac.beemonitor.utils.JWTUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.nimbusds.jose.jwk.JWKSet;
+import com.nimbusds.jose.jwk.RSAKey;
+import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.HttpMethod;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.JwtDecoder;
+import org.springframework.security.oauth2.jwt.JwtEncoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.web.cors.CorsConfigurationSource;
 
 /**
- * The type Security configuration.
+ * SecurityConfiguration is a configuration class that defines the security configuration for the application.
+ * It configures authentication, authorization, and other security-related settings.
  *
  * @author Edson Isaac
  */
+@Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@RequiredArgsConstructor
 public class SecurityConfiguration {
 
-    private final CorsConfigurationSource corsConfigurationSource;
-    private final JWTUtils jwtUtils;
+    private final PasswordEncoder passwordEncoder;
+    private final RSAKeyProperties rsaKeyProperties;
     private final UserDetailsService userDetailsService;
 
-    private static final String[] PUBLIC_MATCHERS_GET = {
-        "/cooperativas",
-        "/cooperativas/search",
-        "/images/*"
-    };
-
-    private static final String[] PUBLIC_MATCHERS_POST = {
-        "/mensurations"
-    };
-
     /**
-     * Instantiates a new Security configuration.
+     * Creates and configures the authentication provider bean using DaoAuthenticationProvider.
      *
-     * @param corsConfigurationSource the cors configuration source
-     * @param jwtUtils                the jwt utils
-     * @param userDetailsService      the user details service
+     * @return the authentication provider instance
      */
-    @Autowired
-    public SecurityConfiguration(CorsConfigurationSource corsConfigurationSource, JWTUtils jwtUtils, UserDetailsService userDetailsService) {
-        this.corsConfigurationSource = corsConfigurationSource;
-        this.jwtUtils = jwtUtils;
-        this.userDetailsService = userDetailsService;
+    @Bean
+    AuthenticationProvider authenticationProvider() {
+
+        final var authenticationProvider = new DaoAuthenticationProvider();
+
+        authenticationProvider.setUserDetailsService(userDetailsService);
+        authenticationProvider.setPasswordEncoder(passwordEncoder);
+
+        return authenticationProvider;
     }
 
     /**
-     * Filter chain security filter chain.
+     * Creates and configures the authentication manager bean.
      *
-     * @param http the http
-     * @return the security filter chain
-     * @throws Exception the exception
+     * @param authenticationConfiguration the authentication configuration
+     * @return the authentication manager instance
+     * @throws Exception if an error occurs while creating the authentication manager
      */
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
 
-        http.authorizeRequests()
-            .antMatchers(HttpMethod.GET, PUBLIC_MATCHERS_GET).permitAll()
-            .antMatchers(HttpMethod.POST, PUBLIC_MATCHERS_POST).permitAll()
-            .anyRequest().authenticated()
-        ;
+    /**
+     * Configures the security filter chain.
+     *
+     * @param http the HttpSecurity object
+     * @return the SecurityFilterChain instance
+     * @throws Exception if an error occurs while configuring the security filter chain
+     */
+    @Bean
+    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
-        http.apply(new HttpConfigurer(jwtUtils, userDetailsService));
-        http.cors().configurationSource(corsConfigurationSource);
-        http.csrf().disable();
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        return http
+                .authorizeHttpRequests(requests -> {
+                    requests.requestMatchers("/auth/**").permitAll();
+                    requests.anyRequest().authenticated();
+                })
+                .cors()
+                .and()
+                .csrf(csrf -> csrf.disable())
+                .httpBasic(Customizer.withDefaults())
+                .headers(headers -> headers.frameOptions().sameOrigin())
+                .oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt)
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .build();
+    }
 
-        return http.build();
+    /**
+     * Creates and configures the JWT decoder bean using NimbusJwtDecoder.
+     *
+     * @return the JwtDecoder instance
+     */
+    @Bean
+    JwtDecoder jwtDecoder() {
+        return NimbusJwtDecoder.withPublicKey(rsaKeyProperties.getPublicKey()).build();
+    }
+
+    /**
+     * Creates and configures the JWT encoder bean using NimbusJwtEncoder.
+     *
+     * @return the JwtEncoder instance
+     */
+    @Bean
+    JwtEncoder jwtEncoder() {
+        final var jwk = new RSAKey.Builder(rsaKeyProperties.getPublicKey()).privateKey(rsaKeyProperties.getPrivateKey()).build();
+        final var jwks = new ImmutableJWKSet<>(new JWKSet(jwk));
+        return new NimbusJwtEncoder(jwks);
     }
 }

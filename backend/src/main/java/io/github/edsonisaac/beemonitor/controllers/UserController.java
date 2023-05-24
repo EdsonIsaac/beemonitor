@@ -1,142 +1,113 @@
 package io.github.edsonisaac.beemonitor.controllers;
 
 import io.github.edsonisaac.beemonitor.dtos.UserDTO;
-import io.github.edsonisaac.beemonitor.entities.Image;
 import io.github.edsonisaac.beemonitor.entities.User;
-import io.github.edsonisaac.beemonitor.exceptions.ObjectNotFoundException;
+import io.github.edsonisaac.beemonitor.exceptions.ValidationException;
 import io.github.edsonisaac.beemonitor.services.UserService;
-import io.github.edsonisaac.beemonitor.utils.FileUtils;
-import io.github.edsonisaac.beemonitor.utils.MessageUtils;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.Valid;
-import java.io.FileNotFoundException;
 import java.util.UUID;
 
-import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.OK;
-
 /**
- * The type User controller.
+ * REST controller for managing users.
  *
  * @author Edson Isaac
  */
 @RestController
-@RequestMapping("/users")
+@RequestMapping(value = "/users")
 @RequiredArgsConstructor
-public class UserController {
+@Tag(name = "User", description = "Endpoints for users management")
+public class UserController implements AbstractController<User, UserDTO> {
 
     private final UserService service;
 
     /**
-     * Find all response entity.
+     * Deletes a user by ID.
      *
-     * @return the response entity
+     * @param id the ID of the user to delete
+     * @return Response entity with no content in the response body
      */
+    @Override
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAuthority('SCOPE_SUPPORT')")
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
+        service.delete(id);
+        return ResponseEntity.status(HttpStatus.OK).build();
+    }
+
+    /**
+     * Retrieves all users with pagination and sorting options.
+     *
+     * @param page       the page number (optional, default: 0)
+     * @param size       the page size (optional, default: 10)
+     * @param sort       the sort field (optional, default: "name")
+     * @param direction  the sort direction (optional, default: "asc")
+     * @return ResponseEntity with a page of UserDTO objects in the response body
+     */
+    @Override
     @GetMapping
-    @PreAuthorize("hasRole('SUPPORT')")
-    public ResponseEntity<?> findAll(@RequestParam(required = false, defaultValue = "0") Integer page,
-                                  @RequestParam(required = false, defaultValue = "10") Integer size,
-                                  @RequestParam(required = false, defaultValue = "name") String sort,
-                                  @RequestParam(required = false, defaultValue = "asc") String direction) {
+    @PreAuthorize("hasAuthority('SCOPE_SUPPORT')")
+    public ResponseEntity<Page<UserDTO>> findAll(@RequestParam(required = false, defaultValue = "0") Integer page,
+                                                 @RequestParam(required = false, defaultValue = "10") Integer size,
+                                                 @RequestParam(required = false, defaultValue = "name") String sort,
+                                                 @RequestParam(required = false, defaultValue = "asc") String direction) {
 
-        var users = service.findAll(page, size, sort, direction).map(UserDTO::toDTO);
-        return ResponseEntity.status(OK).body(users);
+        final var users = service.findAll(page, size, sort, direction);
+        return ResponseEntity.status(HttpStatus.OK).body(users);
     }
 
     /**
-     * Find by id response entity.
+     * Retrieves a user by ID.
      *
-     * @param id the id
-     * @return the response entity
+     * @param id the ID of the user to retrieve
+     * @return ResponseEntity with the UserDTO object in the response body
      */
+    @Override
     @GetMapping("/{id}")
-    @PreAuthorize("hasRole('SUPPORT')")
-    public ResponseEntity<?> findById(@PathVariable UUID id) {
-        var user = service.findById(id);
-        return ResponseEntity.status(OK).body(UserDTO.toDTO(user));
-    }
-    
-    /**
-     * Save response entity.
-     *
-     * @param user the user
-     * @return the response entity
-     */
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasRole('SUPPORT')")
-    public ResponseEntity<?> save(@RequestPart @Valid User user,
-                               @RequestPart(required = false) MultipartFile photo) throws FileNotFoundException {
-
-        if (photo != null) {
-
-            var image = Image.builder()
-                    .name(System.currentTimeMillis() + "." + FileUtils.getExtension(photo))
-                    .build();
-
-            user.setPhoto(image);
-            FileUtils.FILES.put(image.getName(), photo);
-        }
-
-        user = service.save(user);
-        return ResponseEntity.status(CREATED).body(UserDTO.toDTO(user));
+    @PreAuthorize("hasAuthority('SCOPE_SUPPORT')")
+    public ResponseEntity<UserDTO> findById(@PathVariable UUID id) {
+        final var user = service.findById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(user);
     }
 
     /**
-     * Search response entity.
+     * Saves a new user.
      *
-     * @param value     the value
-     * @param page      the page
-     * @param size      the size
-     * @param sort      the sort
-     * @param direction the direction
-     * @return the response entity
+     * @param user the User object to save
+     * @return ResponseEntity with the saved UserDTO object in the response body
      */
-    @GetMapping("/search")
-    public ResponseEntity<?> search(@RequestParam String value,
-                                 @RequestParam(required = false, defaultValue = "0") Integer page,
-                                 @RequestParam(required = false, defaultValue = "10") Integer size,
-                                 @RequestParam(required = false, defaultValue = "name") String sort,
-                                 @RequestParam(required = false, defaultValue = "asc") String direction) {
-
-        var users = service.search(value, page, size, sort, direction).map(UserDTO::toDTO);
-        return ResponseEntity.status(OK).body(users);
+    @Override
+    @PostMapping
+    @PreAuthorize("hasAuthority('SCOPE_SUPPORT')")
+    public ResponseEntity<UserDTO> save(@RequestBody User user) {
+        final var userSaved = service.save(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(userSaved);
     }
 
     /**
-     * Update response entity.
+     * Updates an existing user by ID.
      *
-     * @param id   the id
-     * @param user the user
-     * @return the response entity
+     * @param id   the ID of the user to update
+     * @param user the updated User object
+     * @return ResponseEntity with the updated UserDTO object in the response body
+     * @throws ValidationException if the provided ID is invalid
      */
-    @PutMapping(value = "/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasRole('SUPPORT')")
-    public ResponseEntity<?> update(@PathVariable UUID id,
-                                 @RequestPart @Valid User user,
-                                 @RequestPart(required = false) MultipartFile photo) throws FileNotFoundException {
+    @Override
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAuthority('SCOPE_SUPPORT')")
+    public ResponseEntity<UserDTO> update(@PathVariable UUID id, @RequestBody User user) {
 
         if (user.getId().equals(id)) {
-
-            if (photo != null) {
-
-                var image = Image.builder()
-                        .name(System.currentTimeMillis() + "." + FileUtils.getExtension(photo))
-                        .build();
-
-                user.setPhoto(image);
-                FileUtils.FILES.put(image.getName(), photo);
-            }
-
-            user = service.save(user);
-            return ResponseEntity.status(OK).body(UserDTO.toDTO(user));
+            final var userUpdated = service.save(user);
+            return ResponseEntity.status(HttpStatus.OK).body(userUpdated);
         }
 
-        throw new ObjectNotFoundException(MessageUtils.ARGUMENT_NOT_VALID);
+        throw new ValidationException("ID inválido!");
     }
 }

@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.github.edsonisaac.beemonitor.entities.Hive;
 import io.github.edsonisaac.beemonitor.entities.User;
-import io.github.edsonisaac.beemonitor.enums.Department;
+import io.github.edsonisaac.beemonitor.enums.Authority;
 import io.github.edsonisaac.beemonitor.repositories.HiveRepository;
 import io.github.edsonisaac.beemonitor.services.HiveService;
 import io.github.edsonisaac.beemonitor.services.UserService;
@@ -26,6 +26,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.HashMap;
+import java.util.Set;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
@@ -63,11 +64,11 @@ class HiveControllerTest {
                 .build();
 
         // Create administration user
-        var administration = User.builder()
+        final var administration = User.builder()
                 .name("ADMINISTRATION")
                 .username("administration")
                 .password("administration")
-                .department(Department.ADMINISTRATION)
+                .authorities(Set.of(Authority.ADMINISTRATION))
                 .enabled(true)
                 .build();
 
@@ -75,19 +76,19 @@ class HiveControllerTest {
         userService.save(administration);
 
         // Create login body
-        var requestBody = new HashMap<String, String>();
+        final var requestBody = new HashMap<String, String>();
 
         requestBody.put("username", "administration");
         requestBody.put("password", "administration");
 
         // Call login endpoint to receive authentication information
-        var responseBody = this.mvc.perform(
+        final var responseBody = this.mvc.perform(
                         post("/login")
                                 .content(mapper.writeValueAsString(requestBody)))
                 .andReturn();
 
         // Convert the response body to json object
-        var response = mapper.readValue(responseBody.getResponse().getContentAsString(), ObjectNode.class);
+        final var response = mapper.readValue(responseBody.getResponse().getContentAsString(), ObjectNode.class);
 
         // Set access_token into the token variable
         if (response.has("access_token")) {
@@ -103,7 +104,7 @@ class HiveControllerTest {
     @Test
     void shouldSaveTheHive() throws Exception {
 
-        var hive = Hive.builder().code("0001").build();
+        final var hive = Hive.builder().code("0001").build();
 
         this.mvc.perform(
                         post("/hives")
@@ -118,7 +119,7 @@ class HiveControllerTest {
     @Test
     void shouldNotSaveTheHiveWhenCodeIsNull() throws Exception {
 
-        var hive = Hive.builder().code(null).build();
+        final var hive = Hive.builder().code(null).build();
 
         this.mvc.perform(
                         post("/hives")
@@ -132,7 +133,7 @@ class HiveControllerTest {
     @Test
     void shouldNotSaveTheHiveWhenCodeIsEmpty() throws Exception {
 
-        var hive = Hive.builder().code("").build();
+        final var hive = Hive.builder().code("").build();
 
         this.mvc.perform(
                         post("/hives")
@@ -156,12 +157,11 @@ class HiveControllerTest {
     @Test
     void shouldDeleteTheHive() throws Exception {
 
-        var hive = Hive.builder().code("0001").build();
-
-        hive = hiveService.save(hive);
+        final var hive = Hive.builder().code("0001").build();
+        final var hiveSaved = hiveService.save(hive);
 
         this.mvc.perform(
-                        delete("/hives/" + hive.getId())
+                        delete("/hives/" + hiveSaved.id())
                                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 .andExpect(status().isOk())
                 .andReturn();

@@ -6,7 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * The type Standard error.
+ * Represents a standard error response.
+ * Contains information about an error, such as timestamp, status, error message, and path.
+ * This class is used for error handling and response in case of exceptions.
  *
  * @author Edson Isaac
  */

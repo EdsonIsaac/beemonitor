@@ -12,31 +12,12 @@ import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * The type File utils.
- *
- * @author Edson Isaac
- */
 public abstract class FileUtils {
 
-    /**
-     * The constant FILES.
-     */
     public static final Map<String, MultipartFile> FILES = new HashMap<>();
 
-    /**
-     * The constant IMAGES_DIRECTORY.
-     */
     public static final String IMAGES_DIRECTORY = File.separator + "data" + File.separator + "files" + File.separator + "images";
 
-    /**
-     * Find.
-     *
-     * @param filename the filename
-     * @param path     the path
-     * @return the file
-     * @throws FileNotFoundException the file not found exception
-     */
     public static File find(String filename, String path) throws FileNotFoundException {
 
         File file = new File(System.getProperty("user.dir") + path + File.separator + filename);
@@ -48,15 +29,6 @@ public abstract class FileUtils {
         return file;
     }
 
-    /**
-     * Save.
-     *
-     * @param filename the filename
-     * @param file     the file
-     * @param path     the path
-     * @return the file
-     * @throws IOException the io exception
-     */
     public static File save(String filename, MultipartFile file, String path) throws IOException {
 
 
@@ -70,13 +42,6 @@ public abstract class FileUtils {
         throw new OperationFailureException("Diretório não encontrado!");
     }
 
-    /**
-     * Delete.
-     *
-     * @param filename the filename
-     * @param path     the path
-     * @return the boolean
-     */
     public static boolean delete(String filename, String path) {
         File file = new File(System.getProperty("user.dir") + path + "/" + filename);
 
@@ -87,13 +52,6 @@ public abstract class FileUtils {
         return true;
     }
 
-    /**
-     * Get extension.
-     *
-     * @param object the object
-     * @return the extension
-     * @throws FileNotFoundException the file not found exception
-     */
     public static String getExtension(Object object) throws FileNotFoundException {
 
         if (object instanceof File) {
@@ -117,12 +75,6 @@ public abstract class FileUtils {
         throw new OperationFailureException(MessageUtils.OPERATION_FAILURE);
     }
 
-    /**
-     * Check path destination.
-     *
-     * @param path the path
-     * @return the boolean
-     */
     public static boolean checkPathDestination(String path) {
 
         File directory = new File(System.getProperty("user.dir") + path);

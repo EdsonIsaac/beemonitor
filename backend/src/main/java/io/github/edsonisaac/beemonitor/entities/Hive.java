@@ -1,21 +1,14 @@
 package io.github.edsonisaac.beemonitor.entities;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
+import jakarta.validation.constraints.NotEmpty;
+import lombok.*;
 
-import javax.persistence.Entity;
-import javax.persistence.OneToMany;
-import javax.validation.constraints.NotEmpty;
 import java.util.Set;
 
-/**
- * The type Hive.
- *
- * @author Edson Isaac
- */
 @Data
 @Builder
 @NoArgsConstructor
@@ -23,7 +16,8 @@ import java.util.Set;
 @Entity(name = "tb_hives")
 public class Hive extends AbstractEntity {
 
-    @NotEmpty(message = "{field.code.invalid}")
+    @NotEmpty
+    @Column(name = "code", unique = true)
     private String code;
 
     @OneToMany(orphanRemoval = true, mappedBy = "hive")

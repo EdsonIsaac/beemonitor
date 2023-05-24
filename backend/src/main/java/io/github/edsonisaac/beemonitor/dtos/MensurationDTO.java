@@ -6,11 +6,6 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-/**
- * The type Mensuration dto.
- *
- * @author Edson Isaac
- */
 public record MensurationDTO(
         UUID id,
         LocalDateTime createdDate,
@@ -22,12 +17,6 @@ public record MensurationDTO(
         Double weight
 ) implements Serializable {
 
-    /**
-     * To dto mensuration dto.
-     *
-     * @param mensuration the mensuration
-     * @return the mensuration dto
-     */
     public static MensurationDTO toDTO(Mensuration mensuration) {
 
         return new MensurationDTO(

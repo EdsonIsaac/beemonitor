@@ -1,16 +1,16 @@
 package io.github.edsonisaac.beemonitor.exceptions;
 
 /**
- * The type Object not found exception.
+ * Exception thrown when an object is not found.
  *
  * @author Edson Isaac
  */
 public class ObjectNotFoundException extends RuntimeException {
 
     /**
-     * Instantiates a new Object not found exception.
+     * Constructs a new {@code ObjectNotFoundException} with the specified detail message.
      *
-     * @param message the message
+     * @param message the detail message
      */
     public ObjectNotFoundException(String message) {
         super(message);

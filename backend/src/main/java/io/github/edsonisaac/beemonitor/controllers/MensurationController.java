@@ -2,80 +2,92 @@ package io.github.edsonisaac.beemonitor.controllers;
 
 import io.github.edsonisaac.beemonitor.dtos.MensurationDTO;
 import io.github.edsonisaac.beemonitor.entities.Mensuration;
-import io.github.edsonisaac.beemonitor.services.HiveService;
+import io.github.edsonisaac.beemonitor.exceptions.ObjectNotFoundException;
 import io.github.edsonisaac.beemonitor.services.MensurationService;
+import io.github.edsonisaac.beemonitor.utils.MessageUtils;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.MediaType;
+import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.UUID;
 
-import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.OK;
-
-/**
- * The type Mensuration controller.
- *
- * @author Edson Isaac
- */
 @RestController
 @RequestMapping("/mensurations")
 @RequiredArgsConstructor
-public class MensurationController {
+public class MensurationController implements AbstractController<Mensuration, MensurationDTO> {
 
-    private final HiveService hiveService;
-    private final MensurationService mensurationService;
+    private final MensurationService service;
 
-    @GetMapping
-    @PreAuthorize("hasAnyRole('ADMINISTRATION', 'SUPPORT')")
-    public ResponseEntity<?> findAll(@RequestParam UUID hiveId,
-                                     @RequestParam(required = false, defaultValue = "0") Integer page,
-                                     @RequestParam(required = false, defaultValue = "10") Integer size,
-                                     @RequestParam(required = false, defaultValue = "createdDate") String sort,
-                                     @RequestParam(required = false, defaultValue = "desc") String direction) {
-
-        var mensurations = mensurationService.findAll(hiveId, page, size, sort, direction).map(MensurationDTO::toDTO);
-        return ResponseEntity.status(OK).body(mensurations);
+    @Override
+    @DeleteMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('SCOPE_ADMINISTRATION', 'SCOPE_SUPPORT')")
+    public ResponseEntity<Void> delete(@PathVariable UUID id) {
+        service.delete(id);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    /**
-     * Save response entity.
-     *
-     * @param code        the code
-     * @param mensuration the mensuration
-     * @return the response entity
-     */
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> save(@RequestPart String code,
-                               @RequestPart @Valid Mensuration mensuration) {
+    @Override
+    @PreAuthorize("hasAnyAuthority('SCOPE_ADMINISTRATION', 'SCOPE_SUPPORT')")
+    public ResponseEntity<Page<MensurationDTO>> findAll(@RequestParam(required = false, defaultValue = "0") Integer page,
+                                                        @RequestParam(required = false, defaultValue = "10") Integer size,
+                                                        @RequestParam(required = false, defaultValue = "createdDate") String sort,
+                                                        @RequestParam(required = false, defaultValue = "desc") String direction) {
 
-        var hive = hiveService.findByCode(code);
-        mensuration.setHive(hive);
-        mensuration = mensurationService.save(mensuration);
-
-        return ResponseEntity.status(CREATED).body(MensurationDTO.toDTO(mensuration));
+        final var mensurations = service.findAll(page, size, sort, direction);
+        return ResponseEntity.status(HttpStatus.OK).body(mensurations);
     }
 
-    /**
-     * Search response entity.
-     *
-     * @param hiveId the hive id
-     * @param size   the size
-     * @return the response entity
-     */
+    @Override
+    @GetMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('SCOPE_ADMINISTRATION', 'SCOPE_SUPPORT')")
+    public ResponseEntity<MensurationDTO> findById(@PathVariable UUID id) {
+        final var mensuration = service.findById(id);
+        return ResponseEntity.status(HttpStatus.OK).body(mensuration);
+    }
+
+    @PostMapping
+    public ResponseEntity<MensurationDTO> save(@RequestBody @Valid Mensuration mensuration) {
+        final var mensurationSaved = service.save(mensuration);
+        return ResponseEntity.status(HttpStatus.CREATED).body(mensurationSaved);
+    }
+
     @GetMapping("/search")
-    @PreAuthorize("hasAnyRole('ADMINISTRATION', 'SUPPORT')")
-    public ResponseEntity<?> search(@RequestParam UUID hiveId,
-                                 @RequestParam String date,
-                                 @RequestParam(required = false, defaultValue = "0") Integer page,
-                                 @RequestParam(required = false, defaultValue = "10") Integer size,
-                                 @RequestParam(required = false, defaultValue = "createdDate") String sort,
-                                 @RequestParam(required = false, defaultValue = "desc") String direction) {
+    @PreAuthorize("hasAnyAuthority('SCOPE_ADMINISTRATION', 'SCOPE_SUPPORT')")
+    public ResponseEntity<Page<MensurationDTO>> search(@RequestParam UUID hiveId,
+                                                       @RequestParam(required = false) String date,
+                                                       @RequestParam(required = false, defaultValue = "0") Integer page,
+                                                       @RequestParam(required = false, defaultValue = "10") Integer size,
+                                                       @RequestParam(required = false, defaultValue = "createdDate") String sort,
+                                                       @RequestParam(required = false, defaultValue = "desc") String direction) {
 
-        var mensurations = mensurationService.search(hiveId, date, page, size, sort, direction).map(MensurationDTO::toDTO);
-        return ResponseEntity.status(OK).body(mensurations);
+        if (hiveId != null) {
+
+            if (date != null) {
+                final var mensurations = service.search(hiveId, date, page, size, sort, direction);
+                return ResponseEntity.status(HttpStatus.OK).body(mensurations);
+            }
+
+            var mensurations = service.search(hiveId, page, size, sort, direction);
+            return ResponseEntity.status(HttpStatus.OK).body(mensurations);
+        }
+
+        throw new ObjectNotFoundException(MessageUtils.ARGUMENT_NOT_VALID);
+    }
+
+    @Override
+    @PutMapping("/{id}")
+    @PreAuthorize("hasAnyAuthority('SCOPE_ADMINISTRATION', 'SCOPE_SUPPORT')")
+    public ResponseEntity<MensurationDTO> update(@PathVariable UUID id, @RequestBody @Valid Mensuration mensuration) {
+
+        if (mensuration.getId().equals(id)) {
+            final var mensurationSaved = service.save(mensuration);
+            return ResponseEntity.status(HttpStatus.CREATED).body(mensurationSaved);
+        }
+
+        throw new ObjectNotFoundException(MessageUtils.ARGUMENT_NOT_VALID);
     }
 }

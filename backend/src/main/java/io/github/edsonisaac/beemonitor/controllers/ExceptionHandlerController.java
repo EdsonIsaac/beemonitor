@@ -1,40 +1,65 @@
 package io.github.edsonisaac.beemonitor.controllers;
 
 import io.github.edsonisaac.beemonitor.exceptions.ObjectNotFoundException;
+import io.github.edsonisaac.beemonitor.exceptions.OperationFailureException;
 import io.github.edsonisaac.beemonitor.exceptions.StandardError;
 import io.github.edsonisaac.beemonitor.exceptions.ValidationException;
-import lombok.RequiredArgsConstructor;
-import org.springframework.context.MessageSource;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-
-import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-import java.util.Locale;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 /**
- * The type Controller advice.
+ * Controller advice to handle exceptions globally.
  *
  * @author Edson Isaac
  */
-@ControllerAdvice
-@RequiredArgsConstructor
+@RestControllerAdvice
 public class ExceptionHandlerController {
 
-    private final MessageSource messageSource;
+    /**
+     * Handles the DataIntegrityViolationException and returns a ResponseEntity with a StandardError object containing details
+     * about the data integrity violation error.
+     *
+     * @param ex      the DataIntegrityViolationException thrown
+     * @param request the HttpServletRequest object
+     * @return ResponseEntity with a StandardError object in the response body
+     */
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<?> dataIntegrityViolationException(DataIntegrityViolationException ex, HttpServletRequest request) {
 
+        final var error = StandardError.builder()
+                .timestamp(System.currentTimeMillis())
+                .status(HttpStatus.BAD_REQUEST.value())
+                .error("Bad Request")
+                .message(ex.getMessage())
+                .path(request.getRequestURI())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    /**
+     * Handles MethodArgumentNotValidException and returns a ResponseEntity with a list of StandardError objects
+     * containing details about the validation errors.
+     *
+     * @param ex      the MethodArgumentNotValidException thrown
+     * @param request the HttpServletRequest object
+     * @return ResponseEntity with a list of StandardError objects in the response body
+     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> methodArgumentNotValidException(MethodArgumentNotValidException ex, HttpServletRequest request) {
 
-        var errors = ex.getBindingResult().getFieldErrors().stream().map(error ->
+        final var errors = ex.getBindingResult().getFieldErrors().stream().map(error ->
                 StandardError.builder()
                         .timestamp(System.currentTimeMillis())
                         .status(HttpStatus.BAD_REQUEST.value())
                         .error("Bad Request")
-                        .message(messageSource.getMessage(error, Locale.getDefault()))
+                        .message(StringUtils.capitalize(error.getField()) + " " + error.getDefaultMessage() + "!")
                         .path(request.getRequestURI())
                         .build()
         ).toList();
@@ -43,16 +68,17 @@ public class ExceptionHandlerController {
     }
 
     /**
-     * Object not found response entity.
+     * Handles ObjectNotFoundException and returns a ResponseEntity with a StandardError object containing details
+     * about the not found error.
      *
-     * @param ex      the ex
-     * @param request the request
-     * @return the response entity
+     * @param ex      the ObjectNotFoundException thrown
+     * @param request the HttpServletRequest object
+     * @return ResponseEntity with a StandardError object in the response body
      */
     @ExceptionHandler(ObjectNotFoundException.class)
-    public ResponseEntity<?> objectNotFound(ObjectNotFoundException ex, HttpServletRequest request) {
+    public ResponseEntity<?> objectNotFoundException(ObjectNotFoundException ex, HttpServletRequest request) {
 
-        var error = StandardError.builder()
+        final var error = StandardError.builder()
                 .timestamp(System.currentTimeMillis())
                 .status(HttpStatus.NOT_FOUND.value())
                 .error("Not Found")
@@ -60,20 +86,43 @@ public class ExceptionHandlerController {
                 .path(request.getRequestURI())
                 .build();
 
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(List.of(error));
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
     /**
-     * Validation exception response entity.
+     * Handles OperationFailureException and returns a ResponseEntity with a StandardError object containing details
+     * about the internal server error.
      *
-     * @param ex      the ex
-     * @param request the request
-     * @return the response entity
+     * @param ex      the OperationFailureException thrown
+     * @param request the HttpServletRequest object
+     * @return ResponseEntity with a StandardError object in the response body
+     */
+    @ExceptionHandler(OperationFailureException.class)
+    public ResponseEntity<?> operationFailureException(OperationFailureException ex, HttpServletRequest request) {
+
+        final var error = StandardError.builder()
+                .timestamp(System.currentTimeMillis())
+                .status(HttpStatus.INTERNAL_SERVER_ERROR.value())
+                .error("Internal Server Error")
+                .message(ex.getMessage())
+                .path(request.getRequestURI())
+                .build();
+
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+    }
+
+    /**
+     * Handles ValidationException and returns a ResponseEntity with a StandardError object containing details
+     * about the validation error.
+     *
+     * @param ex      the ValidationException thrown
+     * @param request the HttpServletRequest object
+     * @return ResponseEntity with a StandardError object in the response body
      */
     @ExceptionHandler(ValidationException.class)
     public ResponseEntity<?> validationException(ValidationException ex, HttpServletRequest request) {
 
-        var error = StandardError.builder()
+        final var error = StandardError.builder()
                 .timestamp(System.currentTimeMillis())
                 .status(HttpStatus.BAD_REQUEST.value())
                 .error("Bad Request")
@@ -81,6 +130,6 @@ public class ExceptionHandlerController {
                 .path(request.getRequestURI())
                 .build();
 
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(List.of(error));
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
     }
 }

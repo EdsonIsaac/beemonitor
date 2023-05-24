@@ -1,14 +1,17 @@
 package io.github.edsonisaac.beemonitor.services;
 
+import io.github.edsonisaac.beemonitor.dtos.UserDTO;
 import io.github.edsonisaac.beemonitor.entities.User;
 import io.github.edsonisaac.beemonitor.exceptions.ObjectNotFoundException;
 import io.github.edsonisaac.beemonitor.exceptions.ValidationException;
 import io.github.edsonisaac.beemonitor.repositories.UserRepository;
-import io.github.edsonisaac.beemonitor.utils.MessageUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -17,26 +20,29 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.UUID;
 
 /**
- * The type User service.
+ * The UserService class provides business logic operations for managing User entities.
+ * It implements the AbstractService interface for CRUD operations and the UserDetailsService interface
+ * for user authentication and authorization.
  *
  * @author Edson Isaac
  */
 @Service
 @RequiredArgsConstructor
-public class UserService implements AbstractService<User> {
-
+public class UserService implements AbstractService<User, UserDTO>, UserDetailsService {
+    
     private final PasswordEncoder encoder;
     private final UserRepository repository;
 
     /**
-     * Delete.
+     * Deletes a user by ID.
      *
-     * @param id the id
+     * @param id the ID of the user to be deleted
+     * @throws ObjectNotFoundException if the user with the given ID is not found
      */
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public void delete(UUID id) {
-
+        
         if (id != null) {
 
             if (repository.existsById(id)) {
@@ -44,15 +50,15 @@ public class UserService implements AbstractService<User> {
                 return;
             }
         }
-
-        throw new ObjectNotFoundException(MessageUtils.USER_NOT_FOUND);
+        
+        throw new ObjectNotFoundException("Usuário não encontrado!");
     }
 
     /**
-     * Encode password.
+     * Encodes the password of a user.
      *
-     * @param user the user
-     * @return the user
+     * @param user the user to encode the password for
+     * @return The user with the encoded password
      */
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
     public User encodePassword(User user) {
@@ -72,101 +78,94 @@ public class UserService implements AbstractService<User> {
     }
 
     /**
-     * Find all.
+     * Finds all users.
      *
-     * @return the user list
+     * @param page      the page number
+     * @param size      the number of users per page
+     * @param sort      the field to sort the users
+     * @param direction the sorting direction ("asc" or "desc")
+     * @return A page object containing the list of users
      */
     @Override
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-    public Page<User> findAll(Integer page, Integer size, String sort, String direction) {
-        return repository.findAll(PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(direction), sort)));
+    public Page<UserDTO> findAll(Integer page, Integer size, String sort, String direction) {
+        var users = repository.findAll(PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(direction), sort)));
+        return users.map(UserDTO::toDTO);
     }
 
     /**
-     * Find by id.
+     * Finds a user by ID.
      *
-     * @param id the id
-     * @return the user
+     * @param id the ID of the user to be found
+     * @return The found user
+     * @throws ObjectNotFoundException if the user with the given ID is not found
      */
     @Override
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-    public User findById(UUID id) {
-
-        return repository.findById(id).orElseThrow(() -> {
-            throw new ObjectNotFoundException(MessageUtils.USER_NOT_FOUND);
-        });
+    public UserDTO findById(UUID id) {
+        var user = repository.findById(id).orElseThrow(() -> new ObjectNotFoundException("Usuário não encontrado!"));
+        return UserDTO.toDTO(user);
     }
 
     /**
-     * Find by username.
+     * Finds a user by username.
      *
-     * @param username the username
-     * @return the user
+     * @param username the username to search for
+     * @return The found user
+     * @throws ObjectNotFoundException if the user with the given username is not found
      */
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-    public User findByUsername(String username) {
-
-        return repository.findByUsername(username).orElseThrow(() -> {
-            throw new ObjectNotFoundException(MessageUtils.USER_NOT_FOUND);
-        });
+    public UserDTO findByUsername(String username) {
+        var user = repository.findByUsername(username).orElseThrow(() -> new ObjectNotFoundException("Usuário não encontrado!"));
+        return UserDTO.toDTO(user);
     }
 
     /**
-     * Save.
+     * Loads a user by username for authentication and authorization.
      *
-     * @param user the user
-     * @return the user
+     * @param username the username of the user to load
+     * @return The loaded user details
+     * @throws UsernameNotFoundException if the user with the given username is not found
+     */
+    @Override
+    @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        return repository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Usuário inexistente ou senha inválida!"));
+    }
+
+    /**
+     * Saves a user.
+     *
+     * @param user the user to be saved
+     * @return The saved user
+     * @throws ValidationException if the user is not valid
      */
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public User save (User user) {
-
+    public UserDTO save(User user) {
+    
         if (user == null) {
-            throw new ValidationException(MessageUtils.USER_NULL);
+            throw new ValidationException("Usuário nulo!");
         }
 
         if (validate(user)) {
             user = encodePassword(user);
             user = repository.save(user);
         }
-
-        return user;
+        
+        return UserDTO.toDTO(user);
     }
 
     /**
-     * Search.
+     * Validates a user.
      *
-     * @param value     the value
-     * @param page      the page
-     * @param size      the size
-     * @param sort      the sort
-     * @param direction the direction
-     * @return the user list
-     */
-    @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-    public Page<User> search(String value, Integer page, Integer size, String sort, String direction) {
-        return repository.search(value, PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(direction), sort)));
-    }
-
-    /**
-     * Validate.
-     *
-     * @param user the user
-     * @return the boolean
+     * @param user the user to be validated
+     * @return True if the user is valid
+     * @throws ValidationException if the user is not valid
      */
     @Override
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-    public boolean validate (User user) {
-
-        var user_findByUsername = repository.findByUsername(user.getUsername());
-
-        if (user_findByUsername.isPresent()) {
-
-            if (!user_findByUsername.get().equals(user)) {
-                throw new ValidationException(MessageUtils.USER_ALREADY_SAVE);
-            }
-        }
-
+    public boolean validate(User user) {
         return true;
     }
 }

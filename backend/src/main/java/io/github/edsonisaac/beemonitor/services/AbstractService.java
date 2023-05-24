@@ -1,56 +1,64 @@
 package io.github.edsonisaac.beemonitor.services;
 
+import io.github.edsonisaac.beemonitor.exceptions.ObjectNotFoundException;
+import io.github.edsonisaac.beemonitor.exceptions.ValidationException;
 import org.springframework.data.domain.Page;
 
 import java.util.UUID;
 
 /**
- * The interface Abstract service.
+ * The AbstractService interface provides a common set of operations for managing resources.
+ * Implementations of this interface are responsible for performing CRUD (Create, Read, Update, Delete)
+ * operations on the underlying resources, as well as additional validation and business logic specific to the resource type.
  *
- * @param <T> the type parameter
+ * @param <T> the type of the resource managed by the service
  * @author Edson Isaac
  */
-public interface AbstractService<T> {
+public interface AbstractService<T, DTO> {
 
     /**
-     * Delete.
+     * Deletes a resource by ID.
      *
-     * @param id the id
+     * @param id the ID of the resource to be deleted
+     * @throws ObjectNotFoundException if the resource with the given ID is not found
      */
     void delete(UUID id);
 
     /**
-     * Find all page.
+     * Finds all resources.
      *
-     * @param page      the page
-     * @param size      the size
-     * @param sort      the sort
-     * @param direction the direction
-     * @return the page
+     * @param page      the page number
+     * @param size      the number of resources per page
+     * @param sort      the field to sort the resources
+     * @param direction the sorting direction ("asc" or "desc")
+     * @return A page object containing the list of resources
      */
-    Page<T> findAll(Integer page, Integer size, String sort, String direction);
+    Page<DTO> findAll(Integer page, Integer size, String sort, String direction);
 
     /**
-     * Find by id t.
+     * Finds a resource by ID.
      *
-     * @param id the id
-     * @return the t
+     * @param id the ID of the resource to be found
+     * @return The found resource
+     * @throws ObjectNotFoundException if the resource with the given ID is not found
      */
-    T findById(UUID id);
+    DTO findById(UUID id);
 
     /**
-     * Save t.
+     * Saves a resource.
      *
-     * @param object the object
-     * @return the t
+     * @param object the resource to be saved
+     * @return The saved resource
+     * @throws ValidationException if the resource is not valid
      */
-    T save(T object);
+    DTO save(T object);
 
     /**
-     * Validate boolean.
+     * Validates a resource.
      *
-     * @param object the object
-     * @return the boolean
+     * @param object the resource to be validated
+     * @return True if the resource is valid
+     * @throws ValidationException if the resource is not valid
      */
     boolean validate(T object);
 }
