@@ -38,7 +38,7 @@ public class ApplicationConfiguration implements CommandLineRunner {
      */
     void checkDefaultUser() {
 
-        var user = new User();
+        final var user = new User();
 
         try {
             var userDTO = service.findByUsername("admin");

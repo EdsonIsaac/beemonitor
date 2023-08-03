@@ -24,8 +24,9 @@ public class OpenAPIConfiguration {
 
         return new OpenAPI()
                 .info(new Info()
-                        .title("BeeMonitor")
-                        .description("")
+                        .title("Bee Monitor")
+                        .description("Projeto para monitoramento de colmeias com o auxílio de um Arduino para o ProMel, " +
+                                "Instituto Federal de Educação, Ciência e Tecnologia da Bahia - Campus Irecê")
                 );
     }
 }

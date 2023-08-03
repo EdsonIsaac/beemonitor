@@ -20,7 +20,7 @@ import java.io.IOException;
 public class Image extends AbstractEntity {
 
     @NotEmpty
-    @Column(name = "name", unique = true)
+    @Column(name = "name", unique = true, length = 30)
     private String name;
 
     @Override

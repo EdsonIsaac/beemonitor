@@ -16,6 +16,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
+/**
+ * The MensurationService class provides service methods for managing Mensuration entities.
+ * It implements the AbstractService interface for generic CRUD operations.
+ * This class handles mensuration-related data and business logic in the system.
+ *
+ * @author Edson Isaac
+ */
 @Service
 @RequiredArgsConstructor
 public class MensurationService implements AbstractService<Mensuration, MensurationDTO> {
@@ -59,28 +66,13 @@ public class MensurationService implements AbstractService<Mensuration, Mensurat
             throw new ValidationException(MessageUtils.MENSURATION_NULL);
         }
 
-        if (validate(mensuration)) {
-            mensuration = repository.save(mensuration);
-        }
-
+        mensuration = repository.save(mensuration);
         return MensurationDTO.toDTO(mensuration);
     }
 
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-    public Page<MensurationDTO> search(UUID hiveId, Integer page, Integer size, String sort, String direction) {
-        final var mensurations = repository.search(hiveId, PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(direction), sort)));
+    public Page<MensurationDTO> search(UUID hiveId, String value, Integer page, Integer size, String sort, String direction) {
+        final var mensurations = repository.search(hiveId, value, PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(direction), sort)));
         return mensurations.map(MensurationDTO::toDTO);
-    }
-
-    @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-    public Page<MensurationDTO> search(UUID hiveId, String date, Integer page, Integer size, String sort, String direction) {
-        final var mensurations = repository.search(hiveId, date, PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(direction), sort)));
-        return mensurations.map(MensurationDTO::toDTO);
-    }
-
-    @Override
-    @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-    public boolean validate(Mensuration mensuration) {
-        return true;
     }
 }

@@ -7,7 +7,7 @@ public class MediaTypeUtils {
 
     public static MediaType getMediaTypeForFileName(ServletContext servletContext, String fileName) {
 
-        var mineType = servletContext.getMimeType(fileName);
+        final var mineType = servletContext.getMimeType(fileName);
 
         try {
             return MediaType.parseMediaType(mineType);

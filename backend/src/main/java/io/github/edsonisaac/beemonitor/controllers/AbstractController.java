@@ -1,13 +1,8 @@
 package io.github.edsonisaac.beemonitor.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.data.domain.Page;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.util.UUID;
 
@@ -25,14 +20,9 @@ public interface AbstractController<T, DTO> {
      * Delete an item by ID.
      *
      * @param id the ID of the item to be deleted
-     * @return The response entity with the result of the operation
      */
-    @Operation(summary = "Delete", description = "Delete an item by ID", responses = {
-            @ApiResponse(description = "Success", responseCode = "200"),
-            @ApiResponse(description = "Not Found", responseCode = "404"),
-            @ApiResponse(description = "Internal Server Error", responseCode = "500")
-    })
-    ResponseEntity<Void> delete(UUID id);
+    @Operation(summary = "Delete", description = "Delete an item by ID")
+    void delete(UUID id);
 
     /**
      * Find all items.
@@ -41,63 +31,36 @@ public interface AbstractController<T, DTO> {
      * @param size      the number of items per page
      * @param sort      the field to sort the items
      * @param direction the sorting direction ("asc" or "desc")
-     * @return The response entity with the list of items
+     * @return The list of items
      */
-    @Operation(summary = "Find all", description = "Find all items", responses = {
-            @ApiResponse(description = "Success", responseCode = "200", content = {
-                    @Content(mediaType = "application/json")
-            }),
-            @ApiResponse(description = "Internal Server Error", responseCode = "500")
-    })
-    ResponseEntity<Page<DTO>> findAll(
-            @RequestParam(required = false) Integer page,
-            @RequestParam(required = false) Integer size,
-            @RequestParam(required = false) String sort,
-            @RequestParam(required = false) String direction);
+    @Operation(summary = "Find all", description = "Find all items")
+    Page<DTO> findAll(Integer page, Integer size, String sort, String direction);
 
     /**
      * Find an item by ID.
      *
      * @param id the ID of the item to be found
-     * @return The response entity with the found item
+     * @return The found item
      */
-    @Operation(summary = "Find by ID", description = "Find an item by ID", responses = {
-            @ApiResponse(description = "Success", responseCode = "200", content = {
-                    @Content(mediaType = "application/json")
-            }),
-            @ApiResponse(description = "Not Found", responseCode = "404"),
-            @ApiResponse(description = "Internal Server Error", responseCode = "500")
-    })
-    ResponseEntity<DTO> findById(@PathVariable UUID id);
+    @Operation(summary = "Find by ID", description = "Find an item by ID")
+    DTO findById(UUID id);
 
     /**
      * Save an item.
      *
      * @param object the item to be saved
-     * @return The response entity with the saved item
+     * @return The saved item
      */
-    @Operation(summary = "Save", description = "Save an item", responses = {
-            @ApiResponse(description = "Success", responseCode = "201", content = {
-                    @Content(mediaType = "application/json")
-            }),
-            @ApiResponse(description = "Bad Request", responseCode = "400"),
-            @ApiResponse(description = "Internal Server Error", responseCode = "500")
-    })
-    ResponseEntity<DTO> save(@RequestBody T object);
+    @Operation(summary = "Save", description = "Save an item")
+    DTO save(T object);
 
     /**
      * Update an item.
      *
      * @param id     the ID of the item to be updated
      * @param object the updated item
-     * @return The response entity with the updated item
+     * @return The updated item
      */
-    @Operation(summary = "Update", description = "Update an item", responses = {
-            @ApiResponse(description = "Success", responseCode = "200", content = {
-                    @Content(mediaType = "application/json")
-            }),
-            @ApiResponse(description = "Bad Request", responseCode = "400"),
-            @ApiResponse(description = "Internal Server Error", responseCode = "500")
-    })
-    ResponseEntity<DTO> update(@PathVariable UUID id, @RequestBody T object);
+    @Operation(summary = "Update", description = "Update an item")
+    DTO update(UUID id, T object);
 }

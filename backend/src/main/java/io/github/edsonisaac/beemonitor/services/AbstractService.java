@@ -52,13 +52,4 @@ public interface AbstractService<T, DTO> {
      * @throws ValidationException if the resource is not valid
      */
     DTO save(T object);
-
-    /**
-     * Validates a resource.
-     *
-     * @param object the resource to be validated
-     * @return True if the resource is valid
-     * @throws ValidationException if the resource is not valid
-     */
-    boolean validate(T object);
 }

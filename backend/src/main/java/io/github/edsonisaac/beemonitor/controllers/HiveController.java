@@ -5,78 +5,83 @@ import io.github.edsonisaac.beemonitor.entities.Hive;
 import io.github.edsonisaac.beemonitor.exceptions.ObjectNotFoundException;
 import io.github.edsonisaac.beemonitor.services.HiveService;
 import io.github.edsonisaac.beemonitor.utils.MessageUtils;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
+
 @RestController
-@RequestMapping(value = "/hives")
+@RequestMapping(value = "/api/hives")
 @RequiredArgsConstructor
+@Tag(name = "Hive", description = "Endpoints for hives management")
 public class HiveController implements AbstractController<Hive, HiveDTO> {
 
     private final HiveService service;
 
     @Override
-    @DeleteMapping(value = "/{id}")
+    @DeleteMapping("/{id}")
+    @ResponseStatus(OK)
     @PreAuthorize("hasAnyAuthority('SCOPE_ADMINISTRATION', 'SCOPE_SUPPORT')")
-    public ResponseEntity<Void> delete(@PathVariable UUID id) {
+    public void delete(@PathVariable UUID id) {
         service.delete(id);
-        return ResponseEntity.status(HttpStatus.OK).body(null);
     }
 
     @Override
     @GetMapping
+    @ResponseStatus(OK)
     @PreAuthorize("hasAnyAuthority('SCOPE_ADMINISTRATION', 'SCOPE_SUPPORT')")
-    public ResponseEntity<Page<HiveDTO>> findAll(@RequestParam(required = false, defaultValue = "0") Integer page,
-                                                 @RequestParam(required = false, defaultValue = "10") Integer size,
-                                                 @RequestParam(required = false, defaultValue = "code") String sort,
-                                                 @RequestParam(required = false, defaultValue = "asc") String direction) {
+    public Page<HiveDTO> findAll(@RequestParam(required = false, defaultValue = "0") Integer page,
+                                 @RequestParam(required = false, defaultValue = "10") Integer size,
+                                 @RequestParam(required = false, defaultValue = "code") String sort,
+                                 @RequestParam(required = false, defaultValue = "asc") String direction) {
 
-        final var hives = service.findAll(page, size, sort, direction);
-        return ResponseEntity.status(HttpStatus.OK).body(hives);
+        return service.findAll(page, size, sort, direction);
     }
 
     @Override
-    @GetMapping(value = "/{id}")
+    @GetMapping("/{id}")
+    @ResponseStatus(OK)
     @PreAuthorize("hasAnyAuthority('SCOPE_ADMINISTRATION', 'SCOPE_SUPPORT')")
-    public ResponseEntity<HiveDTO> findById(@PathVariable UUID id) {
-        final var hive = service.findById(id);
-        return ResponseEntity.status(HttpStatus.OK).body(hive);
+    public HiveDTO findById(@PathVariable UUID id) {
+        return service.findById(id);
     }
 
     @Override
     @PostMapping
+    @ResponseStatus(CREATED)
     @PreAuthorize("hasAnyAuthority('SCOPE_ADMINISTRATION', 'SCOPE_SUPPORT')")
-    public ResponseEntity<HiveDTO> save(@RequestBody @Valid Hive hive) {
-        final var hiveSaved = service.save(hive);
-        return ResponseEntity.status(HttpStatus.CREATED).body(hiveSaved);
+    public HiveDTO save(@RequestBody @Valid Hive hive) {
+        return service.save(hive);
     }
 
-    @GetMapping(value = "/search")
-    public ResponseEntity<?> search(@RequestParam String value,
-                                    @RequestParam(required = false, defaultValue = "0") Integer page,
-                                    @RequestParam(required = false, defaultValue = "10") Integer size,
-                                    @RequestParam(required = false, defaultValue = "code") String sort,
-                                    @RequestParam(required = false, defaultValue = "asc") String direction) {
+    @GetMapping("/search")
+    @ResponseStatus(OK)
+    @Operation(summary = "Search", description = "Search a resource")
+    public Page<HiveDTO> search(@RequestParam String value,
+                                @RequestParam(required = false, defaultValue = "0") Integer page,
+                                @RequestParam(required = false, defaultValue = "10") Integer size,
+                                @RequestParam(required = false, defaultValue = "code") String sort,
+                                @RequestParam(required = false, defaultValue = "asc") String direction) {
 
-        final var hives = service.search(value, page, size, sort, direction);
-        return ResponseEntity.status(HttpStatus.OK).body(hives);
+        return service.search(value, page, size, sort, direction);
     }
 
     @Override
     @PutMapping("/{id}")
+    @ResponseStatus(OK)
     @PreAuthorize("hasAnyAuthority('SCOPE_ADMINISTRATION', 'SCOPE_SUPPORT')")
-    public ResponseEntity<HiveDTO> update(@PathVariable UUID id, @RequestBody @Valid Hive hive) {
+    public HiveDTO update(@PathVariable UUID id, @RequestBody @Valid Hive hive) {
 
         if (hive.getId().equals(id)) {
-            final var hiveSaved = service.save(hive);
-            return ResponseEntity.status(HttpStatus.OK).body(hiveSaved);
+            return service.save(hive);
         }
 
         throw new ObjectNotFoundException(MessageUtils.HIVE_NOT_FOUND);

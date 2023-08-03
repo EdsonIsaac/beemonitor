@@ -54,13 +54,13 @@ public abstract class AbstractEntity {
      * The user who created the entity.
      */
     @CreatedBy
-    @Column(name = "created_by_user", updatable = false)
+    @Column(name = "created_by_user", updatable = false, length = 50)
     private String createdByUser;
 
     /**
      * The user who last modified the entity.
      */
     @LastModifiedBy
-    @Column(name = "modified_by_user")
+    @Column(name = "modified_by_user", length = 50)
     private String modifiedByUser;
 }

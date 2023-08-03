@@ -5,6 +5,7 @@ import io.github.edsonisaac.beemonitor.entities.User;
 import io.github.edsonisaac.beemonitor.exceptions.ObjectNotFoundException;
 import io.github.edsonisaac.beemonitor.exceptions.ValidationException;
 import io.github.edsonisaac.beemonitor.repositories.UserRepository;
+import io.github.edsonisaac.beemonitor.utils.MessageUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,9 +21,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.UUID;
 
 /**
- * The UserService class provides business logic operations for managing User entities.
- * It implements the AbstractService interface for CRUD operations and the UserDetailsService interface
- * for user authentication and authorization.
+ * The UserService class provides service methods for managing User entities.
+ * It implements the AbstractService interface for generic CRUD operations.
+ * It also implements the UserDetailsService interface for Spring Security integration.
+ * This class handles user-related data and business logic in the system.
  *
  * @author Edson Isaac
  */
@@ -33,12 +35,6 @@ public class UserService implements AbstractService<User, UserDTO>, UserDetailsS
     private final PasswordEncoder encoder;
     private final UserRepository repository;
 
-    /**
-     * Deletes a user by ID.
-     *
-     * @param id the ID of the user to be deleted
-     * @throws ObjectNotFoundException if the user with the given ID is not found
-     */
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public void delete(UUID id) {
@@ -51,23 +47,17 @@ public class UserService implements AbstractService<User, UserDTO>, UserDetailsS
             }
         }
         
-        throw new ObjectNotFoundException("Usuário não encontrado!");
+        throw new ObjectNotFoundException(MessageUtils.USER_NOT_FOUND);
     }
 
-    /**
-     * Encodes the password of a user.
-     *
-     * @param user the user to encode the password for
-     * @return The user with the encoded password
-     */
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
     public User encodePassword(User user) {
 
         if (user.getId() != null) {
 
-            var user_findById = repository.findById(user.getId()).get();
+            final var user_findById = repository.findById(user.getId());
 
-            if (!user_findById.getPassword().equals(user.getPassword())) {
+            if (user_findById.isPresent() && !user_findById.get().getPassword().equals(user.getPassword())) {
                 user.setPassword(encoder.encode(user.getPassword()));
             }
         } else {
@@ -77,95 +67,48 @@ public class UserService implements AbstractService<User, UserDTO>, UserDetailsS
         return user;
     }
 
-    /**
-     * Finds all users.
-     *
-     * @param page      the page number
-     * @param size      the number of users per page
-     * @param sort      the field to sort the users
-     * @param direction the sorting direction ("asc" or "desc")
-     * @return A page object containing the list of users
-     */
     @Override
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
     public Page<UserDTO> findAll(Integer page, Integer size, String sort, String direction) {
-        var users = repository.findAll(PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(direction), sort)));
+        final var users = repository.findAll(PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(direction), sort)));
         return users.map(UserDTO::toDTO);
     }
 
-    /**
-     * Finds a user by ID.
-     *
-     * @param id the ID of the user to be found
-     * @return The found user
-     * @throws ObjectNotFoundException if the user with the given ID is not found
-     */
     @Override
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
     public UserDTO findById(UUID id) {
-        var user = repository.findById(id).orElseThrow(() -> new ObjectNotFoundException("Usuário não encontrado!"));
+        final var user = repository.findById(id).orElseThrow(() -> new ObjectNotFoundException(MessageUtils.USER_NOT_FOUND));
         return UserDTO.toDTO(user);
     }
 
-    /**
-     * Finds a user by username.
-     *
-     * @param username the username to search for
-     * @return The found user
-     * @throws ObjectNotFoundException if the user with the given username is not found
-     */
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
     public UserDTO findByUsername(String username) {
-        var user = repository.findByUsername(username).orElseThrow(() -> new ObjectNotFoundException("Usuário não encontrado!"));
+        final var user = repository.findByUsername(username).orElseThrow(() -> new ObjectNotFoundException(MessageUtils.USER_NOT_FOUND));
         return UserDTO.toDTO(user);
     }
 
-    /**
-     * Loads a user by username for authentication and authorization.
-     *
-     * @param username the username of the user to load
-     * @return The loaded user details
-     * @throws UsernameNotFoundException if the user with the given username is not found
-     */
     @Override
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return repository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Usuário inexistente ou senha inválida!"));
+        return repository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(MessageUtils.AUTHENTICATION_FAIL));
     }
 
-    /**
-     * Saves a user.
-     *
-     * @param user the user to be saved
-     * @return The saved user
-     * @throws ValidationException if the user is not valid
-     */
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public UserDTO save(User user) {
     
         if (user == null) {
-            throw new ValidationException("Usuário nulo!");
+            throw new ValidationException(MessageUtils.USER_NULL);
         }
 
-        if (validate(user)) {
-            user = encodePassword(user);
-            user = repository.save(user);
-        }
-        
+        user = encodePassword(user);
+        user = repository.save(user);
         return UserDTO.toDTO(user);
     }
 
-    /**
-     * Validates a user.
-     *
-     * @param user the user to be validated
-     * @return True if the user is valid
-     * @throws ValidationException if the user is not valid
-     */
-    @Override
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-    public boolean validate(User user) {
-        return true;
+    public Page<UserDTO> search(String value, Integer page, Integer size, String sort, String direction) {
+        final var users = repository.search(value, PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(direction), sort)));
+        return users.map(UserDTO::toDTO);
     }
 }

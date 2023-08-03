@@ -17,7 +17,7 @@ import java.util.Set;
 public class Hive extends AbstractEntity {
 
     @NotEmpty
-    @Column(name = "code", unique = true)
+    @Column(name = "code", unique = true, length = 50)
     private String code;
 
     @OneToMany(orphanRemoval = true, mappedBy = "hive")

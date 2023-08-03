@@ -30,14 +30,14 @@ public class User extends AbstractEntity implements UserDetails {
      * The name of the user.
      */
     @NotEmpty
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, length = 100)
     private String name;
 
     /**
      * The username of the user (unique).
      */
     @NotEmpty
-    @Column(name = "username", nullable = false, unique = true)
+    @Column(name = "username", nullable = false, unique = true, length = 50)
     private String username;
 
     /**

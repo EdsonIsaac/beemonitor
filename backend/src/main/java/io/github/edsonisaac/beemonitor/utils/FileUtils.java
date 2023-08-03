@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,7 +19,7 @@ public abstract class FileUtils {
 
     public static File find(String filename, String path) throws FileNotFoundException {
 
-        File file = new File(System.getProperty("user.dir") + path + File.separator + filename);
+        final var file = new File(System.getProperty("user.dir") + path + File.separator + filename);
 
         if (!file.exists()) {
             throw new FileNotFoundException("Arquivo não encontrado!");
@@ -33,7 +32,7 @@ public abstract class FileUtils {
 
 
         if (checkPathDestination(path)) {
-            Path filePath = Paths.get(System.getProperty("user.dir") + path, filename);
+            final var filePath = Paths.get(System.getProperty("user.dir") + path, filename);
             Files.write(filePath, file.getBytes());
 
             return find(filename, path);
@@ -43,7 +42,8 @@ public abstract class FileUtils {
     }
 
     public static boolean delete(String filename, String path) {
-        File file = new File(System.getProperty("user.dir") + path + "/" + filename);
+
+        final var file = new File(System.getProperty("user.dir") + path + "/" + filename);
 
         if (file.exists() && file.isFile()) {
             return file.delete();
@@ -56,7 +56,7 @@ public abstract class FileUtils {
 
         if (object instanceof File) {
 
-            var file = ((File) object);
+            final var file = ((File) object);
 
             if (!file.exists()) {
                 throw new FileNotFoundException("Arquivo não encontrado!");
@@ -66,9 +66,7 @@ public abstract class FileUtils {
         }
 
         if (object instanceof MultipartFile) {
-
-            var file = ((MultipartFile) object);
-
+            final var file = ((MultipartFile) object);
             return file.getOriginalFilename().replace(".", " ").split(" ")[1];
         }
 
@@ -77,7 +75,7 @@ public abstract class FileUtils {
 
     public static boolean checkPathDestination(String path) {
 
-        File directory = new File(System.getProperty("user.dir") + path);
+        final var directory = new File(System.getProperty("user.dir") + path);
 
         if (!directory.exists()) {
             return directory.mkdir();
