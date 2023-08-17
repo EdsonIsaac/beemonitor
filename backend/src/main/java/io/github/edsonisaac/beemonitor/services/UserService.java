@@ -20,14 +20,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
-/**
- * The UserService class provides service methods for managing User entities.
- * It implements the AbstractService interface for generic CRUD operations.
- * It also implements the UserDetailsService interface for Spring Security integration.
- * This class handles user-related data and business logic in the system.
- *
- * @author Edson Isaac
- */
 @Service
 @RequiredArgsConstructor
 public class UserService implements AbstractService<User, UserDTO>, UserDetailsService {

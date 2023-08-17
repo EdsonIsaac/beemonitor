@@ -1,7 +1,7 @@
 package io.github.edsonisaac.beemonitor.controllers;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.github.edsonisaac.beemonitor.utils.JWTTokenUtil;
+import io.github.edsonisaac.beemonitor.utils.JWTTokenUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -14,11 +14,6 @@ import java.util.HashMap;
 
 import static org.springframework.http.HttpStatus.OK;
 
-/**
- * REST controller handling authentication endpoints.
- *
- * @author Edson Isaac
- */
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
@@ -26,14 +21,8 @@ import static org.springframework.http.HttpStatus.OK;
 public class AuthenticationController {
 
     private final AuthenticationManager authenticationManager;
-    private final JWTTokenUtil jwtTokenUtil;
+    private final JWTTokenUtils jwtTokenUtil;
 
-    /**
-     * Login method to generate an authentication token.
-     *
-     * @param object the JSON object containing the username and password
-     * @return The authentication token in the response body
-     */
     @PostMapping("/token")
     @ResponseStatus(OK)
     @Operation(summary = "Token", description = "Generate an authentication token")

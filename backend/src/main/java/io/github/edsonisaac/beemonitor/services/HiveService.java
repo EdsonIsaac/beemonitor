@@ -16,13 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
-/**
- * The HiveService class provides service methods for managing Hive entities.
- * It implements the AbstractService interface for generic CRUD operations.
- * This class handles hive-related data and business logic in the system.
- *
- * @author Edson Isaac
- */
 @Service
 @RequiredArgsConstructor
 public class HiveService implements AbstractService<Hive, HiveDTO> {

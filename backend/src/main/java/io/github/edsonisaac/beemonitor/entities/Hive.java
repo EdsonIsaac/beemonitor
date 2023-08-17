@@ -9,7 +9,9 @@ import lombok.*;
 
 import java.util.Set;
 
-@Data
+@Getter
+@Setter
+@ToString
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -23,9 +25,4 @@ public class Hive extends AbstractEntity {
     @OneToMany(orphanRemoval = true, mappedBy = "hive")
     @JsonManagedReference
     private Set<Mensuration> mensurations;
-
-    @Override
-    public boolean equals(Object o) {
-        return super.equals(o);
-    }
 }

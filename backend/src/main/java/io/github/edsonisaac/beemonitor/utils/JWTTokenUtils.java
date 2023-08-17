@@ -12,25 +12,12 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.stream.Collectors;
 
-/**
- * Utility class for JWT token generation.
- * This class provides a method to generate a JWT token based on the authentication information.
- * It uses the provided JwtEncoder to encode the token with the necessary claims.
- *
- * @author Edson Isaac
- */
 @Component
 @RequiredArgsConstructor
-public class JWTTokenUtil {
+public class JWTTokenUtils {
 
     private final JwtEncoder encoder;
 
-    /**
-     * Generates a JWT token based on the provided authentication.
-     *
-     * @param authentication the authentication object
-     * @return the generated JWT token as a string
-     */
     public String generateToken(Authentication authentication) {
 
         final var now = Instant.now();

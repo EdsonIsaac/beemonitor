@@ -7,12 +7,6 @@ import org.springframework.stereotype.Component;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
 
-/**
- * RSAKeyProperties is a component class that represents the RSA key properties.
- * It provides the getter methods for the public and private keys.
- *
- * @author Edson Isaac
- */
 @Getter
 @Component
 public class RSAKeyProperties {

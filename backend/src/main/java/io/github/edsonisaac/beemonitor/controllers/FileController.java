@@ -16,11 +16,6 @@ import java.io.FileNotFoundException;
 
 import static org.springframework.http.HttpStatus.OK;
 
-/**
- * Controller class for handling file operations.
- *
- * @author Edson Isaac
- */
 @RestController
 @RequestMapping("/api/files")
 @RequiredArgsConstructor

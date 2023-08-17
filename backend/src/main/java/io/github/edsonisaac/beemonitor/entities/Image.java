@@ -7,12 +7,16 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import java.io.IOException;
 
-@Data
+@Getter
+@Setter
+@ToString
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -22,11 +26,6 @@ public class Image extends AbstractEntity {
     @NotEmpty
     @Column(name = "name", unique = true, length = 30)
     private String name;
-
-    @Override
-    public boolean equals(Object o) {
-        return super.equals(o);
-    }
 
     @PostPersist
     @PostUpdate

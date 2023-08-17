@@ -17,11 +17,6 @@ import java.util.UUID;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
-/**
- * REST controller for managing users.
- *
- * @author Edson Isaac
- */
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor

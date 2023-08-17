@@ -27,12 +27,6 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfigurationSource;
 
-/**
- * SecurityConfiguration is a configuration class that defines the security configuration for the application.
- * It configures authentication, authorization, and other security-related settings.
- *
- * @author Edson Isaac
- */
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -44,11 +38,6 @@ public class SecurityConfiguration {
     private final RSAKeyProperties rsaKeyProperties;
     private final UserDetailsService userDetailsService;
 
-    /**
-     * Creates and configures the authentication provider bean using DaoAuthenticationProvider.
-     *
-     * @return the authentication provider instance
-     */
     @Bean
     AuthenticationProvider authenticationProvider() {
 
@@ -60,25 +49,11 @@ public class SecurityConfiguration {
         return authenticationProvider;
     }
 
-    /**
-     * Creates and configures the authentication manager bean.
-     *
-     * @param authenticationConfiguration the authentication configuration
-     * @return the authentication manager instance
-     * @throws Exception if an error occurs while creating the authentication manager
-     */
     @Bean
     AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
-    /**
-     * Configures the security filter chain.
-     *
-     * @param http the HttpSecurity object
-     * @return the SecurityFilterChain instance
-     * @throws Exception if an error occurs while configuring the security filter chain
-     */
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
@@ -96,21 +71,11 @@ public class SecurityConfiguration {
                 .build();
     }
 
-    /**
-     * Creates and configures the JWT decoder bean using NimbusJwtDecoder.
-     *
-     * @return the JwtDecoder instance
-     */
     @Bean
     JwtDecoder jwtDecoder() {
         return NimbusJwtDecoder.withPublicKey(rsaKeyProperties.getPublicKey()).build();
     }
 
-    /**
-     * Creates and configures the JWT encoder bean using NimbusJwtEncoder.
-     *
-     * @return the JwtEncoder instance
-     */
     @Bean
     JwtEncoder jwtEncoder() {
         final var jwk = new RSAKey.Builder(rsaKeyProperties.getPublicKey()).privateKey(rsaKeyProperties.getPrivateKey()).build();

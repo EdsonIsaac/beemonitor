@@ -2,17 +2,12 @@ package io.github.edsonisaac.beemonitor.exceptions;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-/**
- * Represents a standard error response.
- * Contains information about an error, such as timestamp, status, error message, and path.
- * This class is used for error handling and response in case of exceptions.
- *
- * @author Edson Isaac
- */
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor

@@ -46,9 +46,6 @@ CREATE TABLE tb_users (
    username                 VARCHAR(50)         NOT NULL,
    password                 VARCHAR(255)        NOT NULL,
    enabled                  BOOLEAN             NOT NULL,
-   account_non_expired      BOOLEAN             DEFAULT TRUE,
-   account_non_locked       BOOLEAN             DEFAULT TRUE,
-   credentials_non_expired  BOOLEAN             DEFAULT TRUE,
    photo_id                 UUID,
    CONSTRAINT pk_tb_users PRIMARY KEY (id)
 );

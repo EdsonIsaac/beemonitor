@@ -2,8 +2,6 @@ package io.github.edsonisaac.beemonitor.controllers;
 
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.data.domain.Page;
-import org.springframework.web.bind.annotation.RequestMapping;
-
 import java.util.UUID;
 
 /**

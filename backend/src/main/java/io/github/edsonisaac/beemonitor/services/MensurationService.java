@@ -16,13 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
-/**
- * The MensurationService class provides service methods for managing Mensuration entities.
- * It implements the AbstractService interface for generic CRUD operations.
- * This class handles mensuration-related data and business logic in the system.
- *
- * @author Edson Isaac
- */
 @Service
 @RequiredArgsConstructor
 public class MensurationService implements AbstractService<Mensuration, MensurationDTO> {
