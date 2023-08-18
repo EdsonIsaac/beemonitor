@@ -1,21 +1,25 @@
 package io.github.edsonisaac.beemonitor.controllers;
 
 import io.github.edsonisaac.beemonitor.dtos.MensurationDTO;
+import io.github.edsonisaac.beemonitor.entities.Hive;
 import io.github.edsonisaac.beemonitor.entities.Mensuration;
-import io.github.edsonisaac.beemonitor.exceptions.ObjectNotFoundException;
+import io.github.edsonisaac.beemonitor.services.HiveService;
 import io.github.edsonisaac.beemonitor.services.MensurationService;
-import io.github.edsonisaac.beemonitor.utils.MessageUtils;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.beans.BeanUtils;
 import org.springframework.data.domain.Page;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
 import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.NOT_IMPLEMENTED;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
@@ -24,14 +28,15 @@ import static org.springframework.http.HttpStatus.OK;
 @Tag(name = "Mensuration", description = "Endpoints for mensurations management")
 public class MensurationController implements AbstractController<Mensuration, MensurationDTO> {
 
-    private final MensurationService service;
+    private final HiveService hiveService;
+    private final MensurationService mensurationService;
 
     @Override
     @DeleteMapping("/{id}")
     @ResponseStatus(OK)
     @PreAuthorize("hasAnyAuthority('SCOPE_ADMINISTRATION', 'SCOPE_SUPPORT')")
     public void delete(@PathVariable UUID id) {
-        service.delete(id);
+        mensurationService.delete(id);
     }
 
     @Override
@@ -43,7 +48,7 @@ public class MensurationController implements AbstractController<Mensuration, Me
                                         @RequestParam(required = false, defaultValue = "createdDate") String sort,
                                         @RequestParam(required = false, defaultValue = "desc") String direction) {
 
-        return service.findAll(page, size, sort, direction);
+        return mensurationService.findAll(page, size, sort, direction);
     }
 
     @Override
@@ -51,14 +56,26 @@ public class MensurationController implements AbstractController<Mensuration, Me
     @ResponseStatus(OK)
     @PreAuthorize("hasAnyAuthority('SCOPE_ADMINISTRATION', 'SCOPE_SUPPORT')")
     public MensurationDTO findById(@PathVariable UUID id) {
-        return service.findById(id);
+        return mensurationService.findById(id);
     }
 
     @Override
-    @PostMapping
+    public MensurationDTO save(Mensuration mensuration) {
+        return mensurationService.save(mensuration);
+    }
+
+
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(CREATED)
-    public MensurationDTO save(@RequestBody @Valid Mensuration mensuration) {
-        return service.save(mensuration);
+    public MensurationDTO save(@RequestPart String code, @RequestPart @Valid Mensuration mensuration) {
+        
+        final var hiveDTO = hiveService.findByCode(code);
+        final var hive = new Hive();
+        
+        BeanUtils.copyProperties(hiveDTO, hive);
+        mensuration.setHive(hive);
+
+        return save(mensuration);
     }
 
     @GetMapping("/search")
@@ -72,19 +89,14 @@ public class MensurationController implements AbstractController<Mensuration, Me
                                        @RequestParam(required = false, defaultValue = "createdDate") String sort,
                                        @RequestParam(required = false, defaultValue = "desc") String direction) {
 
-        return service.search(hiveId, value, page, size, sort, direction);
+        return mensurationService.search(hiveId, value, page, size, sort, direction);
     }
 
     @Override
     @PutMapping("/{id}")
-    @ResponseStatus(OK)
+    @ResponseStatus(NOT_IMPLEMENTED)
     @PreAuthorize("hasAnyAuthority('SCOPE_ADMINISTRATION', 'SCOPE_SUPPORT')")
     public MensurationDTO update(@PathVariable UUID id, @RequestBody @Valid Mensuration mensuration) {
-
-        if (mensuration.getId().equals(id)) {
-            return service.save(mensuration);
-        }
-
-        throw new ObjectNotFoundException(MessageUtils.ARGUMENT_NOT_VALID);
+        return null;
     }
 }

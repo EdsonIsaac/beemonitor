@@ -1,10 +1,11 @@
 /* You can add global styles to this file, and also import other style files */
 
-@import '~bootstrap/dist/css/bootstrap.min.css'
+@tailwind base
+@tailwind components
+@tailwind utilities
 
 html, body 
     height: 100%
-
 
 body 
     font-family: Roboto, "Helvetica Neue", sans-serif
@@ -13,26 +14,30 @@ body
 a, a:hover
     text-decoration: none
 
+// mat-form-field
+//     margin-bottom: -1.25em
 
-.mat-card-header-text 
-    width: 100%
+.link
+    cursor: pointer
 
+.mat-form-field-invalid .mat-mdc-form-field-subscript-wrapper
+    padding-bottom: 1rem
 
 .mat-mdc-snack-bar-container.fail 
     --mdc-snackbar-container-color: #dc3545
     --mdc-snackbar-supporting-text-color: rgba(255, 255, 255, 0.87)
 
-
 .mat-mdc-snack-bar-container.success 
     --mdc-snackbar-container-color: #198754
     --mdc-snackbar-supporting-text-color: rgba(255, 255, 255, 0.87)
 
+.mdc-notched-outline__notch
+  border-right: none
 
 .table-responsive 
     display: block
     width: 100%
     overflow-x: auto
-
 
 .mat-table 
     width: 100%
@@ -42,10 +47,8 @@ a, a:hover
     border-collapse: collapse
     margin: 0px
 
-
 .mat-row, .mat-header-row 
     display: table-row
-
 
 .mat-cell, .mat-header-cell 
     word-wrap: initial

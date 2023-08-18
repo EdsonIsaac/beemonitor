@@ -17,4 +17,12 @@ export class MessageUtils {
     static USER_SAVE_SUCCESS = 'Usuário cadastrado com sucesso!';
     static USER_UPDATE_FAIL = 'Não foi possível atualizar os dados do usuário! ';
     static USER_UPDATE_SUCCESS = 'Dados do usuário atualizados com sucesso!';
+
+    static getMessage(error: any): string {
+        if (Array.isArray(error.erro)) {
+          return error.error[0].message;
+        }
+    
+        return error.error.message;
+    }
 }

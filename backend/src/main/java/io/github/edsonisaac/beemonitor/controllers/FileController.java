@@ -27,9 +27,9 @@ public class FileController {
     @GetMapping("/search")
     @ResponseStatus(OK)
     @Operation(summary = "Search", description = "Search a resource")
-    public ResponseEntity<InputStreamResource> search(@RequestParam String value) throws FileNotFoundException {
+    public ResponseEntity<InputStreamResource> search(@RequestParam String name) throws FileNotFoundException {
 
-        final var file = FileUtils.find(value, FileUtils.IMAGES_DIRECTORY);
+        final var file = FileUtils.find(name, FileUtils.IMAGES_DIRECTORY);
         final var mediaType = MediaTypeUtils.getMediaTypeForFileName(this.servletContext, file.getName());
         final var resource = new InputStreamResource(new FileInputStream(file));
 

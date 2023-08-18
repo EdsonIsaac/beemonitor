@@ -6,61 +6,46 @@ import { Mensuration } from '../entities/mensuration';
 import { Page } from '../entities/page';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class MensurationService {
+  private _baseURL = `${environment.api}/mensurations`;
 
-  private _baseURL = environment.apiURL + '/mensurations';
+  constructor(private http: HttpClient) {}
 
-  constructor(
-    private http: HttpClient
-  ) { }
-
-  /**
-   * 
-   * @param hiveId 
-   * @param page 
-   * @param size 
-   * @param sort 
-   * @param direction 
-   * @returns 
-   */
-  findAll(hiveId: string, page: number, size: number, sort: string, direction: string) {
-
+  findAll(
+    page: number,
+    size: number,
+    sort: string,
+    direction: string
+  ) {
     return this.http.get<Page<Mensuration>>(this._baseURL, {
-      
       params: {
-        hiveId: hiveId,
         page: page,
-        size: size, 
+        size: size,
         sort: sort,
-        direction: direction
-      }
+        direction: direction,
+      },
     });
   }
 
-  /**
-   * 
-   * @param hiveId 
-   * @param date 
-   * @param page 
-   * @param size 
-   * @param sort 
-   * @param direction 
-   * @returns 
-   */
-  search(hiveId: string, date: string, page: number, size: number, sort: string, direction: string) {
-
-    return this.http.get<Page<Mensuration>>(this._baseURL + '/search', {
-      
+  search(
+    hiveId: string,
+    value: string,
+    page: number,
+    size: number,
+    sort: string,
+    direction: string
+  ) {
+    return this.http.get<Page<Mensuration>>(`${this._baseURL}/search`, {
       params: {
         hiveId: hiveId,
-        date: date,
+        value: value,
         page: page,
-        size: size, 
+        size: size,
         sort: sort,
-        direction: direction
-      }
+        direction: direction,
+      },
     });
   }
 }
