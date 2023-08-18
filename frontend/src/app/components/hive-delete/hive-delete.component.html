@@ -1,16 +1,28 @@
-<div class="mat-dialog">
-    <h2 mat-dialog-title>Confirmar exclusão</h2>
-    
-    <div mat-dialog-content>
-        <div class="row">
-            <div class="col-12">
-                <p>Deseja excluir a colmeia <strong>{{this.data.hive.code}}?</strong></p>
-            </div>
-        </div>
+<div class="dialog">
+  <div class="dialog-content p-4">
+    <div class="mb-4">
+      <h2 style="margin: 0">Confirmar Exclusão</h2>
     </div>
-    
-    <div mat-dialog-actions layout="row" class="d-flex justify-content-end">
-        <button mat-button mat-dialog-close>Cancelar</button>
-        <button mat-button class="bg-danger text-white" (click)="submit()">OK</button>
+
+    <div class="mb-4">
+      <p style="margin: 0">
+        Deseja excluir a colmeia <strong>{{ this.data.hive.code }}?</strong>
+      </p>
     </div>
+
+    <div class="flex justify-end gap-4">
+      <button
+        mat-dialog-close
+        class="px-8 py-2 rounded text-white bg-gray-600 hover:bg-gray-700 active:bg-gray-800"
+      >
+        Cancelar
+      </button>
+      <button
+        class="px-8 py-2 rounded text-white bg-red-600 hover:bg-red-700 active:bg-red-800"
+        (click)="submit()"
+      >
+        OK
+      </button>
+    </div>
+  </div>
 </div>

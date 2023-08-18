@@ -17,10 +17,12 @@ export class RedirectService {
   ) {
     this._authenticationService.getAuthenticationAsObservable().subscribe({
       next: (authentication) => {
-        this._authentication = authentication;   
+        if (authentication) {
+          this._authentication = authentication;
+          this._baseURL = '/' + this._authentication?.role.toLowerCase();
+        }   
       }
     });
-    this._baseURL = '/' + this._authentication?.role.toLowerCase();
   }
 
   toHive(id: string) {

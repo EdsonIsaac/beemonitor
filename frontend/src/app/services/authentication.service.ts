@@ -66,5 +66,6 @@ export class AuthenticationService {
 
   setAuthentication(authentication: Authentication) {
     localStorage.setItem('access_token', authentication.access_token);
+    this.getAuthentication();
   }
 }
