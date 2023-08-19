@@ -1,57 +1,66 @@
 package io.github.edsonisaac.beemonitor.entities;
 
 import io.github.edsonisaac.beemonitor.enums.Department;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import jakarta.persistence.*;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import lombok.*;
+
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.persistence.*;
-import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import java.util.Collection;
+import java.util.List;
 
-/**
- * The type User.
- *
- * @author Edson Isaac
- */
-@Data
+@Getter
+@Setter
+@ToString
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity(name = "tb_users")
 public class User extends AbstractEntity implements UserDetails {
 
-    @NotEmpty(message = "{field.name.invalid}")
+    @NotEmpty
+    @Column(name = "name", nullable = false, length = 100)
     private String name;
 
-    @NotEmpty(message = "{field.username.invalid}")
+    @NotEmpty
+    @Column(name = "username", nullable = false, unique = true, length = 50)
     private String username;
 
-    @NotEmpty(message = "{field.password.invalid}")
+    @NotEmpty
+    @Column(name = "password", nullable = false)
     private String password;
 
-    @NotNull(message = "{field.enabled.invalid}")
+    @NotNull
+    @Column(name = "enabled", nullable = false)
     private Boolean enabled;
 
-    @NotNull(message = "{field.department.invalid}")
+    @NotNull
     @Enumerated(EnumType.STRING)
+    @Column(name = "department", nullable = false, length = 25)
     private Department department;
 
     @Valid
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     private Image photo;
 
-    @Transient
-    private Collection<? extends GrantedAuthority> authorities;
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities;
+        return List.of(new SimpleGrantedAuthority(department.name()));
+    }
+
+    @Override
+    public String getPassword() {
+        return password;
+    }
+
+    @Override
+    public String getUsername() {
+        return username;
     }
 
     @Override
@@ -72,10 +81,5 @@ public class User extends AbstractEntity implements UserDetails {
     @Override
     public boolean isEnabled() {
         return enabled;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        return super.equals(o);
     }
 }

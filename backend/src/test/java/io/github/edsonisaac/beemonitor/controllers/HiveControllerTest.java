@@ -26,7 +26,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.HashMap;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -63,7 +62,7 @@ class HiveControllerTest {
                 .build();
 
         // Create administration user
-        var administration = User.builder()
+        final var administration = User.builder()
                 .name("ADMINISTRATION")
                 .username("administration")
                 .password("administration")
@@ -75,19 +74,19 @@ class HiveControllerTest {
         userService.save(administration);
 
         // Create login body
-        var requestBody = new HashMap<String, String>();
+        final var requestBody = new HashMap<String, String>();
 
         requestBody.put("username", "administration");
         requestBody.put("password", "administration");
 
         // Call login endpoint to receive authentication information
-        var responseBody = this.mvc.perform(
+        final var responseBody = this.mvc.perform(
                         post("/login")
                                 .content(mapper.writeValueAsString(requestBody)))
                 .andReturn();
 
         // Convert the response body to json object
-        var response = mapper.readValue(responseBody.getResponse().getContentAsString(), ObjectNode.class);
+        final var response = mapper.readValue(responseBody.getResponse().getContentAsString(), ObjectNode.class);
 
         // Set access_token into the token variable
         if (response.has("access_token")) {
@@ -103,7 +102,7 @@ class HiveControllerTest {
     @Test
     void shouldSaveTheHive() throws Exception {
 
-        var hive = Hive.builder().code("0001").build();
+        final var hive = Hive.builder().code("0001").build();
 
         this.mvc.perform(
                         post("/hives")
@@ -118,7 +117,7 @@ class HiveControllerTest {
     @Test
     void shouldNotSaveTheHiveWhenCodeIsNull() throws Exception {
 
-        var hive = Hive.builder().code(null).build();
+        final var hive = Hive.builder().code(null).build();
 
         this.mvc.perform(
                         post("/hives")
@@ -132,7 +131,7 @@ class HiveControllerTest {
     @Test
     void shouldNotSaveTheHiveWhenCodeIsEmpty() throws Exception {
 
-        var hive = Hive.builder().code("").build();
+        final var hive = Hive.builder().code("").build();
 
         this.mvc.perform(
                         post("/hives")
@@ -156,12 +155,11 @@ class HiveControllerTest {
     @Test
     void shouldDeleteTheHive() throws Exception {
 
-        var hive = Hive.builder().code("0001").build();
-
-        hive = hiveService.save(hive);
+        final var hive = Hive.builder().code("0001").build();
+        final var hiveSaved = hiveService.save(hive);
 
         this.mvc.perform(
-                        delete("/hives/" + hive.getId())
+                        delete("/hives/" + hiveSaved.id())
                                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 .andExpect(status().isOk())
                 .andReturn();

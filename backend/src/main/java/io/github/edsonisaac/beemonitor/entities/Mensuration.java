@@ -1,48 +1,41 @@
 package io.github.edsonisaac.beemonitor.entities;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.validation.constraints.NotNull;
-
-/**
- * The type Mensuration.
- *
- * @author Edson Isaac
- */
-@Data
+@Getter
+@Setter
+@ToString
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity(name = "tb_mensurations")
 public class Mensuration extends AbstractEntity {
 
-    @NotNull(message = "{field.temperature.invalid}")
-    @Column(updatable = false)
+    @NotNull
+    @Column(name = "temperature", updatable = false)
     private Double temperature;
 
-    @NotNull(message = "{field.humidity.invalid}")
-    @Column(updatable = false)
+    @NotNull
+    @Column(name = "humidity", updatable = false)
     private Double humidity;
 
-    @NotNull(message = "{field.weight.invalid}")
-    @Column(updatable = false)
+    @NotNull
+    @Column(name = "weight", updatable = false)
     private Double weight;
 
     @ManyToOne
     @JoinColumn(name = "hive_id")
     @JsonBackReference
     private Hive hive;
-
-    @Override
-    public boolean equals(Object o) {
-        return super.equals(o);
-    }
 }

@@ -1,0 +1,18 @@
+<app-breadcrumbs></app-breadcrumbs>
+
+<mat-card>
+  <mat-card-content>
+    <div class="mb-4">
+      <h2 style="margin: 0" class="text-center">
+        {{ user ? user.name : "Cadastrar Usuário" }}
+      </h2>
+    </div>
+    <mat-tab-group mat-stretch-tabs="false" mat-align-tabs="start">
+      <mat-tab label="Informações">
+        <ng-template matTabContent>
+          <app-user-informations></app-user-informations>
+        </ng-template>
+      </mat-tab>
+    </mat-tab-group>
+  </mat-card-content>
+</mat-card>

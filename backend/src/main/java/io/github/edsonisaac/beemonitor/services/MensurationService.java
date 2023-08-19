@@ -1,5 +1,6 @@
 package io.github.edsonisaac.beemonitor.services;
 
+import io.github.edsonisaac.beemonitor.dtos.MensurationDTO;
 import io.github.edsonisaac.beemonitor.entities.Mensuration;
 import io.github.edsonisaac.beemonitor.exceptions.ObjectNotFoundException;
 import io.github.edsonisaac.beemonitor.exceptions.ValidationException;
@@ -15,22 +16,12 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
-/**
- * The type Mensuration service.
- *
- * @author Edson Isaac
- */
 @Service
 @RequiredArgsConstructor
-public class MensurationService implements AbstractService<Mensuration> {
+public class MensurationService implements AbstractService<Mensuration, MensurationDTO> {
 
     private final MensurationRepository repository;
 
-    /**
-     * Delete.
-     *
-     * @param id the id
-     */
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public void delete(UUID id) {
@@ -46,99 +37,35 @@ public class MensurationService implements AbstractService<Mensuration> {
         throw new ObjectNotFoundException(MessageUtils.MENSURATION_NOT_FOUND);
     }
 
-    /**
-     * Find all.
-     *
-     * @param page      the page
-     * @param size      the size
-     * @param sort      the sort
-     * @param direction the direction
-     * @return the mensuration list
-     */
     @Override
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-    public Page<Mensuration> findAll(Integer page, Integer size, String sort, String direction) {
-        return repository.findAll(PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(direction), sort)));
+    public Page<MensurationDTO> findAll(Integer page, Integer size, String sort, String direction) {
+        final var mensurations = repository.findAll(PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(direction), sort)));
+        return mensurations.map(MensurationDTO::toDTO);
     }
 
-    /**
-     * Find all.
-     *
-     * @param hiveId    the hive id
-     * @param page      the page
-     * @param size      the size
-     * @param sort      the sort
-     * @param direction the direction
-     * @return the mensuration list
-     */
-    @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-    public Page<Mensuration> findAll(UUID hiveId, Integer page, Integer size, String sort, String direction) {
-        return repository.findAll(hiveId, PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(direction), sort)));
-    }
-
-    /**
-     * Find by id.
-     *
-     * @param id the id
-     * @return the mensuration
-     */
     @Override
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-    public Mensuration findById(UUID id) {
-
-        return repository.findById(id).orElseThrow(() -> {
-            throw new ObjectNotFoundException(MessageUtils.MENSURATION_NOT_FOUND);
-        });
+    public MensurationDTO findById(UUID id) {
+        final var mensuration = repository.findById(id).orElseThrow(() -> new ObjectNotFoundException(MessageUtils.MENSURATION_NOT_FOUND));
+        return MensurationDTO.toDTO(mensuration);
     }
 
-    /**
-     * Save.
-     *
-     * @param mensuration the mensuration
-     * @return the mensuration
-     */
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public Mensuration save(Mensuration mensuration) {
+    public MensurationDTO save(Mensuration mensuration) {
 
         if (mensuration == null) {
             throw new ValidationException(MessageUtils.MENSURATION_NULL);
         }
 
-        if (validate(mensuration)) {
-            mensuration = repository.save(mensuration);
-        }
-
-        return mensuration;
+        mensuration = repository.save(mensuration);
+        return MensurationDTO.toDTO(mensuration);
     }
 
-    /**
-     * Search.
-     *
-     * @param hiveId    the hive id
-     * @param date      the date
-     * @param page      the page
-     * @param size      the size
-     * @param sort      the sort
-     * @param direction the direction
-     * @return the mensuration list
-     */
     @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-    public Page<Mensuration> search(UUID hiveId, String date, Integer page, Integer size, String sort, String direction) {
-        return repository.search(hiveId, date, PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(direction), sort)));
-    }
-
-    /**
-     * Validate.
-     *
-     * @param mensuration the mensuration
-     * @return the boolean
-     */
-    @Override
-    @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
-    public boolean validate(Mensuration mensuration) {
-
-
-        return true;
+    public Page<MensurationDTO> search(UUID hiveId, String value, Integer page, Integer size, String sort, String direction) {
+        final var mensurations = repository.search(hiveId, value, PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(direction), sort)));
+        return mensurations.map(MensurationDTO::toDTO);
     }
 }

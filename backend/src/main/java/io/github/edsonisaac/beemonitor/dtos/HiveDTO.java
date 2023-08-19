@@ -7,12 +7,6 @@ import java.time.LocalDateTime;
 import java.util.Set;
 import java.util.UUID;
 
-
-/**
- * The type Hive dto.
- *
- * @author Edson Isaac
- */
 public record HiveDTO(
         UUID id,
         LocalDateTime createdDate,
@@ -23,12 +17,6 @@ public record HiveDTO(
         Set<MensurationDTO> mensurations
 ) implements Serializable {
 
-    /**
-     * To dto hive dto.
-     *
-     * @param hive the hive
-     * @return the hive dto
-     */
     public static HiveDTO toDTO(Hive hive) {
 
         return new HiveDTO(

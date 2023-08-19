@@ -1,86 +1,87 @@
 package io.github.edsonisaac.beemonitor.controllers;
 
 import io.github.edsonisaac.beemonitor.exceptions.ObjectNotFoundException;
+import io.github.edsonisaac.beemonitor.exceptions.OperationFailureException;
 import io.github.edsonisaac.beemonitor.exceptions.StandardError;
 import io.github.edsonisaac.beemonitor.exceptions.ValidationException;
-import lombok.RequiredArgsConstructor;
-import org.springframework.context.MessageSource;
+import io.github.edsonisaac.beemonitor.utils.MessageUtils;
+import jakarta.servlet.http.HttpServletRequest;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import javax.servlet.http.HttpServletRequest;
+import java.io.FileNotFoundException;
 import java.util.List;
-import java.util.Locale;
 
-/**
- * The type Controller advice.
- *
- * @author Edson Isaac
- */
-@ControllerAdvice
-@RequiredArgsConstructor
+import static org.springframework.http.HttpStatus.*;
+
+@RestControllerAdvice
 public class ExceptionHandlerController {
 
-    private final MessageSource messageSource;
+    @ExceptionHandler(AuthenticationException.class)
+    @ResponseStatus(UNAUTHORIZED)
+    public StandardError authenticationException(AuthenticationException ex, HttpServletRequest request) {
+        return buildStandardError(UNAUTHORIZED, MessageUtils.AUTHENTICATION_FAIL, request);
+    }
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    @ResponseStatus(BAD_REQUEST)
+    public StandardError dataIntegrityViolationException(DataIntegrityViolationException ex, HttpServletRequest request) {
+        return buildStandardError(BAD_REQUEST, ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(FileNotFoundException.class)
+    @ResponseStatus(NOT_FOUND)
+    public StandardError fileNotFoundException(FileNotFoundException ex, HttpServletRequest request) {
+        return buildStandardError(NOT_FOUND, ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    @ResponseStatus(BAD_REQUEST)
+    public StandardError httpMessageNotReadableException(HttpMessageNotReadableException ex, HttpServletRequest request) {
+        return buildStandardError(BAD_REQUEST, ex.getMessage(), request);
+    }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<?> methodArgumentNotValidException(MethodArgumentNotValidException ex, HttpServletRequest request) {
-
-        var errors = ex.getBindingResult().getFieldErrors().stream().map(error ->
-                StandardError.builder()
-                        .timestamp(System.currentTimeMillis())
-                        .status(HttpStatus.BAD_REQUEST.value())
-                        .error("Bad Request")
-                        .message(messageSource.getMessage(error, Locale.getDefault()))
-                        .path(request.getRequestURI())
-                        .build()
+    @ResponseStatus(BAD_REQUEST)
+    public List<StandardError> methodArgumentNotValidException(MethodArgumentNotValidException ex, HttpServletRequest request) {
+        return ex.getBindingResult().getFieldErrors().stream().map(error ->
+                buildStandardError(BAD_REQUEST, StringUtils.capitalize(error.getField()) + " " + error.getDefaultMessage() + "!", request)
         ).toList();
-
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);
     }
 
-    /**
-     * Object not found response entity.
-     *
-     * @param ex      the ex
-     * @param request the request
-     * @return the response entity
-     */
     @ExceptionHandler(ObjectNotFoundException.class)
-    public ResponseEntity<?> objectNotFound(ObjectNotFoundException ex, HttpServletRequest request) {
-
-        var error = StandardError.builder()
-                .timestamp(System.currentTimeMillis())
-                .status(HttpStatus.NOT_FOUND.value())
-                .error("Not Found")
-                .message(ex.getMessage())
-                .path(request.getRequestURI())
-                .build();
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(List.of(error));
+    @ResponseStatus(NOT_FOUND)
+    public StandardError objectNotFound(ObjectNotFoundException ex, HttpServletRequest request) {
+        return buildStandardError(NOT_FOUND, ex.getMessage(), request);
     }
 
-    /**
-     * Validation exception response entity.
-     *
-     * @param ex      the ex
-     * @param request the request
-     * @return the response entity
-     */
-    @ExceptionHandler(ValidationException.class)
-    public ResponseEntity<?> validationException(ValidationException ex, HttpServletRequest request) {
+    @ExceptionHandler(OperationFailureException.class)
+    @ResponseStatus(INTERNAL_SERVER_ERROR)
+    public StandardError operationFailureException(OperationFailureException ex, HttpServletRequest request) {
+        return buildStandardError(INTERNAL_SERVER_ERROR, ex.getMessage(), request);
+    }
 
-        var error = StandardError.builder()
+    @ExceptionHandler(ValidationException.class)
+    @ResponseStatus(BAD_REQUEST)
+    public StandardError validationException(ValidationException ex, HttpServletRequest request) {
+        return buildStandardError(BAD_REQUEST, ex.getMessage(), request);
+    }
+
+    private StandardError buildStandardError(HttpStatus status, String message, HttpServletRequest request) {
+
+        return StandardError.builder()
                 .timestamp(System.currentTimeMillis())
-                .status(HttpStatus.BAD_REQUEST.value())
-                .error("Bad Request")
-                .message(ex.getMessage())
+                .status(status.value())
+                .error(status.getReasonPhrase())
+                .message(message)
                 .path(request.getRequestURI())
                 .build();
-
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(List.of(error));
     }
 }

@@ -1,0 +1,25 @@
+<div *ngIf="hasCard">
+  <mat-card>
+    <mat-card-content>
+      <div class="flex flex-col gap-4">
+        <div class="flex justify-center">
+          <img src="/assets/images/bee.png" width="100px" />
+        </div>
+        <div class="flex justify-center">
+          <p style="margin: 0">Não há dados a serem exibidos!</p>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
+
+<div *ngIf="!hasCard">
+  <div class="flex flex-col gap-4">
+    <div class="flex justify-center">
+      <img src="/assets/images/bee.png" width="100px" />
+    </div>
+    <div class="flex justify-center">
+      <p style="margin: 0">Não há dados a serem exibidos!</p>
+    </div>
+  </div>
+</div>

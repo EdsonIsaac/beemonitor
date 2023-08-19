@@ -6,11 +6,6 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-/**
- * The type Image dto.
- *
- * @author Edson Isaac
- */
 public record ImageDTO(
         UUID id,
         LocalDateTime createdDate,
@@ -20,12 +15,6 @@ public record ImageDTO(
         String name
 ) implements Serializable {
 
-    /**
-     * To dto image dto.
-     *
-     * @param image the image
-     * @return the image dto
-     */
     public static ImageDTO toDTO(Image image) {
 
         return new ImageDTO(

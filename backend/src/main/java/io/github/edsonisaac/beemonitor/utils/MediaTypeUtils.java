@@ -1,31 +1,12 @@
 package io.github.edsonisaac.beemonitor.utils;
 
+import jakarta.servlet.ServletContext;
 import org.springframework.http.MediaType;
 
-import javax.servlet.ServletContext;
-
-/**
- * The type Media type utils.
- *
- * @author Edson Isaac
- */
 public class MediaTypeUtils {
 
-    /**
-     * Gets media type for file name.
-     *
-     * @param servletContext the servlet context
-     * @param fileName       the file name
-     * @return the media type for file name
-     */
     public static MediaType getMediaTypeForFileName(ServletContext servletContext, String fileName) {
-
-        var mineType = servletContext.getMimeType(fileName);
-
-        try {
-            return MediaType.parseMediaType(mineType);
-        } catch (Exception e) {
-            return MediaType.APPLICATION_OCTET_STREAM;
-        }
-    }
+        String mineType = servletContext.getMimeType(fileName);
+        return MediaType.parseMediaType(mineType != null ? mineType : MediaType.APPLICATION_OCTET_STREAM_VALUE);
+    }   
 }

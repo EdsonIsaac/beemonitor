@@ -3,21 +3,20 @@ package io.github.edsonisaac.beemonitor.entities;
 import io.github.edsonisaac.beemonitor.exceptions.OperationFailureException;
 import io.github.edsonisaac.beemonitor.utils.FileUtils;
 import io.github.edsonisaac.beemonitor.utils.MessageUtils;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotEmpty;
 import java.io.IOException;
 
-/**
- * The type Image.
- *
- * @author Edson Isaac
- */
-@Data
+@Getter
+@Setter
+@ToString
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -25,13 +24,8 @@ import java.io.IOException;
 public class Image extends AbstractEntity {
 
     @NotEmpty
-    @Column(name = "name")
+    @Column(name = "name", unique = true, length = 25)
     private String name;
-
-    @Override
-    public boolean equals(Object o) {
-        return super.equals(o);
-    }
 
     @PostPersist
     @PostUpdate
@@ -41,7 +35,8 @@ public class Image extends AbstractEntity {
 
             try {
                 FileUtils.save(key, value, FileUtils.IMAGES_DIRECTORY);
-            } catch (IOException e) {
+            } catch (IOException ex) {
+                ex.printStackTrace();
                 throw new OperationFailureException(MessageUtils.OPERATION_FAILURE);
             }
         });

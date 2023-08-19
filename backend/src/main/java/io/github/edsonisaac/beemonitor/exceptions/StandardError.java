@@ -2,15 +2,12 @@ package io.github.edsonisaac.beemonitor.exceptions;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-/**
- * The type Standard error.
- *
- * @author Edson Isaac
- */
-@Data
+@Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
