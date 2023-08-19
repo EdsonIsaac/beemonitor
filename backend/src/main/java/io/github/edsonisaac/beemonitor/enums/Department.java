@@ -1,6 +1,6 @@
 package io.github.edsonisaac.beemonitor.enums;
 
-public enum Authority {
+public enum Department {
     ADMINISTRATION,
     SUPPORT
 }

@@ -38,12 +38,12 @@ export class AuthenticationService {
     return this._subject.asObservable();
   }
 
-  hasAuthority(authorities: Array<string>) {
+  hasRoles(roles: Array<string>) {
     const authentication = this.getAuthentication();
     return (
       !!authentication &&
-      authorities
-        .map((a) => a.toLowerCase())
+      roles
+        .map((role) => role.toLowerCase())
         .includes(authentication.role.toLowerCase())
     );
   }

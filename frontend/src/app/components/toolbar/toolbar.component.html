@@ -18,7 +18,8 @@
         class="text-zinc-800 dark:text-zinc-200"
         [matMenuTriggerFor]="menu"
       >
-        <mat-icon>person</mat-icon>
+        <img *ngIf="user.photo" [src]="api + '/files/search?name=' + user.photo.name" class="rounded-full">
+        <mat-icon *ngIf="!user.photo">person</mat-icon>
       </button>
       <mat-menu #menu="matMenu" xPosition="before">
         <div class="px-4 py-2">{{user.name}}</div>

@@ -25,7 +25,6 @@ public abstract class FileUtils {
     }
 
     public static File save(MultipartFile file, String path) throws IOException {
-        checkPathDestination(path);
         final var extension = getExtension(Objects.requireNonNull(file.getOriginalFilename()));
         final var filename = System.currentTimeMillis() + "." + extension;
         final var filePath = Paths.get(System.getProperty("user.dir") + path, filename);
@@ -34,7 +33,6 @@ public abstract class FileUtils {
     }
 
     public static File save(String filename, MultipartFile file, String path) throws IOException {
-        checkPathDestination(path);
         final var filePath = Paths.get(System.getProperty("user.dir") + path, filename);
         Files.write(filePath, file.getBytes());
         return find(filename, path);
@@ -48,12 +46,5 @@ public abstract class FileUtils {
     public static String getExtension(String filename) {
         final var fileNameParts = filename.split("\\.");
         return fileNameParts.length > 1 ? fileNameParts[fileNameParts.length - 1] : "";
-    }
-
-    public static void checkPathDestination(String path) {
-        final var directory = new File(System.getProperty("user.dir") + path);
-        if (!directory.exists()) {
-            directory.mkdir();
-        }
     }
 }

@@ -19,8 +19,8 @@ export class PanelComponent implements OnInit {
     this.authentication = this._authenticationService.getAuthentication();
   }
 
-  hasAuthority(authorities: Array<string>) {
-    return this._authenticationService.hasAuthority(authorities);
+  hasRoles(roles: Array<string>) {
+    return this._authenticationService.hasRoles(roles);
   }
 
   redirectToHiveList() {

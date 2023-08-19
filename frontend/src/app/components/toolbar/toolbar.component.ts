@@ -15,7 +15,6 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./toolbar.component.sass'],
 })
 export class ToolbarComponent implements OnInit {
-  
   api!: string;
   authentication!: Authentication | null;
   theme!: string;
@@ -51,6 +50,14 @@ export class ToolbarComponent implements OnInit {
             );
           },
         });
+
+      this._userService.get().subscribe({
+        next: (user) => {
+          if (user && this.user.id === user.id) {
+            this.user = user;
+          }
+        },
+      });
     }
   }
 
@@ -60,13 +67,10 @@ export class ToolbarComponent implements OnInit {
   }
 
   checkTheme() {
-  
     if (this.theme === 'dark') {
       document.documentElement.classList.add('dark');
       localStorage.setItem('theme', 'dark');
-    }
-
-    else {
+    } else {
       document.documentElement.classList.remove('dark');
       localStorage.setItem('theme', 'light');
     }

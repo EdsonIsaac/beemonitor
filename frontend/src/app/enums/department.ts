@@ -1,4 +1,4 @@
-export enum Authority {
+export enum Department {
     ADMINISTRATION = 'ADMINISTRATION',
     SUPPORT = 'SUPPORT'
 }

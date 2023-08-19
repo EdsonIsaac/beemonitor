@@ -1,6 +1,6 @@
 package io.github.edsonisaac.beemonitor.entities;
 
-import io.github.edsonisaac.beemonitor.enums.Authority;
+import io.github.edsonisaac.beemonitor.enums.Department;
 import jakarta.persistence.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
@@ -12,7 +12,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.Set;
+import java.util.List;
 
 @Getter
 @Setter
@@ -41,9 +41,8 @@ public class User extends AbstractEntity implements UserDetails {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "tb_authorities")
-    private Set<Authority> authorities;
+    @Column(name = "department", nullable = false, length = 25)
+    private Department department;
 
     @Valid
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
@@ -51,7 +50,7 @@ public class User extends AbstractEntity implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return authorities.stream().map(authority -> new SimpleGrantedAuthority(authority.name())).toList();
+        return List.of(new SimpleGrantedAuthority(department.name()));
     }
 
     @Override

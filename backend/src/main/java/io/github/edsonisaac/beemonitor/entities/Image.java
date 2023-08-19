@@ -24,7 +24,7 @@ import java.io.IOException;
 public class Image extends AbstractEntity {
 
     @NotEmpty
-    @Column(name = "name", unique = true, length = 30)
+    @Column(name = "name", unique = true, length = 25)
     private String name;
 
     @PostPersist
@@ -35,7 +35,8 @@ public class Image extends AbstractEntity {
 
             try {
                 FileUtils.save(key, value, FileUtils.IMAGES_DIRECTORY);
-            } catch (IOException e) {
+            } catch (IOException ex) {
+                ex.printStackTrace();
                 throw new OperationFailureException(MessageUtils.OPERATION_FAILURE);
             }
         });

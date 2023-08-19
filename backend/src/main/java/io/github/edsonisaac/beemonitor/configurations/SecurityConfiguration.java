@@ -6,6 +6,7 @@ import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -59,7 +60,8 @@ public class SecurityConfiguration {
 
         return http
                 .authorizeHttpRequests(requests -> {
-                    requests.requestMatchers(AntPathRequestMatcher.antMatcher("/api/auth/**")).permitAll();
+                    requests.requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.GET, "/api/files/**")).permitAll();
+                    requests.requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/api/auth/**")).permitAll();
                     requests.anyRequest().authenticated();
                 })
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))

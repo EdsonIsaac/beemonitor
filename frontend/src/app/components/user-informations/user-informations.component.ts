@@ -91,14 +91,14 @@ export class UserInformationsComponent implements OnInit {
       name: [user?.name, Validators.required],
       username: [user?.username, Validators.required],
       password: [user?.password, Validators.required],
-      authorities: [user?.authorities, Validators.required],
+      department: [user?.department, Validators.required],
       enabled: [user?.enabled, Validators.required],
       photo: [user?.photo, Validators.nullValidator],
     });
 
-    if (this.user.username === this.authentication?.username) {
+    if (user && user.username === this.authentication?.username) {
       this.form.get('username')?.disable();
-      this.form.get('authorities')?.disable();
+      this.form.get('department')?.disable();
       this.form.get('enabled')?.disable();
     }
   }
@@ -121,45 +121,47 @@ export class UserInformationsComponent implements OnInit {
   }
 
   submit() {
-    const user: User = Object.assign({}, this.form.getRawValue());
-    const image: File = this.photo?.file;
+    if (this.form.valid) {
+      const user: User = Object.assign({}, this.form.getRawValue());
+      const image: File = this.photo?.file;
 
-    if (user.id) {
-      this._userService.update(user, image).subscribe({
-        next: (user) => {
-          this._userService.set(user);
-          this._notificationService.show(
-            MessageUtils.USER_UPDATE_SUCCESS,
-            NotificationType.SUCCESS
-          );
-        },
+      if (user.id) {
+        this._userService.update(user, image).subscribe({
+          next: (user) => {
+            this._userService.set(user);
+            this._notificationService.show(
+              MessageUtils.USER_UPDATE_SUCCESS,
+              NotificationType.SUCCESS
+            );
+          },
 
-        error: (error) => {
-          console.error(error);
-          this._notificationService.show(
-            MessageUtils.getMessage(error),
-            NotificationType.FAIL
-          );
-        },
-      });
-    } else {
-      this._userService.save(user, image).subscribe({
-        next: (user) => {
-          this._notificationService.show(
-            MessageUtils.USER_SAVE_SUCCESS,
-            NotificationType.SUCCESS
-          );
-          this._redirectService.toUser(user.id);
-        },
+          error: (error) => {
+            console.error(error);
+            this._notificationService.show(
+              MessageUtils.getMessage(error),
+              NotificationType.FAIL
+            );
+          },
+        });
+      } else {
+        this._userService.save(user, image).subscribe({
+          next: (user) => {
+            this._notificationService.show(
+              MessageUtils.USER_SAVE_SUCCESS,
+              NotificationType.SUCCESS
+            );
+            this._redirectService.toUser(user.id);
+          },
 
-        error: (error) => {
-          console.error(error);
-          this._notificationService.show(
-            MessageUtils.getMessage(error),
-            NotificationType.FAIL
-          );
-        },
-      });
+          error: (error) => {
+            console.error(error);
+            this._notificationService.show(
+              MessageUtils.getMessage(error),
+              NotificationType.FAIL
+            );
+          },
+        });
+      }
     }
   }
 }

@@ -1,4 +1,4 @@
-import { Authority } from '../enums/authority';
+import { Department } from '../enums/department';
 import { AbstractEntity } from './abstract-entity';
 import { Image } from './image';
 
@@ -7,6 +7,6 @@ export interface User extends AbstractEntity {
   username: string;
   password: string;
   enabled: boolean;
-  authorities: Array<Authority>;
+  department: Department;
   photo: Image;
 }

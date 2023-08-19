@@ -15,7 +15,7 @@
     </mat-card>
   </div>
 
-  <div class="link" (click)="redirectToUserList()">
+  <div class="link" (click)="redirectToUserList()" *ngIf="hasRoles(['support'])">
     <mat-card>
       <mat-card-content>
         <div class="mb-4">

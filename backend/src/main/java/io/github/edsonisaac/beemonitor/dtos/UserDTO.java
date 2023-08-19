@@ -1,10 +1,10 @@
 package io.github.edsonisaac.beemonitor.dtos;
 
 import io.github.edsonisaac.beemonitor.entities.User;
+import io.github.edsonisaac.beemonitor.enums.Department;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.UUID;
 
 public record UserDTO(
@@ -17,7 +17,8 @@ public record UserDTO(
         String username,
         String password,
         Boolean enabled,
-        Collection<?> authorities
+        Department department,
+        ImageDTO photo
 ) implements Serializable {
 
     public static UserDTO toDTO(User user) {
@@ -32,6 +33,7 @@ public record UserDTO(
                 user.getUsername(),
                 user.getPassword(),
                 user.getEnabled(),
-                user.getAuthorities());
+                user.getDepartment(),
+                user.getPhoto() != null ? ImageDTO.toDTO(user.getPhoto()) : null);
     }
 }

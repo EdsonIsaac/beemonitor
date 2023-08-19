@@ -8,6 +8,7 @@ import io.github.edsonisaac.beemonitor.utils.MessageUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -39,6 +40,12 @@ public class ExceptionHandlerController {
     @ResponseStatus(NOT_FOUND)
     public StandardError fileNotFoundException(FileNotFoundException ex, HttpServletRequest request) {
         return buildStandardError(NOT_FOUND, ex.getMessage(), request);
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    @ResponseStatus(BAD_REQUEST)
+    public StandardError httpMessageNotReadableException(HttpMessageNotReadableException ex, HttpServletRequest request) {
+        return buildStandardError(BAD_REQUEST, ex.getMessage(), request);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.github.edsonisaac.beemonitor.entities.Hive;
 import io.github.edsonisaac.beemonitor.entities.User;
-import io.github.edsonisaac.beemonitor.enums.Authority;
+import io.github.edsonisaac.beemonitor.enums.Department;
 import io.github.edsonisaac.beemonitor.repositories.HiveRepository;
 import io.github.edsonisaac.beemonitor.services.HiveService;
 import io.github.edsonisaac.beemonitor.services.UserService;
@@ -26,8 +26,6 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.HashMap;
-import java.util.Set;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -68,7 +66,7 @@ class HiveControllerTest {
                 .name("ADMINISTRATION")
                 .username("administration")
                 .password("administration")
-                .authorities(Set.of(Authority.ADMINISTRATION))
+                .department(Department.ADMINISTRATION)
                 .enabled(true)
                 .build();
 
