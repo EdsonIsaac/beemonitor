@@ -27,7 +27,7 @@ services:
     networks:
       - beemonitor-network
 
-  beemonitor:
+  beemonitor-backend:
     image: edsonisaac/beemonitor-backend:latest
     restart: unless-stopped
     depends_on:
@@ -38,14 +38,31 @@ services:
     ports:
       - "8080:8080"
     volumes:
-      - beemonitor-data:/var/lib/beemonitor
+      - beemonitor-backend-data:/var/lib/beemonitor-backend
     networks:
       - beemonitor-network
-    
+  
+  beemonitor-frontend:
+    image: edsonisaac/beemonitor-frontend:latest
+    restart: unless-stopped
+    depends_on:
+      - postgres
+      - pgadmin
+      - beemonitor-backend
+    env_file:
+      - .env
+    ports:
+      - "80:80"
+    volumes:
+      - beemonitor-frontend-data:/var/lib/beemonitor-frontend
+    networks:
+      - beemonitor-network
+
 volumes:
   postgres-data:
   pgadmin-data:
-  beemonitor-data:
+  beemonitor-backend-data:
+  beemonitor-frontend-data:
 
 networks:
   beemonitor-network:
