@@ -4,28 +4,33 @@ services:
   postgres:
     image: postgres:latest
     restart: unless-stopped
-    env_file: 
-      - .env
+    environment:
+      - POSTGRES_DB=beemonitor
+      - POSTGRES_USER=beemonitor
+      - POSTGRES_PASSWORD=beemonitor
     ports:
       - "5432:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
     networks:
-      - beemonitor-network
+      beemonitor-network:
+        ipv4_address: 172.19.0.2
   
   pgadmin:
     image: dpage/pgadmin4:latest
     restart: unless-stopped
     depends_on:
       - postgres
-    env_file: 
-      - .env
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=edson-isaac@hotmail.com
+      - PGADMIN_DEFAULT_PASSWORD=1234
     ports:
       - "8081:80"
     volumes:
       - pgadmin-data:/var/lib/pgadmin
     networks:
-      - beemonitor-network
+      beemonitor-network:
+        ipv4_address: 172.19.0.3
 
   beemonitor-backend:
     image: edsonisaac/beemonitor-backend:latest
@@ -33,14 +38,17 @@ services:
     depends_on:
       - postgres
       - pgadmin
-    env_file: 
-      - .env
+    environment:
+      - POSTGRES_URL=jdbc:postgresql://172.19.0.2:5432/beemonitor
+      - POSTGRES_USER=beemonitor
+      - POSTGRES_PASSWORD=beemonitor
     ports:
       - "8080:8080"
     volumes:
       - beemonitor-backend-data:/var/lib/beemonitor-backend
     networks:
-      - beemonitor-network
+      beemonitor-network:
+        ipv4_address: 172.19.0.4
   
   beemonitor-frontend:
     image: edsonisaac/beemonitor-frontend:latest
@@ -49,14 +57,13 @@ services:
       - postgres
       - pgadmin
       - beemonitor-backend
-    env_file:
-      - .env
     ports:
       - "80:80"
     volumes:
       - beemonitor-frontend-data:/var/lib/beemonitor-frontend
     networks:
-      - beemonitor-network
+      beemonitor-network:
+        ipv4_address: 172.19.0.5
 
 volumes:
   postgres-data:
@@ -67,3 +74,6 @@ volumes:
 networks:
   beemonitor-network:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 172.19.0.0/24
