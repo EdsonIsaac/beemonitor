@@ -12,18 +12,13 @@ export class AuthGuard {
     private _router: Router
   ) {}
 
-  async canActivate(
-    route: ActivatedRouteSnapshot,
-    state: RouterStateSnapshot
-  ): Promise<boolean> {
-    
-    const isAuthenticated = await this._authenticationService.isAuthenticated();
-    
-    if (isAuthenticated) {
+  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
+
+    if (this._authenticationService.isAuthenticated()) {
       return true;
     }
 
-    this._router.navigate(['/']);
+    this._router.navigate(['/login']);
     return false;
   }
 }

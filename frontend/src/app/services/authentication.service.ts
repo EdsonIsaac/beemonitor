@@ -27,14 +27,19 @@ export class AuthenticationService {
         role: decodedToken.scope,
       };
 
-      this._subject.next(authentication);
       return authentication;
     }
-
+    
     return null;
   }
 
   getAuthenticationAsObservable() {
+    const authentication = this._subject.value;
+  
+    if (!authentication) {
+      this._subject.next(this.getAuthentication());
+    }
+
     return this._subject.asObservable();
   }
 
@@ -62,10 +67,11 @@ export class AuthenticationService {
 
   logout() {
     localStorage.removeItem('access_token');
+    this._subject.next(null);
   }
 
   setAuthentication(authentication: Authentication) {
     localStorage.setItem('access_token', authentication.access_token);
-    this.getAuthentication();
+    this._subject.next(this.getAuthentication());
   }
 }
