@@ -17,9 +17,8 @@ public record HiveDTO(
         Set<MensurationDTO> mensurations
 ) implements Serializable {
 
-    public static HiveDTO toDTO(Hive hive) {
-
-        return new HiveDTO(
+    public HiveDTO(Hive hive) {
+        this(
             hive.getId(),
             hive.getCreatedDate(),
             hive.getLastModifiedDate(),

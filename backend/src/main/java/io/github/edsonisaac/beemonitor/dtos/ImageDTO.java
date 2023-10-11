@@ -15,15 +15,14 @@ public record ImageDTO(
         String name
 ) implements Serializable {
 
-    public static ImageDTO toDTO(Image image) {
-
-        return new ImageDTO(
-                image.getId(),
-                image.getCreatedDate(),
-                image.getLastModifiedDate(),
-                image.getCreatedByUser(),
-                image.getModifiedByUser(),
-                image.getName()
+    public ImageDTO(Image image) {
+        this(
+            image.getId(), 
+            image.getCreatedDate(), 
+            image.getLastModifiedDate(), 
+            image.getCreatedByUser(), 
+            image.getModifiedByUser(), 
+            image.getName()
         );
     }
 }

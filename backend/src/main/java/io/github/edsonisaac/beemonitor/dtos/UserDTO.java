@@ -21,19 +21,19 @@ public record UserDTO(
         ImageDTO photo
 ) implements Serializable {
 
-    public static UserDTO toDTO(User user) {
-
-        return new UserDTO(
-                user.getId(),
-                user.getCreatedDate(),
-                user.getLastModifiedDate(),
-                user.getCreatedByUser(),
-                user.getModifiedByUser(),
-                user.getName(),
-                user.getUsername(),
-                user.getPassword(),
-                user.getEnabled(),
-                user.getDepartment(),
-                user.getPhoto() != null ? ImageDTO.toDTO(user.getPhoto()) : null);
+    public UserDTO(User user) {
+        this(
+            user.getId(),
+            user.getCreatedDate(),
+            user.getLastModifiedDate(),
+            user.getCreatedByUser(),
+            user.getModifiedByUser(),
+            user.getName(),
+            user.getUsername(),
+            user.getPassword(),
+            user.getEnabled(),
+            user.getDepartment(),
+            user.getPhoto() != null ? new ImageDTO(user.getPhoto()) : null
+        );
     }
 }

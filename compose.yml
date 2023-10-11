@@ -15,29 +15,12 @@ services:
     networks:
       beemonitor-network:
         ipv4_address: 172.19.0.2
-  
-  pgadmin:
-    image: dpage/pgadmin4:latest
-    restart: unless-stopped
-    depends_on:
-      - postgres
-    environment:
-      - PGADMIN_DEFAULT_EMAIL=edson-isaac@hotmail.com
-      - PGADMIN_DEFAULT_PASSWORD=1234
-    ports:
-      - "8081:80"
-    volumes:
-      - pgadmin-data:/var/lib/pgadmin
-    networks:
-      beemonitor-network:
-        ipv4_address: 172.19.0.3
 
   beemonitor-backend:
     image: edsonisaac/beemonitor-backend:latest
     restart: unless-stopped
     depends_on:
       - postgres
-      - pgadmin
     environment:
       - POSTGRES_URL=jdbc:postgresql://172.19.0.2:5432/beemonitor
       - POSTGRES_USER=beemonitor
@@ -48,14 +31,13 @@ services:
       - beemonitor-backend-data:/var/lib/beemonitor-backend
     networks:
       beemonitor-network:
-        ipv4_address: 172.19.0.4
+        ipv4_address: 172.19.0.3
   
   beemonitor-frontend:
     image: edsonisaac/beemonitor-frontend:latest
     restart: unless-stopped
     depends_on:
       - postgres
-      - pgadmin
       - beemonitor-backend
     ports:
       - "80:80"
@@ -63,11 +45,10 @@ services:
       - beemonitor-frontend-data:/var/lib/beemonitor-frontend
     networks:
       beemonitor-network:
-        ipv4_address: 172.19.0.5
+        ipv4_address: 172.19.0.4
 
 volumes:
   postgres-data:
-  pgadmin-data:
   beemonitor-backend-data:
   beemonitor-frontend-data:
 

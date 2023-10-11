@@ -17,9 +17,8 @@ public record MensurationDTO(
         Double weight
 ) implements Serializable {
 
-    public static MensurationDTO toDTO(Mensuration mensuration) {
-
-        return new MensurationDTO(
+    public MensurationDTO(Mensuration mensuration) {
+        this(
             mensuration.getId(),
             mensuration.getCreatedDate(),
             mensuration.getLastModifiedDate(),

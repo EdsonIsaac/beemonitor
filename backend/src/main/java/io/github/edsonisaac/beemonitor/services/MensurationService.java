@@ -11,7 +11,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
@@ -23,7 +22,7 @@ public class MensurationService implements AbstractService<Mensuration, Mensurat
     private final MensurationRepository repository;
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional
     public void delete(UUID id) {
 
         if (id != null) {
@@ -38,34 +37,43 @@ public class MensurationService implements AbstractService<Mensuration, Mensurat
     }
 
     @Override
-    @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+    @Transactional(readOnly = true)
     public Page<MensurationDTO> findAll(Integer page, Integer size, String sort, String direction) {
         final var mensurations = repository.findAll(PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(direction), sort)));
-        return mensurations.map(MensurationDTO::toDTO);
+        return mensurations.map(MensurationDTO::new);
     }
 
     @Override
-    @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+    @Transactional(readOnly = true)
     public MensurationDTO findById(UUID id) {
         final var mensuration = repository.findById(id).orElseThrow(() -> new ObjectNotFoundException(MessageUtils.MENSURATION_NOT_FOUND));
-        return MensurationDTO.toDTO(mensuration);
+        return new MensurationDTO(mensuration);
     }
 
     @Override
-    @Transactional(propagation = Propagation.REQUIRED)
+    @Transactional
     public MensurationDTO save(Mensuration mensuration) {
 
         if (mensuration == null) {
             throw new ValidationException(MessageUtils.MENSURATION_NULL);
         }
 
-        mensuration = repository.save(mensuration);
-        return MensurationDTO.toDTO(mensuration);
+        if (validate(mensuration)) {
+            mensuration = repository.save(mensuration);
+        }
+        
+        return new MensurationDTO(mensuration);
     }
 
-    @Transactional(propagation = Propagation.SUPPORTS, readOnly = true)
+    @Transactional(readOnly = true)
     public Page<MensurationDTO> search(UUID hiveId, String value, Integer page, Integer size, String sort, String direction) {
         final var mensurations = repository.search(hiveId, value, PageRequest.of(page, size, Sort.by(Sort.Direction.fromString(direction), sort)));
-        return mensurations.map(MensurationDTO::toDTO);
+        return mensurations.map(MensurationDTO::new);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public boolean validate(Mensuration mensuration) {
+        return true;
     }
 }
