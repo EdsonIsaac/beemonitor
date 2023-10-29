@@ -1,8 +1,14 @@
 app:
   security:
     rsa:
-      public-key: classpath:certs/public.pem
-      private-key: classpath:certs/private.pem
+      public-key: classpath:certs/jwt/public.pem
+      private-key: classpath:certs/jwt/private.pem
+
+server:
+  ssl:
+    enabled: true
+    certificate: classpath:certs/ssl/certificate.crt
+    certificate-private-key: classpath:certs/ssl/private.key
 
 spring:
   datasource:
