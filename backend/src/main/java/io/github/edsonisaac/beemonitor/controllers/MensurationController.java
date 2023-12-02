@@ -47,7 +47,6 @@ public class MensurationController implements AbstractController<Mensuration, Me
                                         @RequestParam(required = false, defaultValue = "10") Integer size,
                                         @RequestParam(required = false, defaultValue = "createdDate") String sort,
                                         @RequestParam(required = false, defaultValue = "desc") String direction) {
-
         return mensurationService.findAll(page, size, sort, direction);
     }
 
@@ -63,7 +62,6 @@ public class MensurationController implements AbstractController<Mensuration, Me
     public MensurationDTO save(Mensuration mensuration) {
         return mensurationService.save(mensuration);
     }
-
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @ResponseStatus(CREATED)
@@ -88,7 +86,6 @@ public class MensurationController implements AbstractController<Mensuration, Me
                                        @RequestParam(required = false, defaultValue = "10") Integer size,
                                        @RequestParam(required = false, defaultValue = "createdDate") String sort,
                                        @RequestParam(required = false, defaultValue = "desc") String direction) {
-
         return mensurationService.search(hiveId, value, page, size, sort, direction);
     }
 

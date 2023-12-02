@@ -20,15 +20,21 @@ import java.util.UUID;
 public interface MensurationRepository extends JpaRepository<Mensuration, UUID> {
 
     /**
-     * Searches for mensurations associated with a specific hive and containing a given value in the created date.
+     * Searches for mensuration's associated with a specific hive and containing a given value in the created date.
      *
-     * @param hiveId the ID of the hive to search mensurations for
-     * @param value  the value to search for in the created date of mensurations
+     * @param hiveId the ID of the hive to search mensuration's for
+     * @param value  the value to search for in the created date of mensuration's
      * @param page   the pagination information
-     * @return A Page containing the list of mensurations that match the search criteria
+     * @return A Page containing the list of mensuration's that match the search criteria
      */
-    @Query("SELECT m FROM tb_mensurations AS m INNER JOIN m.hive as h " +
-            "ON h.id = ?1 " +
-            "AND cast(m.createdDate as string) LIKE concat('%', ?2, '%')")
+    @Query(
+        value = "SELECT m FROM tb_mensurations AS m JOIN FETCH m.hive as h " +
+            "WHERE h.id = ?1 " +
+            "AND cast(m.createdDate as string) LIKE concat('%', ?2, '%')",
+
+        countQuery = "SELECT COUNT(m) FROM tb_mensurations  AS m JOIN m.hive AS h " +
+            "WHERE h.id = ?1 " +
+            "AND cast(m.createdDate as string) LIKE concat('%', ?2, '%')"
+    )
     Page<Mensuration> search(UUID hiveId, String value, Pageable page);
 }

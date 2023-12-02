@@ -4,13 +4,12 @@ import io.github.edsonisaac.beemonitor.entities.User;
 import io.github.edsonisaac.beemonitor.enums.Department;
 import io.github.edsonisaac.beemonitor.exceptions.ObjectNotFoundException;
 import io.github.edsonisaac.beemonitor.services.UserService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.BeanUtils;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.io.File;
-
-import org.springframework.beans.BeanUtils;
-import org.springframework.boot.CommandLineRunner;
-import lombok.RequiredArgsConstructor;
 
 @Component
 @RequiredArgsConstructor
