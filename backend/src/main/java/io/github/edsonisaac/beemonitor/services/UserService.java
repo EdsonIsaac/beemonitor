@@ -1,7 +1,7 @@
 package io.github.edsonisaac.beemonitor.services;
 
 import io.github.edsonisaac.beemonitor.dtos.UserDTO;
-import io.github.edsonisaac.beemonitor.entities.User;
+import io.github.edsonisaac.beemonitor.models.User;
 import io.github.edsonisaac.beemonitor.exceptions.ObjectNotFoundException;
 import io.github.edsonisaac.beemonitor.exceptions.ValidationException;
 import io.github.edsonisaac.beemonitor.repositories.UserRepository;

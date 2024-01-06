@@ -1,8 +1,8 @@
 package io.github.edsonisaac.beemonitor.controllers;
 
 import io.github.edsonisaac.beemonitor.dtos.MensurationDTO;
-import io.github.edsonisaac.beemonitor.entities.Hive;
-import io.github.edsonisaac.beemonitor.entities.Mensuration;
+import io.github.edsonisaac.beemonitor.models.Hive;
+import io.github.edsonisaac.beemonitor.models.Mensuration;
 import io.github.edsonisaac.beemonitor.services.HiveService;
 import io.github.edsonisaac.beemonitor.services.MensurationService;
 import io.swagger.v3.oas.annotations.Operation;

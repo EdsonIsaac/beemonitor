@@ -1,6 +1,6 @@
 package io.github.edsonisaac.beemonitor.configurations;
 
-import io.github.edsonisaac.beemonitor.entities.User;
+import io.github.edsonisaac.beemonitor.models.User;
 import io.github.edsonisaac.beemonitor.enums.Department;
 import io.github.edsonisaac.beemonitor.exceptions.ObjectNotFoundException;
 import io.github.edsonisaac.beemonitor.services.UserService;

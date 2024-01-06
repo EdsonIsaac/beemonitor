@@ -6,7 +6,7 @@ app:
 
 server:
   ssl:
-    enabled: true
+    enabled: false
     certificate: classpath:certs/ssl/certificate.crt
     certificate-private-key: classpath:certs/ssl/private.key
 

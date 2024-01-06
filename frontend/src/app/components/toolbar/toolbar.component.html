@@ -1,33 +1,23 @@
 <mat-toolbar class="bg-zinc-200 dark:bg-zinc-800">
-  <mat-toolbar-row>
-    <a class="link text-zinc-800 dark:text-zinc-200" (click)="redirectToPanel()"
-      >Bee Monitor</a
-    >
-    <span class="spacer"></span>
-    <button
-      mat-icon-button
-      class="text-zinc-800 dark:text-zinc-200"
-      (click)="changeTheme()"
-    >
-      <mat-icon *ngIf="theme === 'light'">brightness_3</mat-icon>
-      <mat-icon *ngIf="theme === 'dark'">wb_sunny</mat-icon>
-    </button>
-    <div *ngIf="user">
-      <button
-        mat-icon-button
-        class="text-zinc-800 dark:text-zinc-200"
-        [matMenuTriggerFor]="menu"
-      >
-        <img *ngIf="user.photo" [src]="api + '/files/search?name=' + user.photo.name" class="rounded-full">
-        <mat-icon *ngIf="!user.photo">person</mat-icon>
-      </button>
-      <mat-menu #menu="matMenu" xPosition="before">
-        <div class="px-4 py-2">{{user.name}}</div>
-        <button mat-menu-item class="text-danger" (click)="logout()">
-          <mat-icon>exit_to_app</mat-icon>
-          <span>Sair</span>
-        </button>
-      </mat-menu>
-    </div>
-  </mat-toolbar-row>
+	<mat-toolbar-row>
+		<a class="link text-zinc-800 dark:text-zinc-200" (click)="redirectToPanel()">Bee Monitor</a>
+		<span class="spacer"></span>
+		<button mat-icon-button class="text-zinc-800 dark:text-zinc-200" (click)="changeTheme()">
+			<mat-icon *ngIf="theme === 'light'">brightness_3</mat-icon>
+			<mat-icon *ngIf="theme === 'dark'">wb_sunny</mat-icon>
+		</button>
+		<div *ngIf="user">
+			<button mat-icon-button class="text-zinc-800 dark:text-zinc-200" [matMenuTriggerFor]="menu">
+				<img *ngIf="user.photo" [src]="api + '/files/search?name=' + user.photo.name" class="rounded-full">
+				<mat-icon *ngIf="!user.photo">person</mat-icon>
+			</button>
+			<mat-menu #menu="matMenu" xPosition="before">
+				<div class="px-4 py-2">{{user.name}}</div>
+				<button mat-menu-item class="text-danger" (click)="logout()">
+					<mat-icon>exit_to_app</mat-icon>
+					<span>Sair</span>
+				</button>
+			</mat-menu>
+		</div>
+	</mat-toolbar-row>
 </mat-toolbar>

@@ -6,32 +6,32 @@ import { NotificationService } from 'src/app/services/notification.service';
 import { MessageUtils } from 'src/app/utils/message-utils';
 
 @Component({
-  selector: 'app-hive-delete',
-  templateUrl: './hive-delete.component.html',
-  styleUrls: ['./hive-delete.component.sass']
+	selector: 'app-hive-delete',
+	templateUrl: './hive-delete.component.html',
+	styleUrls: ['./hive-delete.component.sass']
 })
 export class HiveDeleteComponent {
 
-  constructor(
-    @Inject(MAT_DIALOG_DATA) public data: any,
-    private _dialogRef: MatDialogRef<HiveDeleteComponent>,
-    private _hiveService: HiveService,
-    private _notificationService: NotificationService
-  ) { }
+	constructor(
+		@Inject(MAT_DIALOG_DATA) public readonly data: any,
+		private readonly _dialogRef: MatDialogRef<HiveDeleteComponent>,
+		private readonly _hiveService: HiveService,
+		private readonly _notificationService: NotificationService
+	) { }
 
-  submit() {
+	submit() {
 
-    this._hiveService.delete(this.data.hive).subscribe({
+		this._hiveService.delete(this.data.hive).subscribe({
 
-      complete: () => {
-        this._notificationService.show(MessageUtils.HIVE_DELETE_SUCCESS, NotificationType.SUCCESS);
-        this._dialogRef.close({status: true});
-      },
+			complete: () => {
+				this._notificationService.show(MessageUtils.HIVE_DELETE_SUCCESS, NotificationType.SUCCESS);
+				this._dialogRef.close({ status: true });
+			},
 
-      error: (error) => {
-        console.log(error);
-        this._notificationService.show(MessageUtils.HIVE_DELETE_FAIL, NotificationType.FAIL);
-      }
-    });
-  }
+			error: (error) => {
+				console.log(error);
+				this._notificationService.show(MessageUtils.HIVE_DELETE_FAIL, NotificationType.FAIL);
+			}
+		});
+	}
 }

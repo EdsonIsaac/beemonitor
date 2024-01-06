@@ -1,7 +1,7 @@
 package io.github.edsonisaac.beemonitor.controllers;
 
 import io.github.edsonisaac.beemonitor.dtos.HiveDTO;
-import io.github.edsonisaac.beemonitor.entities.Hive;
+import io.github.edsonisaac.beemonitor.models.Hive;
 import io.github.edsonisaac.beemonitor.exceptions.ObjectNotFoundException;
 import io.github.edsonisaac.beemonitor.services.HiveService;
 import io.github.edsonisaac.beemonitor.utils.MessageUtils;

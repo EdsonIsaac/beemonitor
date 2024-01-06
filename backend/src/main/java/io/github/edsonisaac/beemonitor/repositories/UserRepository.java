@@ -1,6 +1,6 @@
 package io.github.edsonisaac.beemonitor.repositories;
 
-import io.github.edsonisaac.beemonitor.entities.User;
+import io.github.edsonisaac.beemonitor.models.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;

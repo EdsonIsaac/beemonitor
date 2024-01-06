@@ -1,6 +1,6 @@
 package io.github.edsonisaac.beemonitor.dtos;
 
-import io.github.edsonisaac.beemonitor.entities.Hive;
+import io.github.edsonisaac.beemonitor.models.Hive;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;

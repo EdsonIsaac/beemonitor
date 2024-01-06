@@ -3,68 +3,69 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
-import { Hive } from '../entities/hive';
-import { Page } from '../entities/page';
+import { Hive } from '../models/hive';
+import { Page } from '../models/page';
 
 @Injectable({
-  providedIn: 'root',
+	providedIn: 'root',
 })
 export class HiveService {
-  private _baseURL = `${environment.api}/hives`;
-  private _subject = new BehaviorSubject<Hive | null>(null);
+	
+	private _baseURL = `${environment.api}/hives`;
+	private _subject = new BehaviorSubject<Hive | null>(null);
 
-  constructor(private http: HttpClient) {}
+	constructor(private readonly _http: HttpClient) { }
 
-  delete(hive: Hive) {
-    return this.http.delete(`${this._baseURL}/${hive.id}`);
-  }
+	delete(hive: Hive) {
+		return this._http.delete(`${this._baseURL}/${hive.id}`);
+	}
 
-  findAll(page: number, size: number, sort: string, direction: string) {
-    return this.http.get<Page<Hive>>(this._baseURL, {
-      params: {
-        page: page,
-        size: size,
-        sort: sort,
-        direction: direction,
-      },
-    });
-  }
+	findAll(page: number, size: number, sort: string, direction: string) {
+		return this._http.get<Page<Hive>>(this._baseURL, {
+			params: {
+				page: page,
+				size: size,
+				sort: sort,
+				direction: direction,
+			},
+		});
+	}
 
-  findById(id: string) {
-    return this.http.get<Hive>(`${this._baseURL}/${id}`);
-  }
+	findById(id: string) {
+		return this._http.get<Hive>(`${this._baseURL}/${id}`);
+	}
 
-  get() {
-    return this._subject.asObservable();
-  }
+	getHive() {
+		return this._subject.asObservable();
+	}
 
-  save(hive: Hive) {
-    return this.http.post<Hive>(this._baseURL, hive);
-  }
+	save(hive: Hive) {
+		return this._http.post<Hive>(this._baseURL, hive);
+	}
 
-  search(
-    value: string,
-    page: number,
-    size: number,
-    sort: string,
-    direction: string
-  ) {
-    return this.http.get<Page<Hive>>(`${this._baseURL}/search`, {
-      params: {
-        value: value,
-        page: page,
-        size: size,
-        sort: sort,
-        direction: direction,
-      },
-    });
-  }
+	search(
+		value: string,
+		page: number,
+		size: number,
+		sort: string,
+		direction: string
+	) {
+		return this._http.get<Page<Hive>>(`${this._baseURL}/search`, {
+			params: {
+				value: value,
+				page: page,
+				size: size,
+				sort: sort,
+				direction: direction,
+			},
+		});
+	}
 
-  set(hive: Hive | null) {
-    this._subject.next(hive);
-  }
+	setHive(hive: Hive | null) {
+		this._subject.next(hive);
+	}
 
-  update(hive: Hive) {
-    return this.http.put<Hive>(`${this._baseURL}/${hive.id}`, hive);
-  }
+	update(hive: Hive) {
+		return this._http.put<Hive>(`${this._baseURL}/${hive.id}`, hive);
+	}
 }

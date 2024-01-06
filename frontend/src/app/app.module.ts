@@ -5,20 +5,20 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { ComponentsModule } from './components/components.module';
 import { InterceptorsModule } from './interceptors/interceptors.module';
+import { PagesModule } from './pages/pages.module';
 
 @NgModule({
-  declarations: [AppComponent],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    BrowserAnimationsModule,
-    ComponentsModule,
-    HttpClientModule,
-    InterceptorsModule,
-  ],
-  providers: [],
-  bootstrap: [AppComponent],
+	declarations: [AppComponent],
+	imports: [
+		BrowserModule,
+		AppRoutingModule,
+		BrowserAnimationsModule,
+		PagesModule,
+		HttpClientModule,
+		InterceptorsModule,
+	],
+	providers: [],
+	bootstrap: [AppComponent],
 })
-export class AppModule {}
+export class AppModule { }

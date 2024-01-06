@@ -2,44 +2,44 @@ import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
-  selector: 'app-select-image',
-  templateUrl: './select-image.component.html',
-  styleUrls: ['./select-image.component.sass']
+	selector: 'app-select-image',
+	templateUrl: './select-image.component.html',
+	styleUrls: ['./select-image.component.sass']
 })
 export class SelectImageComponent {
 
-  images!: Array<File>;
+	images!: Array<File>;
 
-  constructor(
-    @Inject(MAT_DIALOG_DATA) public data: any, 
-    private _matDialogRef: MatDialogRef<SelectImageComponent>
-  ) { }
+	constructor(
+		@Inject(MAT_DIALOG_DATA) public readonly data: any,
+		private readonly _matDialogRef: MatDialogRef<SelectImageComponent>
+	) { }
 
-  onChange(event: any) {
-    const selectedFiles = <FileList> event.srcElement.files;
-    
-    this.images = new Array();
+	onChange(event: any) {
 
-    for (let i = 0; i< selectedFiles.length; i++) {
-      this.images.push(selectedFiles[i]);
-    }
-  }
+		const selectedFiles = <FileList>event.srcElement.files;
 
-  readImage(image: File) {
+		this.images = new Array();
 
-    const fileReader = new FileReader();
+		for (let i = 0; i < selectedFiles.length; i++) {
+			this.images.push(selectedFiles[i]);
+		}
+	}
 
-    fileReader.readAsDataURL(image);
+	readImage(image: File) {
 
-    fileReader.onloadend = () => {
-      return fileReader.result;
-    }
-  }
+		const fileReader = new FileReader();
 
-  submit () {
+		fileReader.readAsDataURL(image);
+		fileReader.onloadend = () => {
+			return fileReader.result;
+		}
+	}
 
-    if (this.images && this.images.length > 0) {
-      this._matDialogRef.close({status: true, images: this.images});
-    }
-  }
+	submit() {
+
+		if (this.images && this.images.length > 0) {
+			this._matDialogRef.close({ status: true, images: this.images });
+		}
+	}
 }

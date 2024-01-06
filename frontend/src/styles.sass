@@ -4,34 +4,31 @@
 @tailwind components
 @tailwind utilities
 
-html, body 
+html, 
+body
     height: 100%
 
-body 
+body
     font-family: Roboto, "Helvetica Neue", sans-serif
     margin: 0
 
-a, a:hover
+a, 
+a:hover
     text-decoration: none
 
 .link
     cursor: pointer
 
-.mat-mdc-snack-bar-container.fail 
+.mat-mdc-snack-bar-container.fail
     --mdc-snackbar-container-color: #dc3545
     --mdc-snackbar-supporting-text-color: rgba(255, 255, 255, 0.87)
 
-.mat-mdc-snack-bar-container.success 
+.mat-mdc-snack-bar-container.success
     --mdc-snackbar-container-color: #198754
     --mdc-snackbar-supporting-text-color: rgba(255, 255, 255, 0.87)
 
 .mdc-notched-outline__notch
-  border-right: none
-
-.table-responsive 
-    display: block
-    width: 100%
-    overflow-x: auto
+    border-right: none
 
 .mat-table 
     width: 100%
@@ -41,10 +38,12 @@ a, a:hover
     border-collapse: collapse
     margin: 0px
 
-.mat-row, .mat-header-row 
+.mat-row, 
+.mat-header-row 
     display: table-row
 
-.mat-cell, .mat-header-cell 
+.mat-cell, 
+.mat-header-cell 
     word-wrap: initial
     display: table-cell
     padding: 0px 5px
@@ -53,3 +52,8 @@ a, a:hover
     white-space: nowrap
     overflow: hidden
     vertical-align: middle
+
+.table-responsive 
+    display: block
+    width: 100%
+    overflow-x: auto

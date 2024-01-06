@@ -1,6 +1,6 @@
 package io.github.edsonisaac.beemonitor.dtos;
 
-import io.github.edsonisaac.beemonitor.entities.User;
+import io.github.edsonisaac.beemonitor.models.User;
 import io.github.edsonisaac.beemonitor.enums.Department;
 
 import java.io.Serializable;

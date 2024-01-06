@@ -1,51 +1,52 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { Authentication } from '../entities/authentication';
 import { AuthenticationService } from './authentication.service';
 
 @Injectable({
-  providedIn: 'root',
+	providedIn: 'root',
 })
 export class RedirectService {
-  private _authentication!: Authentication | null;
-  private _baseURL!: string;
+	
+	private _baseURL!: string;
 
-  constructor(
-    private _authenticationService: AuthenticationService,
-    private _router: Router
-  ) {
-    this._authenticationService.getAuthenticationAsObservable().subscribe({
-      next: (authentication) => {
-        if (authentication) {
-          this._authentication = authentication;
-          this._baseURL = '/' + this._authentication?.role.toLowerCase();
-        }   
-      }
-    });
-  }
+	constructor(
+		private readonly _authenticationService: AuthenticationService,
+		private readonly _router: Router
+	) {
 
-  toHive(id: string) {
-    this._router.navigate([`${this._baseURL}/hives/${id}`]);
-  }
+		this._authenticationService.getAuthentication().subscribe({
 
-  toHiveList() {
-    this._router.navigate([`${this._baseURL}/hives`]);
-  }
+			next: (authentication) => {
 
-  toLogin() {
-    this._router.navigate([``]);
-  }
+				if (authentication) {
+					this._baseURL = '/' + authentication.profile.toLowerCase();
+				}
+			}
+		});
+	}
 
-  toPanel() {
-    this._router.navigate([`${this._baseURL}/panel`]);
-  }
+	toHive(id: string) {
+		this._router.navigate([`${this._baseURL}/hives/${id}`]);
+	}
 
-  toUser(id: string) {
-    this._router.navigate([`${this._baseURL}/users/${id}`]);
-  }
+	toHiveList() {
+		this._router.navigate([`${this._baseURL}/hives`]);
+	}
 
-  toUserList() {
-    this._router.navigate([`${this._baseURL}/users`]);
-  }
+	toLogin() {
+		this._router.navigate([``]);
+	}
+
+	toPanel() {
+		this._router.navigate([`${this._baseURL}/panel`]);
+	}
+
+	toUser(id: string) {
+		this._router.navigate([`${this._baseURL}/users/${id}`]);
+	}
+
+	toUserList() {
+		this._router.navigate([`${this._baseURL}/users`]);
+	}
 }

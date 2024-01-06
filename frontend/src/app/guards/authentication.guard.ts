@@ -4,21 +4,21 @@ import { ActivatedRouteSnapshot, Router, RouterStateSnapshot } from '@angular/ro
 import { AuthenticationService } from '../services/authentication.service';
 
 @Injectable({
-  providedIn: 'root',
+	providedIn: 'root',
 })
 export class AuthGuard {
-  constructor(
-    private _authenticationService: AuthenticationService,
-    private _router: Router
-  ) {}
+	constructor(
+		private _authenticationService: AuthenticationService,
+		private _router: Router
+	) { }
 
-  canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
+	canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot): boolean {
 
-    if (this._authenticationService.isAuthenticated()) {
-      return true;
-    }
+		if (this._authenticationService.isAuthenticated()) {
+			return true;
+		}
 
-    this._router.navigate(['/login']);
-    return false;
-  }
+		this._router.navigate(['/']);
+		return false;
+	}
 }

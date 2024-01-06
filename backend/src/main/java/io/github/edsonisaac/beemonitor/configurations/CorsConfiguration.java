@@ -14,6 +14,7 @@ public class CorsConfiguration {
     CorsConfigurationSource corsConfigurationSource() {
         final var source = new UrlBasedCorsConfigurationSource();
         final var corsConfiguration = new org.springframework.web.cors.CorsConfiguration().applyPermitDefaultValues();
+        corsConfiguration.setAllowedOrigins(List.of("*"));
         corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE"));
         source.registerCorsConfiguration("/**", corsConfiguration);
         return source;

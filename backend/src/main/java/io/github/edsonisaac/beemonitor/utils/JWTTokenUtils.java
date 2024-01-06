@@ -1,5 +1,6 @@
 package io.github.edsonisaac.beemonitor.utils;
 
+import io.github.edsonisaac.beemonitor.models.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -23,7 +24,9 @@ public class JWTTokenUtils {
         final var now = Instant.now();
         final var scope = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(" "));
+                .collect(Collectors.toList());
+        final var profile = ((User) authentication.getPrincipal()).getDepartment().name();
+
 
         final var claims = JwtClaimsSet.builder()
                 .issuer("self")
@@ -31,6 +34,7 @@ public class JWTTokenUtils {
                 .expiresAt(now.plus(12, ChronoUnit.HOURS))
                 .subject(authentication.getName())
                 .claim("scope", scope)
+                .claim("profile", profile)
                 .build();
 
         return this.encoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();

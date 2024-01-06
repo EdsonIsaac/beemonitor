@@ -6,24 +6,30 @@ import { AuthenticationService } from '../services/authentication.service';
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
-  constructor(private _authenticationService: AuthenticationService) {}
 
-  intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
+	constructor(private _authenticationService: AuthenticationService) { }
 
-    if (!request.url.includes('/auth/token')) {
-    
-      const authentication = this._authenticationService.getAuthentication();
+	intercept(request: HttpRequest<unknown>, next: HttpHandler): Observable<HttpEvent<unknown>> {
 
-      if (authentication) {
+		if (!request.url.includes('/auth/token')) {
 
-        request = request.clone({
-          setHeaders: {
-            Authorization: 'Bearer ' + authentication.access_token
-          }
-        })
-      }
-    }
+			this._authenticationService.getAuthentication().subscribe({
 
-    return next.handle(request);
-  }
+				next: (authentication) => {
+
+					if (authentication) {
+
+						request = request.clone({
+							setHeaders: {
+								Authorization: 'Bearer ' + authentication.access_token
+							}
+						});
+					}
+				}
+			});
+
+		}
+
+		return next.handle(request);
+	}
 }

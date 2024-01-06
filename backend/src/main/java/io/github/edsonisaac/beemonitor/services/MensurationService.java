@@ -1,7 +1,7 @@
 package io.github.edsonisaac.beemonitor.services;
 
 import io.github.edsonisaac.beemonitor.dtos.MensurationDTO;
-import io.github.edsonisaac.beemonitor.entities.Mensuration;
+import io.github.edsonisaac.beemonitor.models.Mensuration;
 import io.github.edsonisaac.beemonitor.exceptions.ObjectNotFoundException;
 import io.github.edsonisaac.beemonitor.exceptions.ValidationException;
 import io.github.edsonisaac.beemonitor.repositories.MensurationRepository;

@@ -1,6 +1,6 @@
 package io.github.edsonisaac.beemonitor.dtos;
 
-import io.github.edsonisaac.beemonitor.entities.Mensuration;
+import io.github.edsonisaac.beemonitor.models.Mensuration;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;

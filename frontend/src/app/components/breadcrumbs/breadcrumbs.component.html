@@ -1,12 +1,8 @@
 <div class="flex">
-  <div class="flex items-center" *ngFor="let route of routes; index as index">
-    <div class="py-4">
-      <span *ngIf="index !== 0" class="px-2 text-zinc-800 dark:text-zinc-200"
-        >/</span
-      >
-      <a [routerLink]="route.route" class="text-zinc-800 dark:text-zinc-200">{{
-        route.label
-      }}</a>
-    </div>
-  </div>
+	<div class="flex items-center" *ngFor="let route of routes; index as index">
+		<div class="py-4">
+			<span *ngIf="index !== 0" class="px-2 text-zinc-800 dark:text-zinc-200">/</span>
+			<a [routerLink]="route.route" class="text-zinc-800 dark:text-zinc-200">{{route.label}}</a>
+		</div>
+	</div>
 </div>

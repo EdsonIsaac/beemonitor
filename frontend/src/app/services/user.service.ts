@@ -3,94 +3,123 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject } from 'rxjs';
 import { environment } from 'src/environments/environment';
 
-import { Page } from '../entities/page';
-import { User } from '../entities/user';
+import { Page } from '../models/page';
+import { User } from '../models/user';
+import { AuthenticationService } from './authentication.service';
 
 @Injectable({
-  providedIn: 'root',
+	providedIn: 'root',
 })
 export class UserService {
-  private _baseURL = `${environment.api}/users`;
-  private _subject = new BehaviorSubject<User | null>(null);
 
-  constructor(private http: HttpClient) {}
+	private _baseURL = `${environment.api}/users`;
+	private _subject = new BehaviorSubject<User | null>(null);
+	private _userLogged = new BehaviorSubject<User | null>(null);
 
-  findAll(page: number, size: number, sort: string, direction: string) {
-    return this.http.get<Page<User>>(this._baseURL, {
-      params: {
-        page: page,
-        size: size,
-        sort: sort,
-        direction: direction,
-      },
-    });
-  }
+	constructor(
+		private readonly _authenticationService: AuthenticationService,
+		private readonly _http: HttpClient
+	) {
+		this.init();
+	}
 
-  findById(id: string) {
-    return this.http.get<User>(`${this._baseURL}/${id}`);
-  }
+	findAll(page: number, size: number, sort: string, direction: string) {
+		
+		return this._http.get<Page<User>>(this._baseURL, {
+			params: {
+				page: page,
+				size: size,
+				sort: sort,
+				direction: direction,
+			},
+		});
+	}
 
-  get() {
-    return this._subject.asObservable();
-  }
+	findById(id: string) {
+		return this._http.get<User>(`${this._baseURL}/${id}`);
+	}
 
-  save(user: User, photo: any) {
-    const form = new FormData();
+	get() {
+		return this._subject.asObservable();
+	}
 
-    form.append(
-      'user',
-      new Blob([JSON.stringify(user)], { type: 'application/json' })
-    );
+	getUserLogged() {
+		return this._userLogged.asObservable();
+	}
 
-    if (photo) {
-      form.append(
-        'photo',
-        new Blob([photo], { type: 'multipart/form-data' }),
-        'photo.png'
-      );
-    }
+	init() {
 
-    return this.http.post<User>(this._baseURL, form);
-  }
+		this._authenticationService.getAuthentication().subscribe({
 
-  search(
-    value: string,
-    page: number,
-    size: number,
-    sort: string,
-    direction: string
-  ) {
-    return this.http.get<Page<User>>(`${this._baseURL}/search`, {
-      params: {
-        value: value,
-        page: page,
-        size: size,
-        sort: sort,
-        direction: direction,
-      },
-    });
-  }
+			next: (authentication) => {
 
-  set(user: User | null) {
-    this._subject.next(user);
-  }
+				if (authentication) {
 
-  update(user: User, photo: any) {
-    const form = new FormData();
+					this.search(authentication.username, 0, 1, 'name', 'asc').subscribe({
 
-    form.append(
-      'user',
-      new Blob([JSON.stringify(user)], { type: 'application/json' })
-    );
+						next: (users) => {
+							this._userLogged.next(users.content[0]);
+						}
+					});
+				}
 
-    if (photo) {
-      form.append(
-        'photo',
-        new Blob([photo], { type: 'multipart/form-data' }),
-        'photo.png'
-      );
-    }
+				else {
+					this._userLogged.next(null);
+				}
+			}
+		});
+	}
 
-    return this.http.put<User>(`${this._baseURL}/${user.id}`, form);
-  }
+	save(user: User, photo: any) {
+
+		const form = new FormData();
+
+		form.append('user', new Blob([JSON.stringify(user)], { type: 'application/json' }));
+
+		if (photo) {
+			form.append('photo', new Blob([photo], { type: 'multipart/form-data' }), 'photo.png');
+		}
+
+		return this._http.post<User>(this._baseURL, form);
+	}
+
+	search(
+		value: string,
+		page: number,
+		size: number,
+		sort: string,
+		direction: string
+	) {
+
+		return this._http.get<Page<User>>(`${this._baseURL}/search`, {
+			params: {
+				value: value,
+				page: page,
+				size: size,
+				sort: sort,
+				direction: direction,
+			},
+		});
+	}
+
+	set(user: User | null) {
+		this._subject.next(user);
+	}
+
+	setUserLogged(user: User | null) {
+		this._userLogged.next(user);
+	}
+
+	update(user: User, photo: any) {
+
+		const form = new FormData();
+
+		form.append('user', new Blob([JSON.stringify(user)], { type: 'application/json' }));
+
+		if (photo) {
+			form.append('photo', new Blob([photo], { type: 'multipart/form-data' }), 'photo.png');
+		}
+
+		return this._http.put<User>(`${this._baseURL}/${user.id}`, form);
+	}
 }

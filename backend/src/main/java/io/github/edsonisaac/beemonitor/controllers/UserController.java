@@ -1,8 +1,8 @@
 package io.github.edsonisaac.beemonitor.controllers;
 
 import io.github.edsonisaac.beemonitor.dtos.UserDTO;
-import io.github.edsonisaac.beemonitor.entities.Image;
-import io.github.edsonisaac.beemonitor.entities.User;
+import io.github.edsonisaac.beemonitor.models.Image;
+import io.github.edsonisaac.beemonitor.models.User;
 import io.github.edsonisaac.beemonitor.exceptions.ValidationException;
 import io.github.edsonisaac.beemonitor.services.UserService;
 import io.github.edsonisaac.beemonitor.utils.FileUtils;

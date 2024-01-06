@@ -1,32 +1,26 @@
 <div class="dialog">
-  <div class="dialog-content p-4">
-    <div class="mb-4">
-      <h2 style="margin: 0">Selecionar Imagem</h2>
-    </div>
+	<div class="dialog-content p-4">
+		<div class="mb-4">
+			<h2 style="margin: 0">Selecionar Imagem</h2>
+		</div>
 
-    <div class="mb-4">
-      <input
-        type="file"
-        accept="image/*"
-        class="w-full text-zinc-800 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-sm file:bg-zinc-300 file:text-zinc-800 hover:file:bg-zinc-400 border rounded"
-        [multiple]="data.multiple"
-        (change)="onChange($event)"
-      />
-    </div>
+		<div class="mb-4">
+			
+			<input 
+				type="file" 
+				accept="image/*"
+				class="w-full text-zinc-800 file:mr-4 file:py-2 file:px-4 file:border-0 file:text-sm file:bg-zinc-300 file:text-zinc-800 hover:file:bg-zinc-400 border rounded"
+				[multiple]="data.multiple" (change)="onChange($event)" 
+			/>
+		</div>
 
-    <div class="flex justify-end gap-4">
-      <button
-        mat-dialog-close
-        class="px-8 py-2 rounded text-white bg-gray-600 hover:bg-gray-700 active:bg-gray-800"
-      >
-        Cancelar
-      </button>
-      <button
-        class="px-8 py-2 rounded text-white bg-green-600 hover:bg-green-700 active:bg-green-800"
-        (click)="submit()"
-      >
-        OK
-      </button>
-    </div>
-  </div>
+		<div class="flex justify-end gap-4">
+			<button mat-dialog-close class="px-8 py-2 rounded text-white bg-gray-600 hover:bg-gray-700 active:bg-gray-800">
+				Cancelar
+			</button>
+			<button class="px-8 py-2 rounded text-white bg-green-600 hover:bg-green-700 active:bg-green-800" (click)="submit()">
+				OK
+			</button>
+		</div>
+	</div>
 </div>

@@ -5,20 +5,22 @@ import { NotificationType } from '../enums/notification-type';
 import { NotificationComponent } from '../components/notification/notification.component';
 
 @Injectable({
-  providedIn: 'root',
+	providedIn: 'root',
 })
 export class NotificationService {
-  constructor(private snackBar: MatSnackBar) {}
+	
+	constructor(private readonly _snackBar: MatSnackBar) { }
 
-  show(message: string, type: NotificationType) {
-    this.snackBar.openFromComponent(NotificationComponent, {
-      data: {
-        message: message,
-      },
-      duration: 5000,
-      horizontalPosition: 'center',
-      verticalPosition: 'bottom',
-      panelClass: type,
-    });
-  }
+	show(message: string, type: NotificationType) {
+		
+		this._snackBar.openFromComponent(NotificationComponent, {
+			data: {
+				message: message,
+			},
+			duration: 5000,
+			horizontalPosition: 'center',
+			verticalPosition: 'bottom',
+			panelClass: type,
+		});
+	}
 }
