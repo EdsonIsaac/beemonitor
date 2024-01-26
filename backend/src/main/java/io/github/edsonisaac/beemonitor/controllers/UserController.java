@@ -108,6 +108,7 @@ public class UserController implements AbstractController<User, UserDTO> {
     private void handlePhoto(User user, MultipartFile photo) {
 
         if (photo != null) {
+
             final var image = Image.builder()
                 .name(System.currentTimeMillis() + "." + FileUtils.getExtension(Objects.requireNonNull(photo.getOriginalFilename())))
                 .build();
