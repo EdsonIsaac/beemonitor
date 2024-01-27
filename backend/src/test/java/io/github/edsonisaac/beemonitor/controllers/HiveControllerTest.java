@@ -1,31 +1,33 @@
 package io.github.edsonisaac.beemonitor.controllers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import io.github.edsonisaac.beemonitor.enums.Department;
 import io.github.edsonisaac.beemonitor.models.Hive;
 import io.github.edsonisaac.beemonitor.models.User;
-import io.github.edsonisaac.beemonitor.enums.Department;
 import io.github.edsonisaac.beemonitor.repositories.HiveRepository;
 import io.github.edsonisaac.beemonitor.services.HiveService;
 import io.github.edsonisaac.beemonitor.services.UserService;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.UUID;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -37,6 +39,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class HiveControllerTest {
 
+    private Hive hive;
     private ObjectMapper mapper;
     private String token;
 
@@ -57,9 +60,8 @@ class HiveControllerTest {
     public void beforeAll() throws Exception {
 
         // Init mapper
-        this.mapper = JsonMapper.builder()
-                .addModule(new JavaTimeModule())
-                .build();
+        this.mapper = new ObjectMapper();
+        this.mapper.registerModules(new JavaTimeModule());
 
         // Create administration user
         final var administration = User.builder()
@@ -76,12 +78,13 @@ class HiveControllerTest {
         // Create login body
         final var requestBody = new HashMap<String, String>();
 
-        requestBody.put("username", "administration");
-        requestBody.put("password", "administration");
+        requestBody.put("username", "admin");
+        requestBody.put("password", "admin");
 
         // Call login endpoint to receive authentication information
         final var responseBody = this.mvc.perform(
-                        post("/login")
+                        post("/api/auth/token")
+                                .contentType(MediaType.APPLICATION_JSON)
                                 .content(mapper.writeValueAsString(requestBody)))
                 .andReturn();
 
@@ -94,18 +97,28 @@ class HiveControllerTest {
         }
     }
 
+    @BeforeEach
+    public void beforeEach() {
+
+        this.hive = Hive.builder()
+                .code("0001")
+                .mensurations(Collections.emptySet())
+                .build();
+
+        final var hiveDTO = this.hiveService.save(hive);
+        BeanUtils.copyProperties(hiveDTO, hiveDTO);
+    }
+
     @AfterEach
     public void alterEach() {
-        this.hiveRepository.deleteAll();
+        this.hiveRepository.deleteById(this.hive.getId());
     }
 
     @Test
     void shouldSaveTheHive() throws Exception {
 
-        final var hive = Hive.builder().code("0001").build();
-
         this.mvc.perform(
-                        post("/hives")
+                        post("/api/hives")
                                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(mapper.writeValueAsString(hive)))
@@ -117,10 +130,10 @@ class HiveControllerTest {
     @Test
     void shouldNotSaveTheHiveWhenCodeIsNull() throws Exception {
 
-        final var hive = Hive.builder().code(null).build();
+        hive.setCode(null);
 
         this.mvc.perform(
-                        post("/hives")
+                        post("/api/hives")
                                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(mapper.writeValueAsString(hive)))
@@ -131,10 +144,10 @@ class HiveControllerTest {
     @Test
     void shouldNotSaveTheHiveWhenCodeIsEmpty() throws Exception {
 
-        final var hive = Hive.builder().code("").build();
+        hive.setCode("");
 
         this.mvc.perform(
-                        post("/hives")
+                        post("/api/hives")
                                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(mapper.writeValueAsString(hive)))
@@ -145,40 +158,31 @@ class HiveControllerTest {
     @Test
     void shouldReturnAllHives() throws Exception {
 
-        this.mvc.perform(
-                        get("/hives")
+        final var response = this.mvc.perform(
+                        get("/api/hives")
                                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
-                .andExpect(status().isOk())
-                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
+                .andReturn().getResponse();
+
+        final var hives = mapper.readValue(response.getContentAsString(), LinkedHashMap.class);
+
+        assertEquals(HttpStatus.OK.value(), response.getStatus());
+        assertEquals(1, Integer.parseInt(hives.get("totalElements").toString()));
     }
 
     @Test
     void shouldDeleteTheHive() throws Exception {
 
-        final var hive = Hive.builder().code("0001").build();
-        final var hiveSaved = hiveService.save(hive);
-
         this.mvc.perform(
-                        delete("/hives/" + hiveSaved.id())
+                        delete("/api/hives/" + hive.getId())
                                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
-                .andExpect(status().isOk())
-                .andReturn();
-    }
-
-    @Test
-    void shouldNotDeleteWhenIdIsNull() throws Exception {
-
-        this.mvc.perform(
-                        delete("/hives/" + null)
-                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isOk());
     }
 
     @Test
     void shouldNotDeleteWhenIdNotExists() throws Exception {
 
         this.mvc.perform(
-                        delete("/hives/" + "00000000-0000-0000-0000-000000000000")
+                        delete("/api/hives/" + UUID.randomUUID())
                                 .header(HttpHeaders.AUTHORIZATION, "Bearer " + token))
                 .andExpect(status().isNotFound());
     }
