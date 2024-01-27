@@ -1,6 +1,7 @@
 package io.github.edsonisaac.beemonitor.models;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.OneToMany;
@@ -22,7 +23,7 @@ public class Hive extends AbstractModel {
     @Column(name = "code", unique = true, length = 50)
     private String code;
 
-    @OneToMany(orphanRemoval = true, mappedBy = "hive")
+    @OneToMany(cascade = CascadeType.REMOVE, mappedBy = "hive")
     @JsonManagedReference
     private Set<Mensuration> mensurations;
 }
