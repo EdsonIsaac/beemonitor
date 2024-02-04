@@ -12,7 +12,8 @@ public record ImageDTO(
         LocalDateTime lastModifiedDate,
         String createdByUser,
         String modifiedByUser,
-        String name
+        String name,
+        String path
 ) implements Serializable {
 
     public ImageDTO(Image image) {
@@ -22,7 +23,8 @@ public record ImageDTO(
             image.getLastModifiedDate(), 
             image.getCreatedByUser(), 
             image.getModifiedByUser(), 
-            image.getName()
+            image.getName(),
+            image.getPath()
         );
     }
 }

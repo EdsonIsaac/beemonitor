@@ -5,6 +5,9 @@ import org.junit.platform.suite.api.Suite;
 
 @Suite
 @SelectClasses({
-        HiveControllerTest.class
+        AuthenticationControllerTest.class,
+        HiveControllerTest.class,
+        MensurationControllerTest.class,
+        UserControllerTest.class
 })
 public class ExecuteAll { }

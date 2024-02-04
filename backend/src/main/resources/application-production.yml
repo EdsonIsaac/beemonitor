@@ -1,37 +1,43 @@
 app:
-  security:
-    rsa:
-      public-key: classpath:certs/jwt/public.pem
-      private-key: classpath:certs/jwt/private.pem
+    aws:
+        access_key_id: ${AWS_ACCESS_KEY_ID}
+        secret_access_key: ${AWS_SECRET_ACCESS_KEY}
+        s3:
+            bucket: ${AWS_S3_BUCKET}
+            region: ${AWS_S3_REGION}
+    security:
+        rsa:
+            public-key: classpath:certs/jwt/public.pem
+            private-key: classpath:certs/jwt/private.pem
 
 server:
-  ssl:
-    enabled: true
-    certificate: classpath:certs/ssl/certificate.pem
-    certificate-private-key: classpath:certs/ssl/private.pem
+    ssl:
+        enabled: true
+        certificate: classpath:certs/ssl/certificate.pem
+        certificate-private-key: classpath:certs/ssl/private.pem
 
 spring:
-  datasource:
-    url: ${POSTGRES_URL}
-    username: ${POSTGRES_USER}
-    password: ${POSTGRES_PASSWORD}
-    driver-class-name: org.postgresql.Driver
-  jpa:
-    hibernate:
-      ddl-auto: validate
-    properties:
-      hibernate:
-        dialect: org.hibernate.dialect.PostgreSQLDialect
-        format_sql: true
-    show-sql: false
-  servlet:
-    multipart:
-      max-file-size: 10MB
-  web:
-    locale: pt_BR
+    datasource:
+        url: ${POSTGRES_URL}
+        username: ${POSTGRES_USER}
+        password: ${POSTGRES_PASSWORD}
+        driver-class-name: org.postgresql.Driver
+    jpa:
+        hibernate:
+            ddl-auto: validate
+        properties:
+            hibernate:
+                dialect: org.hibernate.dialect.PostgreSQLDialect
+                format_sql: true
+        show-sql: false
+    servlet:
+        multipart:
+            max-file-size: 10MB
+    web:
+        locale: pt_BR
 
 springdoc:
-  api-docs:
-    path: /api-docs
-  swagger-ui:
-    path: /swagger-ui
+    api-docs:
+        path: /api-docs
+    swagger-ui:
+        path: /swagger-ui

@@ -1,13 +1,12 @@
 import { AfterViewInit, Component, ViewChild } from '@angular/core';
 import { MatPaginator } from '@angular/material/paginator';
-import { User } from 'src/app/models/user';
 import { NotificationType } from 'src/app/enums/notification-type';
+import { User } from 'src/app/models/user';
 import { NotificationService } from 'src/app/services/notification.service';
 import { RedirectService } from 'src/app/services/redirect.service';
 import { UserService } from 'src/app/services/user.service';
 import { MessageUtils } from 'src/app/utils/message-utils';
 import { OperatorUtils } from 'src/app/utils/operator-utils';
-import { environment } from 'src/environments/environment';
 
 @Component({
 	selector: 'app-users',
@@ -16,7 +15,6 @@ import { environment } from 'src/environments/environment';
 })
 export class UsersComponent implements AfterViewInit {
 
-	api!: string;
 	filterString!: string;
 	isLoadingResults!: boolean;
 	pageIndex!: number;
@@ -31,7 +29,6 @@ export class UsersComponent implements AfterViewInit {
 		private readonly _redirectService: RedirectService,
 		private readonly _userService: UserService
 	) {
-		this.api = environment.api;
 		this.isLoadingResults = true;
 		this.resultsLength = 0;
 	}

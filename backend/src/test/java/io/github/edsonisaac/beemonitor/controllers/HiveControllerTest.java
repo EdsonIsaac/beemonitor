@@ -3,12 +3,9 @@ package io.github.edsonisaac.beemonitor.controllers;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import io.github.edsonisaac.beemonitor.enums.Department;
 import io.github.edsonisaac.beemonitor.models.Hive;
-import io.github.edsonisaac.beemonitor.models.User;
 import io.github.edsonisaac.beemonitor.repositories.HiveRepository;
 import io.github.edsonisaac.beemonitor.services.HiveService;
-import io.github.edsonisaac.beemonitor.services.UserService;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.BeanUtils;
@@ -35,8 +32,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ActiveProfiles(profiles = "test")
 @AutoConfigureMockMvc
 @ExtendWith(SpringExtension.class)
-@SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@SpringBootTest
 class HiveControllerTest {
 
     private Hive hive;
@@ -46,52 +43,33 @@ class HiveControllerTest {
     private final HiveRepository hiveRepository;
     private final HiveService hiveService;
     private final MockMvc mvc;
-    private final UserService userService;
 
     @Autowired
-    HiveControllerTest(HiveRepository hiveRepository, HiveService hiveService, MockMvc mvc, UserService userService) {
+    HiveControllerTest(HiveRepository hiveRepository, HiveService hiveService, MockMvc mvc) {
         this.hiveRepository = hiveRepository;
         this.hiveService = hiveService;
         this.mvc = mvc;
-        this.userService = userService;
     }
 
     @BeforeAll
     public void beforeAll() throws Exception {
 
-        // Init mapper
         this.mapper = new ObjectMapper();
         this.mapper.registerModules(new JavaTimeModule());
 
-        // Create administration user
-        final var administration = User.builder()
-                .name("ADMINISTRATION")
-                .username("administration")
-                .password("administration")
-                .department(Department.ADMINISTRATION)
-                .enabled(true)
-                .build();
-
-        // Save administration user
-        userService.save(administration);
-
-        // Create login body
         final var requestBody = new HashMap<String, String>();
 
         requestBody.put("username", "admin");
         requestBody.put("password", "admin");
 
-        // Call login endpoint to receive authentication information
         final var responseBody = this.mvc.perform(
                         post("/api/auth/token")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .content(mapper.writeValueAsString(requestBody)))
                 .andReturn();
 
-        // Convert the response body to json object
         final var response = mapper.readValue(responseBody.getResponse().getContentAsString(), ObjectNode.class);
 
-        // Set access_token into the token variable
         if (response.has("access_token")) {
             this.token = response.get("access_token").asText();
         }

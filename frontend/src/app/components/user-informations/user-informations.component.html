@@ -4,7 +4,7 @@
 			<img src="assets/images/users.png" width="128px" />
 		</div>
 		<div *ngIf="photo" class="flex justify-center">
-			<img [src]="photo.name ? api + '/files/search?name=' + photo.name : photo.data" width="128px" class="rounded-full" />
+			<img [src]="photo.name ? photo.path : photo.data" width="128px" class="rounded-full" />
 		</div>
 	</div>
 

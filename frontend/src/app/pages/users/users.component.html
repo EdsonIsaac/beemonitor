@@ -37,7 +37,7 @@
 			<mat-card-content>
 				<div class="mb-4 flex justify-center">
 					<img 
-						[src]="user.photo ? api + '/files/search?name=' + user.photo.name : '/assets/images/users.png'"
+						[src]="user.photo ? user.photo.path : '/assets/images/users.png'"
 						[ngClass]="user.photo ? 'rounded-full' : ''" 
 						width="128px" 
 					/>

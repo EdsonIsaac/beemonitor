@@ -22,7 +22,6 @@ import { FormUtils } from 'src/app/utils/form-utils';
 })
 export class UserInformationsComponent implements OnInit {
 
-	api!: string;
 	authentication!: Authentication;
 	form!: FormGroup;
 	hide!: boolean;
@@ -41,7 +40,6 @@ export class UserInformationsComponent implements OnInit {
 
 	ngOnInit(): void {
 
-		this.api = environment.api;
 		this.hide = true;
 		this.photo = null;
 
@@ -67,6 +65,7 @@ export class UserInformationsComponent implements OnInit {
 						this.photo = {
 							id: user.photo.id,
 							name: user.photo.name,
+							path: user.photo.path
 						};
 					}
 				} else {

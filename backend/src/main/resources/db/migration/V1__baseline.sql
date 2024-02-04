@@ -17,6 +17,7 @@ CREATE TABLE tb_images
     created_by_user    VARCHAR(50),
     modified_by_user   VARCHAR(50),
     name               VARCHAR(25),
+    path               VARCHAR(255),
     CONSTRAINT pk_tb_images PRIMARY KEY (id)
 );
 
