@@ -8,7 +8,7 @@
 		</button>
 		<div *ngIf="user">
 			<button mat-icon-button class="text-zinc-800 dark:text-zinc-200" [matMenuTriggerFor]="menu">
-				<img *ngIf="user.photo" [src]="api + '/files/search?name=' + user.photo.name" class="rounded-full">
+				<img *ngIf="user.photo" [src]="user.photo.path" class="rounded-full">
 				<mat-icon *ngIf="!user.photo">person</mat-icon>
 			</button>
 			<mat-menu #menu="matMenu" xPosition="before">

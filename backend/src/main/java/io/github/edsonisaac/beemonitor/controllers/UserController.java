@@ -110,7 +110,7 @@ public class UserController implements AbstractController<User, UserDTO> {
     @SneakyThrows
     private void handlePhoto(User user, MultipartFile photo) {
 
-        final var file = FileUtils.save(photo, FileUtils.IMAGES_DIRECTORY);
+        final var file = FileUtils.save(photo, FileUtils.FILES_DIRECTORY);
         final var path = awss3Service.save(file);
         final var image = Image.builder()
                 .name(file.getName())
@@ -118,6 +118,6 @@ public class UserController implements AbstractController<User, UserDTO> {
                 .build();
 
         user.setPhoto(image);
-        FileUtils.delete(file.getName(), FileUtils.IMAGES_DIRECTORY);
+        FileUtils.delete(file.getName(), FileUtils.FILES_DIRECTORY);
     }
 }

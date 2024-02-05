@@ -48,12 +48,6 @@ public class ApplicationConfiguration implements CommandLineRunner {
         if (!files.exists()) {
             files.mkdir();
         }
-
-        final var images = new File("data/files/images");
-
-        if (!images.exists()) {
-            images.mkdir();
-        }
     }
 
     void saveDefaultUser(User user) {

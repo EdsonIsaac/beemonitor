@@ -3,7 +3,6 @@ import { User } from 'src/app/models/user';
 import { AuthenticationService } from 'src/app/services/authentication.service';
 import { RedirectService } from 'src/app/services/redirect.service';
 import { UserService } from 'src/app/services/user.service';
-import { environment } from 'src/environments/environment';
 
 @Component({
 	selector: 'app-toolbar',
@@ -12,7 +11,6 @@ import { environment } from 'src/environments/environment';
 })
 export class ToolbarComponent implements OnInit {
 
-	api!: string;
 	theme!: string;
 	user!: User;
 
@@ -23,8 +21,6 @@ export class ToolbarComponent implements OnInit {
 	) { }
 
 	ngOnInit(): void {
-
-		this.api = environment.api;
 		this.theme = localStorage.getItem('theme') ?? 'light';
 
 		this.checkTheme();
