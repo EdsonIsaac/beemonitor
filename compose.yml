@@ -1,60 +1,73 @@
 version: '3.8'
 
 services:
-  postgres:
-    image: postgres:latest
-    restart: unless-stopped
-    environment:
-      - POSTGRES_DB=beemonitor
-      - POSTGRES_USER=beemonitor
-      - POSTGRES_PASSWORD=beemonitor
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
-    networks:
-      beemonitor-network:
-        ipv4_address: 172.19.0.2
+    postgres:
+        image: postgres:latest
+        restart: unless-stopped
+        environment:
+            - POSTGRES_DB=beemonitor
+            - POSTGRES_USER=beemonitor
+            - POSTGRES_PASSWORD=beemonitor
+        ports:
+            - "5432:5432"
+        volumes:
+            - postgres-data:/var/lib/postgresql/data
+        networks:
+            beemonitor-network:
+                ipv4_address: 192.168.0.2
 
-  beemonitor-backend:
-    image: edsonisaac/beemonitor-backend:latest
-    restart: unless-stopped
-    depends_on:
-      - postgres
-    environment:
-      - POSTGRES_URL=jdbc:postgresql://172.19.0.2:5432/beemonitor
-      - POSTGRES_USER=beemonitor
-      - POSTGRES_PASSWORD=beemonitor
-    ports:
-      - "8080:8080"
-    volumes:
-      - beemonitor-backend-data:/var/lib/beemonitor-backend
-    networks:
-      beemonitor-network:
-        ipv4_address: 172.19.0.3
-  
-  beemonitor-frontend:
-    image: edsonisaac/beemonitor-frontend:latest
-    restart: unless-stopped
-    depends_on:
-      - postgres
-      - beemonitor-backend
-    ports:
-      - "80:80"
-    volumes:
-      - beemonitor-frontend-data:/var/lib/beemonitor-frontend
-    networks:
-      beemonitor-network:
-        ipv4_address: 172.19.0.4
+    # beemonitor-backend:
+    #     image: edsonisaac/beemonitor-backend:latest
+    #     restart: unless-stopped
+    #     depends_on:
+    #         - postgres
+    #     environment:
+    #         - POSTGRES_URL=jdbc:postgresql://192.168.0.2:5432/beemonitor
+    #         - POSTGRES_USER=beemonitor
+    #         - POSTGRES_PASSWORD=beemonitor
+    #     ports:
+    #         - "8080:8080"
+    #     volumes:
+    #         - ./data:/data
+    #     networks:
+    #         beemonitor-network:
+    #             ipv4_address: 192.168.0.3
+
+    # beemonitor-frontend:
+    #     image: edsonisaac/beemonitor-frontend:latest
+    #     restart: unless-stopped
+    #     depends_on:
+    #         - postgres
+    #         - beemonitor-backend
+    #     networks:
+    #         beemonitor-network:
+    #             ipv4_address: 192.168.0.4
+
+    # nginx-proxy-manager:
+    #     image: 'jc21/nginx-proxy-manager:latest'
+    #     container_name: nginx-proxy-manager
+    #     restart: unless-stopped
+    #     depends_on:
+    #         - postgres
+    #         - beemonitor-backend
+    #         - beemonitor-frontend
+    #     ports:
+    #         - '80:80'
+    #         - '81:81'
+    #         - '443:443'
+    #     volumes:
+    #         - ./data:/data
+    #         - ./letsencrypt:/etc/letsencrypt
+    #     networks:
+    #         beemonitor-network:
+    #             ipv4_address: 192.168.0.5
 
 volumes:
-  postgres-data:
-  beemonitor-backend-data:
-  beemonitor-frontend-data:
+    postgres-data:
 
 networks:
-  beemonitor-network:
-    driver: bridge
-    ipam:
-      config:
-        - subnet: 172.19.0.0/24
+    beemonitor-network:
+        driver: bridge
+        ipam:
+            config:
+                - subnet: 192.168.0.0/24
