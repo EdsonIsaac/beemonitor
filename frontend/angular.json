@@ -72,10 +72,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "beemonitor-frontend:build:production"
+              "buildTarget": "beemonitor-frontend:build:production"
             },
             "development": {
-              "browserTarget": "beemonitor-frontend:build:development"
+              "buildTarget": "beemonitor-frontend:build:development"
             }
           },
           "defaultConfiguration": "development",
@@ -86,7 +86,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "beemonitor-frontend:build"
+            "buildTarget": "beemonitor-frontend:build"
           }
         },
         "test": {
