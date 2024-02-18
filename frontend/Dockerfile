@@ -6,4 +6,4 @@ RUN npm run build --prod
 
 FROM nginx:alpine
 COPY nginx.conf /etc/nginx/conf.d/default.conf
-COPY --from=node /app/dist/beemonitor-frontend/browser /usr/share/nginx/html
+COPY --from=node /app/dist/beemonitor-frontend /usr/share/nginx/html
