@@ -52,7 +52,7 @@ export class AuthenticationService {
 	}
 
 	logout() {
-		this._cookieService.delete('access_token');
+		this._cookieService.delete('access_token', '/');
 		this._subject.next(null);
 	}
 
@@ -61,8 +61,7 @@ export class AuthenticationService {
 		authentication = this.decodeToken(authentication.access_token);
 		this._subject.next(authentication);
 		this._cookieService.set("access_token", authentication.access_token, {
-			secure: true,
-			expires: authentication.expires,
+			expires: new Date(authentication.expires * 1000),
 			path: '/'
 		});
 	}
