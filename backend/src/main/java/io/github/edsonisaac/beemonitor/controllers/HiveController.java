@@ -19,7 +19,7 @@ import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
-@RequestMapping(value = "/api/hives")
+@RequestMapping(value = "/hives")
 @RequiredArgsConstructor
 @Tag(name = "Hive", description = "Endpoints for hives management")
 public class HiveController implements AbstractController<Hive, HiveDTO> {

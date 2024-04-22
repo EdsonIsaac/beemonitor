@@ -25,7 +25,7 @@ import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/users")
 @RequiredArgsConstructor
 @Tag(name = "User", description = "Endpoints for users management")
 public class UserController implements AbstractController<User, UserDTO> {

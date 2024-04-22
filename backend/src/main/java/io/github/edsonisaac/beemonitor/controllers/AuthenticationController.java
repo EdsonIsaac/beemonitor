@@ -15,7 +15,7 @@ import java.util.HashMap;
 import static org.springframework.http.HttpStatus.OK;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/auth")
 @RequiredArgsConstructor
 @Tag(name = "Authentication", description = "Endpoints for authentication")
 public class AuthenticationController {

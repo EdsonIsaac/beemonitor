@@ -60,7 +60,7 @@ public class SecurityConfiguration {
 
         return http
                 .authorizeHttpRequests(requests -> {
-                    requests.requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/api/auth/**")).permitAll();
+                    requests.requestMatchers(AntPathRequestMatcher.antMatcher(HttpMethod.POST, "/auth/**")).permitAll();
                     requests.anyRequest().authenticated();
                 })
                 .cors(cors -> cors.configurationSource(corsConfigurationSource))

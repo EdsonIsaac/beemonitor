@@ -20,7 +20,7 @@ import java.util.UUID;
 import static org.springframework.http.HttpStatus.*;
 
 @RestController
-@RequestMapping("/api/mensurations")
+@RequestMapping("/mensurations")
 @RequiredArgsConstructor
 @Tag(name = "Mensuration", description = "Endpoints for mensurations management")
 public class MensurationController implements AbstractController<Mensuration, MensurationDTO> {
